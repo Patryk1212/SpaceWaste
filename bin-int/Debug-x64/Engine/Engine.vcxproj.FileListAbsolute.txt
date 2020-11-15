@@ -1,0 +1,2 @@
+C:\CCTP\SpaceWaste\bin\Debug-x64\Engine\Engine.pdb
+C:\CCTP\SpaceWaste\bin-int\Debug-x64\Engine\Engine.pdb
