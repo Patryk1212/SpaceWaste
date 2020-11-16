@@ -1,0 +1,14 @@
+# Visual Studio files and folder
+.vs
+
+bin-intDebug-x64Orbit
+
+binDebug-x64Engine
+
+binDebug-x64Orbit
+
+bin-intDebug-x64Engine
+
+.filters
+
+.vcxproj
