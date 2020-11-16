@@ -7,7 +7,7 @@ namespace Engine
 
 	Application::Application()
 	{
-        /*glfwInit();
+        glfwInit();
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         GLFWwindow* window = glfwCreateWindow(800, 600, "Vulkan window", nullptr, nullptr);
@@ -23,7 +23,7 @@ namespace Engine
 
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
-        }*/
+        }
 	}
 
 	void Application::run()
