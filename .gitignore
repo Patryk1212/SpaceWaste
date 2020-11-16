@@ -24,3 +24,5 @@ bin/Debug-x64/Engine/
 bin/Debug-x64/Orbit/
 
 *.vcxproj
+
+*.filters

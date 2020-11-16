@@ -1,7 +1,6 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include "Window.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -17,6 +16,9 @@ namespace Engine
 		virtual ~Application() = default;
 
 		void run();
+
+	private:
+		std::unique_ptr<Window> window;
 
 	private:
 		static Application* appInstance;
