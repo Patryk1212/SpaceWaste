@@ -71,6 +71,12 @@ namespace Engine
 
 		/*--------------------------------------------------*/
 
+		void createGraphicsPipeline();
+		std::vector<char> readFile(const std::string& filename);
+		VkShaderModule createShaderModule(const std::vector<char>& code);
+
+		void createRenderPass();
+
 		void run();
 
 	private:
@@ -103,6 +109,11 @@ namespace Engine
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
 		std::vector<VkImageView> swapChainImageViews;
+
+		///////////////////////////////////////////////////////
+
+		VkRenderPass renderPass;
+		VkPipelineLayout pipelineLayout;
 
 	private:
 		static Application* appInstance;
