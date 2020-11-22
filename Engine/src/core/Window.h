@@ -24,6 +24,8 @@ namespace Engine
 		void init();
 		void onUpdate();
 
+		GLFWwindow* getWindow() const;
+
 	private:
 		GLFWwindow* window = nullptr;
 		WindowSpec windowSpec;

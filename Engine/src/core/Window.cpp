@@ -31,4 +31,9 @@ namespace Engine
 			glfwPollEvents();
 		}
 	}
+
+	GLFWwindow* Window::getWindow() const
+	{
+		return window;
+	}
 }

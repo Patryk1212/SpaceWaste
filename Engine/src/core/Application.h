@@ -16,11 +16,19 @@ const bool enableValidationLayers = true;
 struct QueueFamilyIndices 
 {
 	std::optional<uint32_t> graphicsFamily;
+	std::optional<uint32_t> presentFamily;
 
 	bool isComplete()
 	{
 		return graphicsFamily.has_value();
 	}
+};
+
+struct SwapChainSupportDetails 
+{
+	VkSurfaceCapabilitiesKHR capabilities;
+	std::vector<VkSurfaceFormatKHR> formats;
+	std::vector<VkPresentModeKHR> presentModes;
 };
 
 namespace Engine
@@ -50,6 +58,19 @@ namespace Engine
 		void createLogicalDevice();
 		/*--------------------------------------------------*/
 
+		void createSurface();
+		bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+
+		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+		void createSwapChain();
+
+		void createImageViews();
+
+		/*--------------------------------------------------*/
+
 		void run();
 
 	private:
@@ -60,11 +81,28 @@ namespace Engine
 		VkDevice device; // logical device
 		VkQueue graphicsQueue;
 
-		const std::vector<const char*> validationLayers = {
+		const std::vector<const char*> validationLayers = 
+		{
 			"VK_LAYER_KHRONOS_validation"
 		};
 
 		VkDebugUtilsMessengerEXT debugMessenger;
+
+		///////////
+		VkSurfaceKHR surface;
+
+		VkQueue presentQueue;
+
+		const std::vector<const char*> deviceExtensions = 
+		{
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME
+		};
+
+		VkSwapchainKHR swapChain;
+		std::vector<VkImage> swapChainImages;
+		VkFormat swapChainImageFormat;
+		VkExtent2D swapChainExtent;
+		std::vector<VkImageView> swapChainImageViews;
 
 	private:
 		static Application* appInstance;
