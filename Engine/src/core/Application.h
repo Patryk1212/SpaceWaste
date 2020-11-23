@@ -77,6 +77,16 @@ namespace Engine
 
 		void createRenderPass();
 
+		void createFramebuffers();
+
+		void createCommandPool();
+
+		void createCommandBuffers();
+
+		void doFrame();
+
+		void createSemaphores();
+
 		void run();
 
 	private:
@@ -114,6 +124,20 @@ namespace Engine
 
 		VkRenderPass renderPass;
 		VkPipelineLayout pipelineLayout;
+
+		VkPipeline graphicsPipeline;
+
+		///////////////////////////////////////////////////////
+		std::vector<VkFramebuffer> swapChainFramebuffers;
+
+		VkCommandPool commandPool;
+
+		std::vector<VkCommandBuffer> commandBuffers;
+
+		//////////////////////////////////////////////////////
+
+		VkSemaphore imageAvailableSemaphore;
+		VkSemaphore renderFinishedSemaphore;
 
 	private:
 		static Application* appInstance;
