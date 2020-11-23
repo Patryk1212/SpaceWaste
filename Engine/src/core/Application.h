@@ -85,7 +85,10 @@ namespace Engine
 
 		void doFrame();
 
-		void createSemaphores();
+		void createSyncObjects();
+
+		void recreateSwapChain();
+		void cleanupSwapChain();
 
 		void run();
 
@@ -136,8 +139,14 @@ namespace Engine
 
 		//////////////////////////////////////////////////////
 
-		VkSemaphore imageAvailableSemaphore;
-		VkSemaphore renderFinishedSemaphore;
+		std::vector<VkSemaphore> imageAvailableSemaphores;
+		std::vector<VkSemaphore> renderFinishedSemaphores;
+		std::vector<VkFence> inFlightFences;
+		std::vector<VkFence> imagesInFlight;
+		const int MAX_FRAMES_IN_FLIGHT = 2;
+		size_t currentFrame = 0;
+
+		//bool framebufferResized = false;
 
 	private:
 		static Application* appInstance;

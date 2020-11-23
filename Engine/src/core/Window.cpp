@@ -22,6 +22,8 @@ namespace Engine
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 		window = glfwCreateWindow(windowSpec.width, windowSpec.height, windowSpec.name.c_str(), nullptr, nullptr);
+		glfwSetWindowUserPointer(window, this);
+		glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 	}
 
 	void Window::onUpdate()
@@ -30,6 +32,12 @@ namespace Engine
 		{
 			glfwPollEvents();
 		}
+	}
+
+	void Window::framebufferResizeCallback(GLFWwindow* window, int width, int height)
+	{
+		auto app = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+		app->framebufferResized = true;
 	}
 
 	GLFWwindow* Window::getWindow() const

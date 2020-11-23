@@ -23,8 +23,11 @@ namespace Engine
 
 		void init();
 		void onUpdate();
+		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
 		GLFWwindow* getWindow() const;
+
+		bool framebufferResized = false;
 
 	private:
 		GLFWwindow* window = nullptr;
