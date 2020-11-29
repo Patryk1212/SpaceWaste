@@ -4,9 +4,10 @@
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
-#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -72,6 +73,12 @@ const std::vector<Vertex> vertices = {
 
 const std::vector<uint16_t> indices = {
 	0, 1, 2, 2, 3, 0
+};
+
+struct UniformBufferObject {
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 proj;
 };
 
 namespace Engine
@@ -143,6 +150,11 @@ namespace Engine
 
 		void createIndexBuffer();
 
+		/*-------------------------------------------------*/
+		void createDescriptorSetLayout();
+		void createUniformBuffers();
+		void updateUniformBuffer(uint32_t currentImage);
+
 		void run();
 
 	private:
@@ -178,6 +190,9 @@ namespace Engine
 
 		///////////////////////////////////////////////////////
 
+		VkDescriptorSetLayout descriptorSetLayout;
+
+		/*---------------------------------------------------*/
 		VkRenderPass renderPass;
 		VkPipelineLayout pipelineLayout;
 
@@ -207,6 +222,9 @@ namespace Engine
 
 		VkBuffer indexBuffer;
 		VkDeviceMemory indexBufferMemory;
+
+		std::vector<VkBuffer> uniformBuffers;
+		std::vector<VkDeviceMemory> uniformBuffersMemory;
 
 	private:
 		static Application* appInstance;
