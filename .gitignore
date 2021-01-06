@@ -11,8 +11,6 @@ bin-intDebug-x64Engine
 
 .filters
 
-.vcxproj
-
 *.obj
 
 bin-int/Debug-x64/Engine/
@@ -22,7 +20,5 @@ bin-int/Debug-x64/Orbit/
 bin/Debug-x64/Engine/
 
 bin/Debug-x64/Orbit/
-
-*.vcxproj
 
 *.filters
