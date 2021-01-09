@@ -99,24 +99,31 @@ namespace Engine
 
 		bool checkValidationLayerSupport();
 		std::vector<const char*> getRequiredExtensions();
+
 		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
-		void setupDebugMessenger();
+		void setupDebugMessenger(); 
 		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 		VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 		void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
-
+		
 		void pickPhysicalDevice();
 		bool isDeviceSuitable(VkPhysicalDevice device);
 		//int rateDevice(VkPhysicalDevice device);
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
-		void createLogicalDevice();
-		/*--------------------------------------------------*/
-
-		void createSurface();
 		bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-
 		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+
+		void createLogicalDevice();
+		
+		void createSurface();
+		
+		// ---------------------------------------------------------- already in new class
+
+
+		
+
+
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
@@ -168,32 +175,35 @@ namespace Engine
 	private:
 		std::unique_ptr<Window> window;
 
-		VkInstance instance;
-		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-		VkDevice device; // logical device
-		VkQueue graphicsQueue;
+		// -----------------------------------------------------------------
+		VkInstance instance; // to context 1
+		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE; // to context 1
 
-		const std::vector<const char*> validationLayers = 
+		VkDevice device; // logical device // to context 1
+		VkQueue graphicsQueue; // to context 1
+
+		const std::vector<const char*> validationLayers = // 1
 		{
 			"VK_LAYER_KHRONOS_validation"
 		};
 
-		VkDebugUtilsMessengerEXT debugMessenger;
+		VkDebugUtilsMessengerEXT debugMessenger; // to context 1
 
-		///////////
-		VkSurfaceKHR surface;
+		VkSurfaceKHR surface; // to context 1
 
-		VkQueue presentQueue;
+		VkQueue presentQueue; // to context 1
 
-		const std::vector<const char*> deviceExtensions = 
+		const std::vector<const char*> deviceExtensions = // 1
 		{
 			VK_KHR_SWAPCHAIN_EXTENSION_NAME
 		};
 
-		VkSwapchainKHR swapChain;
+		// -----------------------------------------------------------------
+
+		VkSwapchainKHR swapChain; // to context
 		std::vector<VkImage> swapChainImages;
 		VkFormat swapChainImageFormat;
-		VkExtent2D swapChainExtent;
+		VkExtent2D swapChainExtent; // to context
 		std::vector<VkImageView> swapChainImageViews;
 
 		///////////////////////////////////////////////////////
@@ -222,7 +232,7 @@ namespace Engine
 		const int MAX_FRAMES_IN_FLIGHT = 2;
 		size_t currentFrame = 0;
 
-		//bool framebufferResized = false;
+		//bool framebufferResized = false; // in window rn
 
 		/*------------------------------------------------*/
 		VkBuffer vertexBuffer;

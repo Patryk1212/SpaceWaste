@@ -11,11 +11,17 @@ namespace Engine
 		window = std::make_unique<Window>(ws);
 		window->init();
 
-		initVulkan();
+		initVulkan(); //
+
 		setupDebugMessenger();
-		createSurface();
-		pickPhysicalDevice();
-		createLogicalDevice();
+
+		createSurface(); //
+
+		pickPhysicalDevice(); //
+		createLogicalDevice(); //
+
+
+
 		createSwapChain();
 		createImageViews();
 		createRenderPass();
