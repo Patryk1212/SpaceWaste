@@ -1,56 +1,22 @@
 #pragma once
 
 #include "core/Window.h"
-#include "vulkan/vulkan.h"
-
-#ifdef NDEBUG
-const bool enableValidationLayers = false;
-#else
-const bool enableValidationLayers = true;
-#endif
-
-struct QueueFamilyIndices
-{
-	std::optional<uint32_t> graphicsFamily;
-	std::optional<uint32_t> presentFamily;
-
-	bool isComplete()
-	{
-		return graphicsFamily.has_value();
-	}
-};
-
-struct SwapChainSupportDetails
-{
-	VkSurfaceCapabilitiesKHR capabilities;
-	std::vector<VkSurfaceFormatKHR> formats;
-	std::vector<VkPresentModeKHR> presentModes;
-};
+#include "VulkanCore.h"
 
 namespace Engine
 {
-	class Surface
+	class VulkanSurface
 	{
 	public:
-		Surface() = default;
-		~Surface() = default;
+		VulkanSurface(std::unique_ptr<Window> window);
+		~VulkanSurface();
 
-		void createSurface(std::unique_ptr<Window> window);
-		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+		static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+		static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+
+		static VkSurfaceKHR getSurface();
 
 	private:
-		VkSurfaceKHR surface;
-		
-	private:
-		const std::vector<const char*> validationLayers =
-		{
-			"VK_LAYER_KHRONOS_validation"
-		};
-
-		const std::vector<const char*> deviceExtensions =
-		{
-			VK_KHR_SWAPCHAIN_EXTENSION_NAME
-		};
+		static VkSurfaceKHR surface;
 	};
 }

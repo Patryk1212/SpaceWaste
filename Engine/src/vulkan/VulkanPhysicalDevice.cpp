@@ -5,7 +5,17 @@
 
 namespace Engine
 {
-	void VulkanPhysicalDevice::pickPhysicalDevice()
+	VulkanPhysicalDevice::VulkanPhysicalDevice(const std::vector<const char*>& deviceExtensions)
+	{
+		pickPhysicalDevice(deviceExtensions);
+	}
+
+	VkPhysicalDevice VulkanPhysicalDevice::getPhysicalDevice() const
+	{
+		return physicalDevice;
+	}
+
+	void VulkanPhysicalDevice::pickPhysicalDevice(const std::vector<const char*>& deviceExtensions)
 	{
 		auto instance = VulkanContext::getInstance();
 
@@ -28,7 +38,7 @@ namespace Engine
 		{
 			int score = 0;
 
-			if (isDeviceSuitable(device))
+			if (isDeviceSuitable(device, deviceExtensions))
 			{
 				score = rateDevice(device);
 			}
@@ -47,16 +57,16 @@ namespace Engine
 		}
 	}
 
-	bool VulkanPhysicalDevice::isDeviceSuitable(VkPhysicalDevice device)
+	bool VulkanPhysicalDevice::isDeviceSuitable(VkPhysicalDevice device, const std::vector<const char*>& deviceExtensions)
 	{
-		QueueFamilyIndices indices = findQueueFamilies(device);
+		QueueFamilyIndices indices = VulkanSurface::findQueueFamilies(device);
 
-		bool extensionsSupported = checkDeviceExtensionSupport(device);
+		bool extensionsSupported = checkDeviceExtensionSupport(device, deviceExtensions);
 
 		bool swapChainAdequate = false;
 		if (extensionsSupported)
 		{
-			SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+			SwapChainSupportDetails swapChainSupport = VulkanSurface::querySwapChainSupport(device);
 			swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
 		}
 
@@ -65,8 +75,8 @@ namespace Engine
 
 	int VulkanPhysicalDevice::rateDevice(VkPhysicalDevice device)
 	{
-		VkPhysicalDeviceProperties physicalDeviceProperties;
-		VkPhysicalDeviceFeatures physiclaDeviceFeatures;
+		VkPhysicalDeviceProperties physicalDeviceProperties{};
+		VkPhysicalDeviceFeatures physiclaDeviceFeatures{};
 
 		int score = 0;
 
@@ -88,7 +98,7 @@ namespace Engine
 		return score;
 	}
 
-	bool VulkanPhysicalDevice::checkDeviceExtensionSupport(VkPhysicalDevice device)
+	bool VulkanPhysicalDevice::checkDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*>& deviceExtensions)
 	{
 		uint32_t extensionCount;
 		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
@@ -104,69 +114,5 @@ namespace Engine
 		}
 
 		return requiredExtensions.empty();
-	}
-
-	QueueFamilyIndices VulkanPhysicalDevice::findQueueFamilies(VkPhysicalDevice device)
-	{
-		QueueFamilyIndices indices;
-
-		uint32_t queueFamilyCount = 0;
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
-		int i = 0;
-		for (const auto& queueFamily : queueFamilies)
-		{
-			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-			{
-				indices.graphicsFamily = i;
-			}
-
-			VkBool32 presentSupport = false;
-			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-
-			if (presentSupport)
-			{
-				indices.presentFamily = i;
-			}
-
-			if (indices.isComplete())
-			{
-				break;
-			}
-
-			i++;
-		}
-
-		return indices;
-	}
-
-	SwapChainSupportDetails VulkanPhysicalDevice::querySwapChainSupport(VkPhysicalDevice device)
-	{
-		SwapChainSupportDetails details;
-
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
-
-		uint32_t formatCount;
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
-
-		if (formatCount != 0)
-		{
-			details.formats.resize(formatCount);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
-		}
-
-		uint32_t presentModeCount;
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
-
-		if (presentModeCount != 0)
-		{
-			details.presentModes.resize(presentModeCount);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
-		}
-
-		return details;
 	}
 }

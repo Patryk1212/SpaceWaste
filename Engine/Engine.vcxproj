@@ -174,10 +174,16 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\renderer\VulkanShader.cpp" />
     <ClCompile Include="src\vulkan\VulkanContext.cpp" />
+    <ClCompile Include="src\vulkan\VulkanCore.cpp" />
+    <ClCompile Include="src\vulkan\VulkanDebug.cpp" />
+    <ClCompile Include="src\vulkan\VulkanGraphicsPipeline.cpp" />
     <ClCompile Include="src\vulkan\VulkanLogicalDevice.cpp" />
     <ClCompile Include="src\vulkan\VulkanPhysicalDevice.cpp" />
     <ClCompile Include="src\vulkan\VulkanSurface.cpp" />
+    <ClCompile Include="src\vulkan\VulkanSwapChain.cpp" />
+    <ClCompile Include="src\vulkan\VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Application.h" />
@@ -185,10 +191,16 @@
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\core\Window.h" />
+    <ClInclude Include="src\renderer\VulkanShader.h" />
     <ClInclude Include="src\vulkan\VulkanContext.h" />
+    <ClInclude Include="src\vulkan\VulkanCore.h" />
+    <ClInclude Include="src\vulkan\VulkanDebug.h" />
+    <ClInclude Include="src\vulkan\VulkanGraphicsPipeline.h" />
     <ClInclude Include="src\vulkan\VulkanLogicalDevice.h" />
     <ClInclude Include="src\vulkan\VulkanPhysicalDevice.h" />
     <ClInclude Include="src\vulkan\VulkanSurface.h" />
+    <ClInclude Include="src\vulkan\VulkanSwapChain.h" />
+    <ClInclude Include="src\vulkan\VulkanUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

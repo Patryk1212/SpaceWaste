@@ -3,21 +3,21 @@
 #include "core/Window.h"
 #include "VulkanSurface.h"
 
-#include "vulkan/vulkan.h"
+#include "VulkanDebug.h"
+#include "VulkanPhysicalDevice.h"
+#include "VulkanLogicalDevice.h"
 
 namespace Engine
 {
 	class VulkanContext
 	{
 	public:
-		VulkanContext() = default;
-		~VulkanContext() = default;
-
-		void init();
-
+		VulkanContext();
+		~VulkanContext();
 
 		static VkInstance getInstance() { return instance; }
-	private:
+
+	public:
 		const std::vector<const char*> validationLayers =
 		{
 			"VK_LAYER_KHRONOS_validation"
@@ -32,46 +32,13 @@ namespace Engine
 		bool checkValidationLayerSupport();
 		std::vector<const char*> getRequiredExtensions();
 
-		// might be class
-	private:
-		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, 
-			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
-		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
-
-		void setupDebugMessenger();
-		VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-			const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
-
-		// is class
-	private:
-		void pickPhysicalDevice();
-		bool isDeviceSuitable(VkPhysicalDevice device);
-		bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-
-		// is class
-	private:
-		void createLogicalDevice();
-
-		// might be class
-	private:
-		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-
-		// might be class
-	private:
-		void createSurface(std::unique_ptr<Window> window);
-
 	private:
 		inline static VkInstance instance;
-		VkDebugUtilsMessengerEXT debugMessenger;
 
-		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-		VkDevice logicaldevice;
-		
-		VkQueue graphicsQueue;
-		VkQueue presentQueue;
-		
-		VkSurfaceKHR surface;
+		std::unique_ptr<VulkanDebug> debug; // remember to init
+		std::unique_ptr<VulkanPhysicalDevice> physicalDevice; // remember to init
+		std::unique_ptr<VulkanLogicalDevice> logicalDevice; // remember to init
 
+		std::unique_ptr<VulkanSurface> surface;		
 	};
 }

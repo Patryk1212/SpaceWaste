@@ -6,17 +6,20 @@
 
 namespace Engine
 {
-	void Surface::createSurface(std::unique_ptr<Window> window)
+	VulkanSurface::VulkanSurface(std::unique_ptr<Window> window)
 	{
-		auto instance = VulkanContext::getInstance();
-
-		if (glfwCreateWindowSurface(instance, window->getWindow(), nullptr, &surface) != VK_SUCCESS)
+		if (glfwCreateWindowSurface(VulkanContext::getInstance(), window->getWindow(), nullptr, &surface) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create window surface!");
 		}
 	}
 
-	QueueFamilyIndices Engine::Surface::findQueueFamilies(VkPhysicalDevice device)
+	VulkanSurface::~VulkanSurface()
+	{
+		vkDestroySurfaceKHR(VulkanContext::getInstance(), surface, nullptr);
+	}
+
+	QueueFamilyIndices Engine::VulkanSurface::findQueueFamilies(VkPhysicalDevice device)
 	{
 		QueueFamilyIndices indices;
 
@@ -53,7 +56,7 @@ namespace Engine
 		return indices;
 	}
 
-	SwapChainSupportDetails Engine::Surface::querySwapChainSupport(VkPhysicalDevice device)
+	SwapChainSupportDetails Engine::VulkanSurface::querySwapChainSupport(VkPhysicalDevice device)
 	{
 		SwapChainSupportDetails details;
 
@@ -78,5 +81,10 @@ namespace Engine
 		}
 
 		return details;
+	}
+
+	VkSurfaceKHR VulkanSurface::getSurface()
+	{
+		return surface;
 	}
 }

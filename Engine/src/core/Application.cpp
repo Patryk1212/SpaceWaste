@@ -13,7 +13,7 @@ namespace Engine
 
 		initVulkan(); //
 
-		setupDebugMessenger();
+		setupDebugMessenger(); //
 
 		createSurface(); //
 
@@ -21,9 +21,10 @@ namespace Engine
 		createLogicalDevice(); //
 
 
+		createSwapChain(); //
+		createImageViews(); //
 
-		createSwapChain();
-		createImageViews();
+
 		createRenderPass();
 		createDescriptorSetLayout();
 		createGraphicsPipeline();
@@ -59,15 +60,15 @@ namespace Engine
 
 		vkDestroyCommandPool(device, commandPool, nullptr);
 
-		vkDestroyDevice(device, nullptr);
+		vkDestroyDevice(device, nullptr); // already in class
 
 		if (enableValidationLayers)
 		{
-			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+			DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr); // already in class
 		}
 
-		vkDestroySurfaceKHR(instance, surface, nullptr);
-		vkDestroyInstance(instance, nullptr);
+		vkDestroySurfaceKHR(instance, surface, nullptr); // already in class
+		vkDestroyInstance(instance, nullptr); // already in class
 	}
 
 	void Application::initVulkan()

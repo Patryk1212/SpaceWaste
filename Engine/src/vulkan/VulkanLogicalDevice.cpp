@@ -3,9 +3,9 @@
 
 namespace Engine
 {
-	void VulkanLogicalDevice::createLogicalDevice()
+	VulkanLogicalDevice::VulkanLogicalDevice(const VkPhysicalDevice& physicalDevice, const std::vector<const char*>& validationLayers, const std::vector<const char*>& deviceExtensions)
 	{
-		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+		QueueFamilyIndices indices = VulkanSurface::findQueueFamilies(physicalDevice);
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
@@ -51,5 +51,15 @@ namespace Engine
 
 		vkGetDeviceQueue(logicaldevice, indices.graphicsFamily.value(), 0, &graphicsQueue);
 		vkGetDeviceQueue(logicaldevice, indices.presentFamily.value(), 0, &presentQueue);
+	}
+
+	VulkanLogicalDevice::~VulkanLogicalDevice()
+	{
+		vkDestroyDevice(logicaldevice, nullptr);
+	}
+
+	VkDevice VulkanLogicalDevice::getLogicalDevice() const
+	{
+		return logicaldevice;
 	}
 }

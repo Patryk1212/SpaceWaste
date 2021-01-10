@@ -34,6 +34,8 @@ struct SwapChainSupportDetails
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
+/* top stuff already in classes*/
+
 struct Vertex 
 {
 	glm::vec2 pos;
@@ -118,12 +120,6 @@ namespace Engine
 		
 		void createSurface();
 		
-		// ---------------------------------------------------------- already in new class
-
-
-		
-
-
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
@@ -131,11 +127,12 @@ namespace Engine
 
 		void createImageViews();
 
-		/*--------------------------------------------------*/
-
-		void createGraphicsPipeline();
 		std::vector<char> readFile(const std::string& filename);
 		VkShaderModule createShaderModule(const std::vector<char>& code);
+
+		void createGraphicsPipeline();
+		// ---------------------------------------------------------- already in new class
+
 
 		void createRenderPass();
 
@@ -198,25 +195,20 @@ namespace Engine
 			VK_KHR_SWAPCHAIN_EXTENSION_NAME
 		};
 
+		VkSwapchainKHR swapChain; // to context 1
+		std::vector<VkImage> swapChainImages; // 1
+		VkFormat swapChainImageFormat; // 1
+		VkExtent2D swapChainExtent; // to context 1
+		std::vector<VkImageView> swapChainImageViews; // 1
+
+		VkDescriptorSetLayout descriptorSetLayout; // 1
+		VkPipelineLayout pipelineLayout; // 1
+
+		VkPipeline graphicsPipeline; // 1
+		VkRenderPass renderPass; // 1
+
 		// -----------------------------------------------------------------
 
-		VkSwapchainKHR swapChain; // to context
-		std::vector<VkImage> swapChainImages;
-		VkFormat swapChainImageFormat;
-		VkExtent2D swapChainExtent; // to context
-		std::vector<VkImageView> swapChainImageViews;
-
-		///////////////////////////////////////////////////////
-
-		VkDescriptorSetLayout descriptorSetLayout;
-
-		/*---------------------------------------------------*/
-		VkRenderPass renderPass;
-		VkPipelineLayout pipelineLayout;
-
-		VkPipeline graphicsPipeline;
-
-		///////////////////////////////////////////////////////
 		std::vector<VkFramebuffer> swapChainFramebuffers;
 
 		VkCommandPool commandPool;
