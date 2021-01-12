@@ -15,6 +15,10 @@ namespace Engine
 		VulkanContext();
 		~VulkanContext();
 
+		void initSurfaceAndDevices(const std::shared_ptr<Window>& window);
+
+		void onUpdate();
+
 		static VkInstance getInstance() { return instance; }
 
 	public:
@@ -31,14 +35,18 @@ namespace Engine
 	private:
 		bool checkValidationLayerSupport();
 		std::vector<const char*> getRequiredExtensions();
+		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
+		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 
 	private:
 		inline static VkInstance instance;
 
 		std::unique_ptr<VulkanDebug> debug; // remember to init
+		
+		std::unique_ptr<VulkanSurface> surface;		
+		
 		std::unique_ptr<VulkanPhysicalDevice> physicalDevice; // remember to init
 		std::unique_ptr<VulkanLogicalDevice> logicalDevice; // remember to init
 
-		std::unique_ptr<VulkanSurface> surface;		
 	};
 }

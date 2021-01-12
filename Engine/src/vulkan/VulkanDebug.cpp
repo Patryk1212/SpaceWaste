@@ -5,11 +5,6 @@
 
 namespace Engine
 {
-	VulkanDebug::VulkanDebug()
-	{
-		setupDebugMessenger();
-	}
-
 	VulkanDebug::~VulkanDebug()
 	{
 		if (enableValidationLayers)

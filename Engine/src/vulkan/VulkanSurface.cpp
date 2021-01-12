@@ -6,7 +6,7 @@
 
 namespace Engine
 {
-	VulkanSurface::VulkanSurface(std::unique_ptr<Window> window)
+	VulkanSurface::VulkanSurface(const std::shared_ptr<Window>& window)
 	{
 		if (glfwCreateWindowSurface(VulkanContext::getInstance(), window->getWindow(), nullptr, &surface) != VK_SUCCESS)
 		{

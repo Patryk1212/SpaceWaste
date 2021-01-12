@@ -8,7 +8,7 @@ namespace Engine
 	class VulkanSurface
 	{
 	public:
-		VulkanSurface(std::unique_ptr<Window> window);
+		VulkanSurface(const std::shared_ptr<Window>& window);
 		~VulkanSurface();
 
 		static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
@@ -17,6 +17,6 @@ namespace Engine
 		static VkSurfaceKHR getSurface();
 
 	private:
-		static VkSurfaceKHR surface;
+		inline static VkSurfaceKHR surface;
 	};
 }

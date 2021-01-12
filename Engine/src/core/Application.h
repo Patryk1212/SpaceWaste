@@ -68,6 +68,8 @@ struct Vertex
 	}
 };
 
+/* top stuff already in classes*/
+
 const std::vector<Vertex> vertices = 
 {
 	{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
@@ -88,6 +90,8 @@ struct UniformBufferObject
 	alignas(16) glm::mat4 proj;
 };
 
+#include "vulkan/VulkanContext.h"
+
 namespace Engine
 {
 	class Application
@@ -95,6 +99,14 @@ namespace Engine
 	public:
 		Application();
 		~Application();
+
+		void run();
+
+	private:
+		std::unique_ptr<VulkanContext> vulkanContext;
+
+
+	public:
 
 		/*----------------------Vulkan-----------------------*/
 		void initVulkan();
@@ -130,17 +142,16 @@ namespace Engine
 		std::vector<char> readFile(const std::string& filename);
 		VkShaderModule createShaderModule(const std::vector<char>& code);
 
+		
 		void createGraphicsPipeline();
+		void createRenderPass();
+		void createFramebuffers();
+		void createCommandPool();
+		void createCommandBuffers();
+		
+				
 		// ---------------------------------------------------------- already in new class
 
-
-		void createRenderPass();
-
-		void createFramebuffers();
-
-		void createCommandPool();
-
-		void createCommandBuffers();
 
 		void doFrame();
 
@@ -152,11 +163,11 @@ namespace Engine
 		/*-------------------------------------------------*/
 
 		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-		void createVertexBuffer();
 		uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-
 		void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
+
+		void createVertexBuffer();
 		void createIndexBuffer();
 
 		/*-------------------------------------------------*/
@@ -167,10 +178,10 @@ namespace Engine
 		void createDescriptorPool();
 		void createDescriptorSets();
 
-		void run();
+		
 
 	private:
-		std::unique_ptr<Window> window;
+		std::shared_ptr<Window> window;
 
 		// -----------------------------------------------------------------
 		VkInstance instance; // to context 1
@@ -207,15 +218,14 @@ namespace Engine
 		VkPipeline graphicsPipeline; // 1
 		VkRenderPass renderPass; // 1
 
-		// -----------------------------------------------------------------
+		std::vector<VkFramebuffer> swapChainFramebuffers; // 1
+		
+		VkCommandPool commandPool; // 1
+		
+		std::vector<VkCommandBuffer> commandBuffers; // 1
 
-		std::vector<VkFramebuffer> swapChainFramebuffers;
 
-		VkCommandPool commandPool;
-
-		std::vector<VkCommandBuffer> commandBuffers;
-
-		//////////////////////////////////////////////////////
+		// ------------------------------------------------ //
 
 		std::vector<VkSemaphore> imageAvailableSemaphores;
 		std::vector<VkSemaphore> renderFinishedSemaphores;

@@ -12,6 +12,13 @@
 
 namespace Engine
 {
+	struct UniformBufferObject
+	{
+		alignas(16) glm::mat4 model;
+		alignas(16) glm::mat4 view;
+		alignas(16) glm::mat4 proj;
+	};
+
 	struct Vertex
 	{
 		glm::vec2 pos;

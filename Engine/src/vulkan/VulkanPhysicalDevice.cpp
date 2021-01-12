@@ -34,24 +34,38 @@ namespace Engine
 		// find the best graphics card available
 		std::multimap<int, VkPhysicalDevice> candidates;
 
-		for (const auto& device : devices) 
-		{
-			int score = 0;
+		//for (const auto& device : devices) 
+		//{
+		//	int score = 0;
+		//
+		//	if (isDeviceSuitable(device, deviceExtensions))
+		//	{
+		//		score = rateDevice(device);
+		//	}
+		//	
+		//	candidates.insert(std::make_pair(score, device));
+		//}
+		//
+		//// Check if the best candidate is suitable at all
+		//if (candidates.rbegin()->first > 0) 
+		//{
+		//	physicalDevice = candidates.rbegin()->second;
+		//}
+		//else 
+		//{
+		//	throw std::runtime_error("failed to find a suitable GPU!");
+		//}
 
+		for (const auto& device : devices)
+		{
 			if (isDeviceSuitable(device, deviceExtensions))
 			{
-				score = rateDevice(device);
+				physicalDevice = device;
+				break;
 			}
-			
-			candidates.insert(std::make_pair(score, device));
 		}
 
-		// Check if the best candidate is suitable at all
-		if (candidates.rbegin()->first > 0) 
-		{
-			physicalDevice = candidates.rbegin()->second;
-		}
-		else 
+		if (physicalDevice == VK_NULL_HANDLE)
 		{
 			throw std::runtime_error("failed to find a suitable GPU!");
 		}
