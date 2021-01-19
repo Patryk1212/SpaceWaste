@@ -166,6 +166,7 @@
     <ClCompile Include="src\events\Event.cpp" />
     <ClCompile Include="src\events\KeyEvent.cpp" />
     <ClCompile Include="src\events\MouseEvent.cpp" />
+    <ClCompile Include="src\events\WindowEvent.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
@@ -196,6 +197,7 @@
     <ClInclude Include="src\events\Event.h" />
     <ClInclude Include="src\events\KeyEvent.h" />
     <ClInclude Include="src\events\MouseEvent.h" />
+    <ClInclude Include="src\events\WindowEvent.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\renderer\VulkanBuffer.h" />

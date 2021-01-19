@@ -10,6 +10,7 @@ namespace Engine
 		Engine::WindowSpec ws("Space Debris", 800, 600);
 		window = std::make_shared<Window>(ws);
 		window->init();
+		window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
 		vulkanContext = std::make_unique<VulkanContext>();
 		vulkanContext->initSurfaceAndDevices(window);
@@ -50,12 +51,28 @@ namespace Engine
 
 	void Application::run()
 	{
-		while (true)
+		while (running)
 		{
 			window->onUpdate();
 			vulkanContext->onUpdate();
 		}
 
+		// if here do clean up
 		//vkDeviceWaitIdle(device);
+	}
+
+	void Application::onEvent(Event& event)
+	{
+		EventDispatcher dispatcher(event);
+
+		//dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
+
+		std::cout << event.getNameString() << std::endl;
+	}
+
+	bool Application::shutdown(WindowCloseEvent event)
+	{
+		running = false;
+		return false;
 	}
 }

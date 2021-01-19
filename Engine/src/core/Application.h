@@ -12,6 +12,10 @@ namespace Engine
 		~Application();
 
 		void run();
+		void onEvent(Event& event);
+
+	private:
+		bool shutdown(WindowCloseEvent event);
 
 	private:
 		std::shared_ptr<Window> window;
@@ -20,6 +24,7 @@ namespace Engine
 
 	private:
 		static Application* appInstance;
+		bool running = true;
 	};
 
 	Application* createApplication();

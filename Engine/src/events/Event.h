@@ -5,10 +5,11 @@ namespace Engine
 	enum class EventType
 	{
 		NONE = 0,
+		WINDOW_CLOSE, WINDOW_RESIZE,
 		KEY_PRESSED, KEY_RELEASED, KEY_TYPED,
 		MOUSE_PRESSED, MOUSE_RELEASED, MOUSE_MOVED, MOUSE_SCROLLED
 	};
-
+	
 #define EVENT_CLASS_TYPE(type) static EventType getStaticType() { return EventType::##type; }\
 								virtual EventType getEventType() const override { return getStaticType(); }\
 								virtual const char* getName() const override { return #type; }
@@ -25,11 +26,11 @@ namespace Engine
 
 	class EventDispatcher
 	{
-	public:
-		EventDispatcher(Event& event) : event(event) {}
-
 		template<typename T>
 		using EventFn = std::function<bool(T&)>;
+
+	public:
+		EventDispatcher(Event& event) : event(event) {}
 
 		template<typename T>
 		bool dispatch(EventFn<T> function)

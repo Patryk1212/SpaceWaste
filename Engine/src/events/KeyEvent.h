@@ -14,7 +14,7 @@ namespace Engine
 		int key_code;
 	};
 
-	class KeyPressedEvent : KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(int key_code) : KeyEvent(key_code) {}
@@ -22,7 +22,7 @@ namespace Engine
 		EVENT_CLASS_TYPE(KEY_PRESSED)
 	};
 
-	class KeyReleasedEvent : KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int key_code) : KeyEvent(key_code) {}
@@ -30,7 +30,7 @@ namespace Engine
 		EVENT_CLASS_TYPE(KEY_RELEASED)
 	};
 
-	class KeyTypedEvent : KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int key_code) : KeyEvent(key_code) {}
