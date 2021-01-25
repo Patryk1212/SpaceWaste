@@ -18,25 +18,25 @@ namespace Engine
 	//	0, 1, 2, 2, 3, 0
 	//};
 
-	const std::vector<Vertex> vertices = {
-			{{-1.0f, -1.0f, -1.0f}, {2.0f, 0.0f, 4.0f}},
-			{{ 1.0f, -1.0f, -1.0f}, {3.0f, 0.0f, 4.0f}},
-			{{-1.0f,  1.0f, -1.0f}, {2.0f, 1.0f, 4.0f}},
-			{{ 1.0f,  1.0f, -1.0f}, {1.0f, 1.0f, 4.0f}},
+	const std::vector<Vertex> vertices = 
+	{
+			{{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
+			{{ 1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
+			{{-1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
+			{{ 1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
 	
-			{{-1.0f, -1.0f, 1.0f }, {2.0f, 3.0f, 4.0f}},
-			{{ 1.0f, -1.0f,  1.0f}, {1.0f, 3.0f, 4.0f}},
-			{{ -1.0f, 1.0f,  1.0f}, {2.0f, 3.0f, 4.0f}},
-			{{ 1.0f,  1.0f,  1.0f}, {1.0f, 3.0f, 4.0f}},
+			{{-1.0f, -1.0f, 1.0f }, {1.0f, 0.0f, 1.0f}},
+			{{ 1.0f, -1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
+			{{ -1.0f, 1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
+			{{ 1.0f,  1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
 	
-			{{-1.0f, -1.0f, -1.0f}, {2.0f, 4.0f, 4.0f}},
-			{{ 1.0f, -1.0f, -1.0f}, {1.0f, 4.0f, 4.0f}},
-			{{-1.0f, -1.0f, -1.0f}, {3.0f, 1.0f, 4.0f}},
-			{{-1.0f, -1.0f,  1.0f}, {3.0f, 2.0f, 4.0f}},
+			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
+			{{ 1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
+			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
+			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
 	
-			{{ 1.0f, -1.0f, -1.0f}, {0.0f, 3.0f, 4.0f}},
-			{{ 1.0f, -1.0f,  1.0f}, {0.0f, 3.0f, 4.0f}}
-	
+			{{ 1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
+			{{ 1.0f, -1.0f,  1.0f}, {0.0f, 1.0f, 1.0f}}
 	};
 
 	const std::vector<uint16_t> indices =
@@ -53,9 +53,10 @@ namespace Engine
 	{
 	public:
 		VulkanSwapChain(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
-		~VulkanSwapChain();
+		~VulkanSwapChain() = default;
 
 		void onUpdate();
+		void onShutDown();
 
 		void createSyncObjects();
 

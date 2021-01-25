@@ -16,7 +16,7 @@ namespace Engine
 
 	VulkanSurface::~VulkanSurface()
 	{
-		vkDestroySurfaceKHR(VulkanContext::getInstance(), surface, nullptr);
+		//vkDestroySurfaceKHR(VulkanContext::getInstance(), surface, nullptr);
 	}
 
 	QueueFamilyIndices Engine::VulkanSurface::findQueueFamilies(VkPhysicalDevice device)

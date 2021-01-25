@@ -4,9 +4,9 @@
 #include "vulkan/vulkan.h"
 #include <GLFW/glfw3.h>
 
-#include "events/WindowEvent.h"
-#include "events/KeyEvent.h"
-#include "events/MouseEvent.h"
+#include "events+input/WindowEvent.h"
+#include "events+input/KeyEvent.h"
+#include "events+input/MouseEvent.h"
 
 namespace Engine
 {

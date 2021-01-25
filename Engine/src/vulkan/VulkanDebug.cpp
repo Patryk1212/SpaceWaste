@@ -7,10 +7,10 @@ namespace Engine
 {
 	VulkanDebug::~VulkanDebug()
 	{
-		if (enableValidationLayers)
-		{
-			DestroyDebugUtilsMessengerEXT(VulkanContext::getInstance(), debugMessenger, nullptr);
-		}
+		//if (enableValidationLayers)
+		//{
+		//	DestroyDebugUtilsMessengerEXT(VulkanContext::getInstance(), debugMessenger, nullptr);
+		//}
 	}
 
 	VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebug::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
@@ -56,7 +56,7 @@ namespace Engine
 		}
 	}
 
-	void VulkanDebug::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator)
+	void VulkanDebug::DestroyDebugUtilsMessengerEXT(VkInstance instance, const VkAllocationCallbacks* pAllocator)
 	{
 		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
 

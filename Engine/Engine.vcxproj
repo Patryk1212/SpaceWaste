@@ -163,10 +163,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp" />
-    <ClCompile Include="src\events\Event.cpp" />
-    <ClCompile Include="src\events\KeyEvent.cpp" />
-    <ClCompile Include="src\events\MouseEvent.cpp" />
-    <ClCompile Include="src\events\WindowEvent.cpp" />
+    <ClCompile Include="src\core\Camera.cpp" />
+    <ClCompile Include="src\core\CameraController.cpp" />
+    <ClCompile Include="src\events+input\Event.cpp" />
+    <ClCompile Include="src\events+input\Input.cpp" />
+    <ClCompile Include="src\events+input\KeyEvent.cpp" />
+    <ClCompile Include="src\events+input\MouseEvent.cpp" />
+    <ClCompile Include="src\events+input\WindowEvent.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
@@ -192,12 +195,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Application.h" />
+    <ClInclude Include="src\core\Camera.h" />
+    <ClInclude Include="src\core\CameraController.h" />
     <ClInclude Include="src\core\EntryPoint.h" />
+    <ClInclude Include="src\events+input\Input.h" />
+    <ClInclude Include="src\events+input\KeyCodes.h" />
     <ClInclude Include="src\Engine.h" />
-    <ClInclude Include="src\events\Event.h" />
-    <ClInclude Include="src\events\KeyEvent.h" />
-    <ClInclude Include="src\events\MouseEvent.h" />
-    <ClInclude Include="src\events\WindowEvent.h" />
+    <ClInclude Include="src\events+input\Event.h" />
+    <ClInclude Include="src\events+input\KeyEvent.h" />
+    <ClInclude Include="src\events+input\MouseEvent.h" />
+    <ClInclude Include="src\events+input\WindowEvent.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\renderer\VulkanBuffer.h" />

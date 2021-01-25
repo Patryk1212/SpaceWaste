@@ -37,14 +37,14 @@ namespace Engine
 		//}
 		//
 		//vkDestroyCommandPool(device, commandPool, nullptr);
-		//
+		
 		//vkDestroyDevice(device, nullptr); // already in class
-		//
+		
 		//if (enableValidationLayers)
 		//{
 		//	DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr); // already in class
 		//}
-		//
+		
 		//vkDestroySurfaceKHR(instance, surface, nullptr); // already in class
 		//vkDestroyInstance(instance, nullptr); // already in class
 	}
@@ -57,15 +57,15 @@ namespace Engine
 			vulkanContext->onUpdate();
 		}
 
-		// if here do clean up
-		//vkDeviceWaitIdle(device);
+		vulkanContext->onShutDown();
+		//vkDeviceWaitIdle(vulkanContext->getLogicalDevice());
 	}
 
 	void Application::onEvent(Event& event)
 	{
 		EventDispatcher dispatcher(event);
 
-		//dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
+		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
 
 		std::cout << event.getNameString() << std::endl;
 	}

@@ -25,10 +25,6 @@ namespace Engine
 		createSyncObjects();
 	}
 
-	VulkanSwapChain::~VulkanSwapChain()
-	{
-	}
-
 	void VulkanSwapChain::onUpdate()
 	{
 		vkWaitForFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
@@ -102,6 +98,28 @@ namespace Engine
 		}
 
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+	}
+
+	void VulkanSwapChain::onShutDown()
+	{
+		cleanupSwapChain();
+
+		vkDestroyDescriptorSetLayout(logicalDeviceHandle, descriptorSetLayout, nullptr);
+
+		vkDestroyBuffer(logicalDeviceHandle, indexBuffer, nullptr);
+		vkFreeMemory(logicalDeviceHandle, indexBufferMemory, nullptr);
+
+		vkDestroyBuffer(logicalDeviceHandle, vertexBuffer, nullptr);
+		vkFreeMemory(logicalDeviceHandle, vertexBufferMemory, nullptr);
+
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		{
+			vkDestroySemaphore(logicalDeviceHandle, renderFinishedSemaphores[i], nullptr);
+			vkDestroySemaphore(logicalDeviceHandle, imageAvailableSemaphores[i], nullptr);
+			vkDestroyFence(logicalDeviceHandle, inFlightFences[i], nullptr);
+		}
+
+		vkDestroyCommandPool(logicalDeviceHandle, commandPool, nullptr);
 	}
 
 	void VulkanSwapChain::createSyncObjects()
@@ -632,15 +650,22 @@ namespace Engine
 	{
 		static auto startTime = std::chrono::high_resolution_clock::now();
 
-		auto currentTime = std::chrono::high_resolution_clock::now();
+		auto currentTime = std::chrono::high_resolution_clock::now(); // delta time
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
+
 		UniformBufferObject ubo{};
-		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.model = glm::rotate(glm::mat4(1.0f),  glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		//ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+		//glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+		float radius = 10.0f;
+		float camX = sin(glfwGetTime()) * radius;
+		float camZ = cos(glfwGetTime()) * radius;
+		ubo.view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		ubo.proj = glm::perspective(glm::radians(90.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 1000.0f);
 
 		ubo.proj[1][1] *= -1;
 

@@ -18,6 +18,7 @@ namespace Engine
 		void initSurfaceAndDevices(const std::shared_ptr<Window>& window);
 
 		void onUpdate();
+		void onShutDown();
 
 		static VkInstance getInstance() { return instance; }
 
@@ -41,12 +42,11 @@ namespace Engine
 	private:
 		inline static VkInstance instance;
 
-		std::unique_ptr<VulkanDebug> debug; // remember to init
+		std::unique_ptr<VulkanDebug> debug;
 		
-		std::unique_ptr<VulkanSurface> surface;		
-		
-		std::unique_ptr<VulkanPhysicalDevice> physicalDevice; // remember to init
-		std::unique_ptr<VulkanLogicalDevice> logicalDevice; // remember to init
+		std::unique_ptr<VulkanSurface> surface;
+		std::unique_ptr<VulkanPhysicalDevice> physicalDevice;
+		std::unique_ptr<VulkanLogicalDevice> logicalDevice;
 
 	};
 }
