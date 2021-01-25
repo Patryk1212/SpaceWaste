@@ -14,7 +14,6 @@ namespace Engine
 
 		vulkanContext = std::make_unique<VulkanContext>();
 		vulkanContext->initSurfaceAndDevices(window);
-
 	}
 
 	Application::~Application()
@@ -53,8 +52,11 @@ namespace Engine
 	{
 		while (running)
 		{
+			timer.onUpdate((float)glfwGetTime());
+
 			window->onUpdate();
-			vulkanContext->onUpdate();
+			vulkanContext->onUpdate(timer.getDeltaTime());
+			
 		}
 
 		vulkanContext->onShutDown();
@@ -67,7 +69,12 @@ namespace Engine
 
 		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
 
-		std::cout << event.getNameString() << std::endl;
+		std::cout << event.getNameString() << std::endl; // debug only
+
+		if (event.getEventType() == Engine::EventType::KEY_PRESSED)
+		{
+			std::cout << "asas" << std::endl;
+		}
 	}
 
 	bool Application::shutdown(WindowCloseEvent event)

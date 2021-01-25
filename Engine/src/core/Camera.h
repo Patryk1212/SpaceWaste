@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vulkan/VulkanUtility.h"
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
@@ -17,16 +18,16 @@ namespace Engine
 		Camera()
 		{
 			view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
-			/*view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
-				glm::vec3(0.0f, 0.0f, 0.0f),
-				glm::vec3(0.0f, 1.0f, 0.0f));*/
 		}
 		~Camera() = default;
 
+		void updateCameraPos(const glm::vec3& pos) { cameraPos = pos; ubo.view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); }
+		void update(const glm::vec3& front) { cameraFront = front; }
+
 		const glm::mat4& getProjectionMatrix() const { return ubo.proj; }
 		const glm::mat4& getViewMatrix() const { return ubo.view; }
-		const glm::mat4& getViewProjectionMatrix() const { return ubo.proj; }
+		const glm::mat4& getModelMatrix() const { return ubo.model; }
+		//const glm::mat4& getViewProjectionMatrix() const { return ubo.proj; }
 
 	private:
 		UniformBufferObject ubo;

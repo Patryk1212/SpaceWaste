@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "Time.h"
 #include "vulkan/VulkanContext.h"
 
 namespace Engine
@@ -14,8 +15,8 @@ namespace Engine
 		void run();
 		void onEvent(Event& event);
 
-		inline static Application& get() { return *appInstance; }
-		inline Window& getWindow() { return *window; }
+		//inline static Application& get() { return *appInstance; }
+		//inline Window& getWindow() { return *window.get(); }
 
 	private:
 		bool shutdown(WindowCloseEvent event);
@@ -26,6 +27,7 @@ namespace Engine
 
 	private:
 		static Application* appInstance;
+		Time timer;
 		bool running = true;
 	};
 

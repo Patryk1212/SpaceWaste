@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GLFW/glfw3.h"
+#include "KeyCodes.h"
 
 namespace Engine
 {
@@ -9,14 +10,14 @@ namespace Engine
 	public:
 		Input() = default;
 		~Input() = default;
-		
+
 		// keyboard
-		bool isKeyPressed(int key_code);
+		static bool isKeyPressed(int key_code);
 
 		// mouse
-		bool isMouseButtonPressed(int button);
-		float getMouseX();
-		float getMouseY();
-		std::pair<float, float> getMousePos();
+		static bool isMouseButtonPressed(int button);
+		static float getMouseX();
+		static float getMouseY();
+		static std::pair<float, float> getMousePos();
 	};
 }

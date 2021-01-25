@@ -63,9 +63,9 @@ namespace Engine
 		swapChain = std::make_unique<VulkanSwapChain>(window, physicalDevice, logicalDevice, graphicsQueue, presentQueue);
 	}
 
-	void VulkanLogicalDevice::onUpdate()
+	void VulkanLogicalDevice::onUpdate(float deltaTime)
 	{
-		swapChain->onUpdate();
+		swapChain->onUpdate(deltaTime);
 	}
 
 	void VulkanLogicalDevice::onShutDown()

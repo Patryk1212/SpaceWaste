@@ -3,21 +3,10 @@
 #include "VulkanSurface.h"
 #include "VulkanUtility.h"
 
+#include "core/CameraController.h"
+
 namespace Engine
 {
-	//const std::vector<Vertex> vertices =
-	//{
-	//	{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-	//	{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-	//	{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-	//	{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
-	//};
-	//
-	//const std::vector<uint16_t> indices =
-	//{
-	//	0, 1, 2, 2, 3, 0
-	//};
-
 	const std::vector<Vertex> vertices = 
 	{
 			{{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
@@ -55,7 +44,7 @@ namespace Engine
 		VulkanSwapChain(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
 		~VulkanSwapChain() = default;
 
-		void onUpdate();
+		void onUpdate(float deltaTime);
 		void onShutDown();
 
 		void createSyncObjects();
@@ -156,6 +145,9 @@ namespace Engine
 
 		void createVertexBuffer();
 		void createIndexBuffer();
+
+		/// camera
+		CameraController cc;
 
 	};
 }

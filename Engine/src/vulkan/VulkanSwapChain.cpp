@@ -25,7 +25,7 @@ namespace Engine
 		createSyncObjects();
 	}
 
-	void VulkanSwapChain::onUpdate()
+	void VulkanSwapChain::onUpdate(float deltaTime)
 	{
 		vkWaitForFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -98,6 +98,8 @@ namespace Engine
 		}
 
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+		cc.onUpdate(deltaTime);
 	}
 
 	void VulkanSwapChain::onShutDown()
@@ -648,14 +650,9 @@ namespace Engine
 
 	void VulkanSwapChain::updateUniformBuffer(uint32_t currentImage)
 	{
-		static auto startTime = std::chrono::high_resolution_clock::now();
-
-		auto currentTime = std::chrono::high_resolution_clock::now(); // delta time
-		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-
+		/// to camera class
 		UniformBufferObject ubo{};
-		ubo.model = glm::rotate(glm::mat4(1.0f),  glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		//ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
@@ -663,11 +660,13 @@ namespace Engine
 		float radius = 10.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
-		ubo.view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.view = cc.getCamera().getViewMatrix();// glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		ubo.proj = glm::perspective(glm::radians(90.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 1000.0f);
 
 		ubo.proj[1][1] *= -1;
+		///////////////
+
 
 		void* data;
 		vkMapMemory(logicalDeviceHandle, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);

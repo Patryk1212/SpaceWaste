@@ -198,6 +198,7 @@
     <ClInclude Include="src\core\Camera.h" />
     <ClInclude Include="src\core\CameraController.h" />
     <ClInclude Include="src\core\EntryPoint.h" />
+    <ClInclude Include="src\core\Time.h" />
     <ClInclude Include="src\events+input\Input.h" />
     <ClInclude Include="src\events+input\KeyCodes.h" />
     <ClInclude Include="src\Engine.h" />

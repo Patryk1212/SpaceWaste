@@ -68,9 +68,9 @@ namespace Engine
 		logicalDevice->createGraphics(window, physicalDevice->getPhysicalDevice(), logicalDevice->getLogicalDevice());
 	}
 
-	void VulkanContext::onUpdate()
+	void VulkanContext::onUpdate(float deltaTime)
 	{
-		logicalDevice->onUpdate();
+		logicalDevice->onUpdate(deltaTime);
 	}
 
 	void VulkanContext::onShutDown()

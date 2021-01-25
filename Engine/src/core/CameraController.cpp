@@ -1,25 +1,30 @@
 #include "pch.h"
 #include "CameraController.h"
 
-void Engine::CameraController::onUpdate()
+#include "core/Window.h"
+
+void Engine::CameraController::onUpdate(float deltaTime)
 {
-	static auto startTime = std::chrono::high_resolution_clock::now();
-
-	auto currentTime = std::chrono::high_resolution_clock::now(); // delta time
-	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
 	//if (Input::isKeyPressed(EN_KEY_A))
-	//	cameraPosition.x += cameraSpeed * time;
+		//cameraPosition += cameraSpeed * cameraFront * deltaTime; // to
 	//else if (Input::isKeyPressed(EN_KEY_D))
-	//	cameraPosition.x -= cameraSpeed * time;
-	//
+		//cameraPosition -= cameraSpeed * cameraFront * deltaTime; // from
+	
 	//if (Input::isKeyPressed(EN_KEY_S))
-	//	cameraPosition.y += cameraSpeed * time;
+		//cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime; // left
 	//else if (Input::isKeyPressed(EN_KEY_W))
-	//	cameraPosition.y -= cameraSpeed * time;
+		//cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime; // right
+
+	camera.update(cameraFront);
+	camera.updateCameraPos(cameraPosition);
 }
 
 void Engine::CameraController::onEvent(Event& event)
 {
+	EventDispatcher dispatcher(event);
 
+	if (event.getEventType() == Engine::EventType::KEY_PRESSED)
+	{
+		cameraPosition += cameraSpeed * cameraFront;
+	}
 }

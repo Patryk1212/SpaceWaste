@@ -17,7 +17,7 @@ namespace Engine
 
 		void initSurfaceAndDevices(const std::shared_ptr<Window>& window);
 
-		void onUpdate();
+		void onUpdate(float deltaTime);
 		void onShutDown();
 
 		static VkInstance getInstance() { return instance; }
