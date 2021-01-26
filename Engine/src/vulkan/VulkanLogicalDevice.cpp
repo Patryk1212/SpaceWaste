@@ -55,7 +55,7 @@ namespace Engine
 
 	VulkanLogicalDevice::~VulkanLogicalDevice()
 	{
-		vkDestroyDevice(logicaldevice, nullptr);
+		//vkDestroyDevice(logicaldevice, nullptr);
 	}
 
 	void VulkanLogicalDevice::createGraphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice)
@@ -63,9 +63,20 @@ namespace Engine
 		swapChain = std::make_unique<VulkanSwapChain>(window, physicalDevice, logicalDevice, graphicsQueue, presentQueue);
 	}
 
-	void VulkanLogicalDevice::onUpdate()
+	void VulkanLogicalDevice::onUpdate(float deltaTime)
 	{
-		swapChain->onUpdate();
+		swapChain->onUpdate(deltaTime);
+	}
+
+	void VulkanLogicalDevice::onEvent(Event& event)
+	{
+		swapChain->onEvent(event);
+	}
+
+	void VulkanLogicalDevice::onShutDown()
+	{
+		swapChain->onShutDown();
+		vkDestroyDevice(logicaldevice, nullptr);
 	}
 
 	VkDevice VulkanLogicalDevice::getLogicalDevice() const

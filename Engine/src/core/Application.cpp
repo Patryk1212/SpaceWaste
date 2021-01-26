@@ -14,7 +14,6 @@ namespace Engine
 
 		vulkanContext = std::make_unique<VulkanContext>();
 		vulkanContext->initSurfaceAndDevices(window);
-
 	}
 
 	Application::~Application()
@@ -37,14 +36,14 @@ namespace Engine
 		//}
 		//
 		//vkDestroyCommandPool(device, commandPool, nullptr);
-		//
+		
 		//vkDestroyDevice(device, nullptr); // already in class
-		//
+		
 		//if (enableValidationLayers)
 		//{
 		//	DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr); // already in class
 		//}
-		//
+		
 		//vkDestroySurfaceKHR(instance, surface, nullptr); // already in class
 		//vkDestroyInstance(instance, nullptr); // already in class
 	}
@@ -53,21 +52,31 @@ namespace Engine
 	{
 		while (running)
 		{
+			timer.onUpdate((float)glfwGetTime());
+
 			window->onUpdate();
-			vulkanContext->onUpdate();
+			vulkanContext->onUpdate(timer.getDeltaTime());
+			
 		}
 
-		// if here do clean up
-		//vkDeviceWaitIdle(device);
+		vulkanContext->onShutDown();
+		//vkDeviceWaitIdle(vulkanContext->getLogicalDevice());
 	}
 
 	void Application::onEvent(Event& event)
 	{
+		vulkanContext->onEvent(event);
+
 		EventDispatcher dispatcher(event);
+		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
 
-		//dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
-
+		// debug only
 		std::cout << event.getNameString() << std::endl;
+
+		if (event.getEventType() == Engine::EventType::KEY_PRESSED)
+		{
+			std::cout << "asas" << std::endl;
+		}
 	}
 
 	bool Application::shutdown(WindowCloseEvent event)

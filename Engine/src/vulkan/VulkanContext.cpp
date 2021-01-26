@@ -30,8 +30,6 @@ namespace Engine
 
 		if (enableValidationLayers)
 		{
-			
-
 			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
 			createInfo.ppEnabledLayerNames = validationLayers.data();
 
@@ -49,14 +47,16 @@ namespace Engine
 			throw std::runtime_error("failed to create instance!");
 		}
 
-
-		debug = std::make_unique<VulkanDebug>();
-		debug->setupDebugMessenger();
+		if (enableValidationLayers)
+		{
+			debug = std::make_unique<VulkanDebug>();
+			debug->setupDebugMessenger();
+		}
 	}
 
 	VulkanContext::~VulkanContext()
 	{
-		vkDestroyInstance(instance, nullptr);
+		//vkDestroyInstance(instance, nullptr);
 	}
 
 	void VulkanContext::initSurfaceAndDevices(const std::shared_ptr<Window>& window)
@@ -68,9 +68,28 @@ namespace Engine
 		logicalDevice->createGraphics(window, physicalDevice->getPhysicalDevice(), logicalDevice->getLogicalDevice());
 	}
 
-	void VulkanContext::onUpdate()
+	void VulkanContext::onUpdate(float deltaTime)
 	{
-		logicalDevice->onUpdate();
+		logicalDevice->onUpdate(deltaTime);
+	}
+
+	void VulkanContext::onEvent(Event& event)
+	{
+		logicalDevice->onEvent(event);
+	}
+
+	void VulkanContext::onShutDown()
+	{
+		logicalDevice->onShutDown();
+
+		if (enableValidationLayers)
+		{
+			debug->DestroyDebugUtilsMessengerEXT(instance, nullptr); // already in class
+		}
+
+		vkDestroySurfaceKHR(instance, surface->getSurface(), nullptr);
+
+		vkDestroyInstance(instance, nullptr);
 	}
 
 	bool VulkanContext::checkValidationLayerSupport()
