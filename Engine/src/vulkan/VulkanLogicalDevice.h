@@ -14,6 +14,7 @@ namespace Engine
 		void createGraphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice);
 
 		void onUpdate(float deltaTime);
+		void onEvent(Event& event);
 		void onShutDown();
 
 		VkDevice getLogicalDevice() const;

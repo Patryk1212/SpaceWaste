@@ -68,6 +68,11 @@ namespace Engine
 		swapChain->onUpdate(deltaTime);
 	}
 
+	void VulkanLogicalDevice::onEvent(Event& event)
+	{
+		swapChain->onEvent(event);
+	}
+
 	void VulkanLogicalDevice::onShutDown()
 	{
 		swapChain->onShutDown();

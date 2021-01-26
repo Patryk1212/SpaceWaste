@@ -8,32 +8,24 @@ namespace Engine
 	class CameraController
 	{
 	public:
-		CameraController()
-		{
-			float yaw = -20;
-			float pitch = 34;
-			direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-			direction.y = sin(glm::radians(pitch));
-			direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-			cameraFront = glm::normalize(direction);
-		}
-
+		CameraController();
 		~CameraController() = default;
 
 		void onUpdate(float deltaTime);
 		void onEvent(Event& event);
 
-		Camera getCamera() const { return camera; }
+		std::unique_ptr<Camera>& getCamera() { return camera; }
 
 	private:
-		glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-		float cameraSpeed = 0.001f;
+		ViewMatrixData viewData;
+		float moveSpeed = 0.01f;
 
 		glm::vec3 direction;
+		float yaw = 0.0f;
+		float pitch = 0.0f;
+		float rotationSpeed = 1.0f;
 
 	private:
-		Camera camera;
+		std::unique_ptr<Camera> camera;
 	};
 }

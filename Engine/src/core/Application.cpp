@@ -65,11 +65,13 @@ namespace Engine
 
 	void Application::onEvent(Event& event)
 	{
-		EventDispatcher dispatcher(event);
+		vulkanContext->onEvent(event);
 
+		EventDispatcher dispatcher(event);
 		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
 
-		std::cout << event.getNameString() << std::endl; // debug only
+		// debug only
+		std::cout << event.getNameString() << std::endl;
 
 		if (event.getEventType() == Engine::EventType::KEY_PRESSED)
 		{

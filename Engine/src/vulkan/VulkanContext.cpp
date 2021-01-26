@@ -73,6 +73,11 @@ namespace Engine
 		logicalDevice->onUpdate(deltaTime);
 	}
 
+	void VulkanContext::onEvent(Event& event)
+	{
+		logicalDevice->onEvent(event);
+	}
+
 	void VulkanContext::onShutDown()
 	{
 		logicalDevice->onShutDown();

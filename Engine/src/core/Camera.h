@@ -10,46 +10,40 @@
 
 #include <GLFW/glfw3.h>
 
+struct ViewMatrixData
+{
+	glm::vec3 cameraPos;
+	glm::vec3 cameraFront;
+	glm::vec3 cameraUp;
+};
+
+struct ProjectionMatrixData
+{
+	float fov = 45.0f;
+	float aspectRatio = 800.0f / 600.0f; // take this from app
+	float near = 0.1f;
+	float far = 1000.0f;
+};
+
 namespace Engine
 {
 	class Camera
 	{
 	public:
-		Camera()
-		{
-			view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		}
+		Camera(const ViewMatrixData& vData);
 		~Camera() = default;
 
-		void updateCameraPos(const glm::vec3& pos) { cameraPos = pos; ubo.view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); }
-		void update(const glm::vec3& front) { cameraFront = front; }
+		void onUpdateViewMatrix(const ViewMatrixData& data);
 
-		const glm::mat4& getProjectionMatrix() const { return ubo.proj; }
-		const glm::mat4& getViewMatrix() const { return ubo.view; }
-		const glm::mat4& getModelMatrix() const { return ubo.model; }
-		//const glm::mat4& getViewProjectionMatrix() const { return ubo.proj; }
+		const glm::mat4& getProjectionMatrix() const { return proj; }
+		const glm::mat4& getViewMatrix() const { return view; }
 
 	private:
-		UniformBufferObject ubo;
+		alignas(16) glm::mat4 proj;
+		alignas(16) glm::mat4 view;
 
-		// walking camera
-		glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-		glm::mat4 view;
-
-		//// tutorial
-		//glm::vec3 position = { 0.0f, 0.0f , 0.0f };
-		//glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-		//glm::vec3 cameraDirection = glm::normalize(position - cameraTarget);
-		//
-		//glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-		//glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-		//
-		//glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
-
-		
-		
+	private:
+		ViewMatrixData viewData;
+		ProjectionMatrixData projData;
 	};
 }

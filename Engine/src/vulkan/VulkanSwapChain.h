@@ -45,6 +45,7 @@ namespace Engine
 		~VulkanSwapChain() = default;
 
 		void onUpdate(float deltaTime);
+		void onEvent(Event& event);
 		void onShutDown();
 
 		void createSyncObjects();
