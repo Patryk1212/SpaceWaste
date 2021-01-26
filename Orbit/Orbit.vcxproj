@@ -158,9 +158,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\MainLayer.h" />
     <ClInclude Include="src\SpaceDebrisVisualization.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\MainLayer.cpp" />
     <ClCompile Include="src\SpaceDebrisVisualization.cpp" />
   </ItemGroup>
   <ItemGroup>

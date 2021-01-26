@@ -165,6 +165,8 @@
     <ClCompile Include="src\core\Application.cpp" />
     <ClCompile Include="src\core\Camera.cpp" />
     <ClCompile Include="src\core\CameraController.cpp" />
+    <ClCompile Include="src\core\Layer.cpp" />
+    <ClCompile Include="src\core\LayerStack.cpp" />
     <ClCompile Include="src\events+input\Event.cpp" />
     <ClCompile Include="src\events+input\Input.cpp" />
     <ClCompile Include="src\events+input\KeyEvent.cpp" />
@@ -200,6 +202,8 @@
     <ClInclude Include="src\core\Camera.h" />
     <ClInclude Include="src\core\CameraController.h" />
     <ClInclude Include="src\core\EntryPoint.h" />
+    <ClInclude Include="src\core\Layer.h" />
+    <ClInclude Include="src\core\LayerStack.h" />
     <ClInclude Include="src\core\Time.h" />
     <ClInclude Include="src\events+input\Input.h" />
     <ClInclude Include="src\events+input\KeyCodes.h" />

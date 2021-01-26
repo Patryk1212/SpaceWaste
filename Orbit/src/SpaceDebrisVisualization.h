@@ -6,8 +6,8 @@
 class SpaceDebrisVisualization : public Engine::Application
 {
 public:
-
-private:
+	SpaceDebrisVisualization();
+	~SpaceDebrisVisualization() = default;
 };
 
 Engine::Application* Engine::createApplication()

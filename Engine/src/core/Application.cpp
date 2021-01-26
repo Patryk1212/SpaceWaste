@@ -54,9 +54,14 @@ namespace Engine
 		{
 			timer.onUpdate((float)glfwGetTime());
 
+			for (const auto& layer : layerStack.getAllLayers())
+			{
+				layer->onUpdate(timer.getDeltaTime());
+				layer->onRender();
+			}
+
 			window->onUpdate();
 			vulkanContext->onUpdate(timer.getDeltaTime());
-			
 		}
 
 		vulkanContext->onShutDown();
@@ -70,13 +75,23 @@ namespace Engine
 		EventDispatcher dispatcher(event);
 		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
 
-		// debug only
-		std::cout << event.getNameString() << std::endl;
-
-		if (event.getEventType() == Engine::EventType::KEY_PRESSED)
+		for (const auto& layer : layerStack.getAllLayers())
 		{
-			std::cout << "asas" << std::endl;
+			if (layer->onEvent(event)) break;
 		}
+
+		// debug only
+		//std::cout << event.getNameString() << std::endl;
+
+		//if (event.getEventType() == Engine::EventType::KEY_PRESSED)
+		//{
+		//	std::cout << "asas" << std::endl;
+		//}
+	}
+
+	void Application::addNewLayer(std::unique_ptr<Layer>& layer)
+	{
+		layerStack.addLayer(layer);
 	}
 
 	bool Application::shutdown(WindowCloseEvent event)

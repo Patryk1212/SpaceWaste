@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "Time.h"
 #include "vulkan/VulkanContext.h"
+#include "LayerStack.h"
 
 namespace Engine
 {
@@ -15,6 +16,8 @@ namespace Engine
 		void run();
 		void onEvent(Event& event);
 
+		void addNewLayer(std::unique_ptr<Layer>& layer);
+
 		//inline static Application& get() { return *appInstance; }
 		//inline Window& getWindow() { return *window.get(); }
 
@@ -22,13 +25,16 @@ namespace Engine
 		bool shutdown(WindowCloseEvent event);
 
 	private:
+		static Application* appInstance;
+		bool running = true;
+
+	private:
 		std::shared_ptr<Window> window;
 		std::unique_ptr<VulkanContext> vulkanContext;
 
 	private:
-		static Application* appInstance;
+		LayerStack layerStack;
 		Time timer;
-		bool running = true;
 	};
 
 	Application* createApplication();
