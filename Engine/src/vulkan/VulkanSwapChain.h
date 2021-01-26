@@ -5,6 +5,9 @@
 
 #include "core/CameraController.h"
 
+#include "renderer/VulkanVertexBuffer.h"
+#include "renderer/VulkanIndexBuffer.h"
+
 namespace Engine
 {
 	const std::vector<Vertex> vertices = 
@@ -132,20 +135,12 @@ namespace Engine
 		VkDescriptorPool descriptorPool;
 		std::vector<VkDescriptorSet> descriptorSets;
 
-		/// 
-		VkBuffer vertexBuffer;
-		VkDeviceMemory vertexBufferMemory;
 
-		VkBuffer indexBuffer;
-		VkDeviceMemory indexBufferMemory;
+		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
+		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 
 		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-		void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-
-
-		void createVertexBuffer();
-		void createIndexBuffer();
 
 		/// camera
 		CameraController cc;
