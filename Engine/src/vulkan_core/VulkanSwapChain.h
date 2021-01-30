@@ -14,20 +14,20 @@ namespace Engine
 {
 	const std::vector<Vertex> vertices = 
 	{
-			{{-1.0f, -1.0f, -1.0f}, {0.2f, 0.0f, 1.0f}},
-			{{ 1.0f, -1.0f, -1.0f}, {0.2f, 0.0f, 1.0f}},
-			{{-1.0f,  1.0f, -1.0f}, {0.2f, 0.3f, 1.0f}},
-			{{ 1.0f,  1.0f, -1.0f}, {0.2f, 0.3f, 1.0f}},
+			{{-1.0f, -1.0f, -1.0f}, {0.2f, 1.0f, 1.0f}},
+			{{ 1.0f, -1.0f, -1.0f}, {0.2f, 1.0f, 1.0f}},
+			{{-1.0f,  1.0f, -1.0f}, {0.2f, 1.0f, 1.0f}},
+			{{ 1.0f,  1.0f, -1.0f}, {0.2f, 1.0f, 1.0f}},
 													  
-			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.7f, 1.0f}},
-			{{ 1.0f, -1.0f,  1.0f}, {1.0f, 0.7f, 1.0f}},
-			{{-1.0f,  1.0f,  1.0f}, {1.0f, 0.7f, 1.0f}},
-			{{ 1.0f,  1.0f,  1.0f}, {1.0f, 0.7f, 1.0f}},
+			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.7f, 0.0f}},
+			{{ 1.0f, -1.0f,  1.0f}, {1.0f, 0.7f, 0.0f}},
+			{{-1.0f,  1.0f,  1.0f}, {1.0f, 0.7f, 0.0f}},
+			{{ 1.0f,  1.0f,  1.0f}, {1.0f, 0.7f, 0.0f}},
 													  
-			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 1.0f}},
-			{{ 1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 1.0f}},
-			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 1.0f}},
-			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.8f, 1.0f}},
+			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 0.3f}},
+			{{ 1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 0.3f}},
+			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 0.3f}},
+			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.8f, 0.3f}},
 													  
 			{{ 1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
 			{{ 1.0f, -1.0f,  1.0f}, {0.0f, 1.0f, 1.0f}}
@@ -129,30 +129,21 @@ namespace Engine
 		const int MAX_FRAMES_IN_FLIGHT = 2;
 		size_t currentFrame = 0;
 
-	private: // uniform buffers
-		//std::vector<VkBuffer> uniformBuffers;
-		//std::vector<VkDeviceMemory> uniformBuffersMemory;
-
-		//std::vector<VkBuffer> uniformBuffers1;
-		//std::vector<VkDeviceMemory> uniformBuffersMemory1;
-
 	private: // descriptor sets
 		VkDescriptorPool descriptorPool;
-		VkDescriptorSet descriptorSets; // global 
-		//std::vector<VkDescriptorSet> descriptorSets1; // per object
+		VkDescriptorSet descriptorSets;
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
+		std::unique_ptr<VulkanBufferAllocator> bufferAllocator;
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 
-		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-		uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 		/// camera
 		CameraController cc;
 
 
 		// cube test
-		std::array<Cube, 3> cubes;
+		std::vector<std::unique_ptr<Cube>> cubes;
 	};
 }

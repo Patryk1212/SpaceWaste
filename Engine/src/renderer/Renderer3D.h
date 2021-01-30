@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/CameraController.h"
+
 namespace Engine
 {
 	class Renderer3D
@@ -11,6 +13,9 @@ namespace Engine
 		static void beginScene();
 		static void endScene();
 
-		static void draw();
+		static void draw(const CameraController& camera);
+
+	private:
+		//std::vector<Object>  
 	};
 }

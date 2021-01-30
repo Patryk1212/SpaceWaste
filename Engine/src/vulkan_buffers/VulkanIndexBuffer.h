@@ -4,13 +4,11 @@
 
 namespace Engine
 {
-	class VulkanIndexBuffer : protected VulkanBufferAllocator
+	class VulkanIndexBuffer
 	{
 	public:
-		VulkanIndexBuffer(const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkCommandPool& commandPool);
+		VulkanIndexBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, const std::vector<uint16_t>& indices);
 		~VulkanIndexBuffer() = default;
-
-		void createIndexBuffer(const std::vector<uint16_t>& indices);
 
 		VkBuffer getIndexBuffer() const;
 		VkDeviceMemory getIndexBufferMemory() const;

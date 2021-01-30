@@ -8,6 +8,35 @@ namespace Engine
 	VulkanSwapChain::VulkanSwapChain(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
 		: physicalDeviceHandle(physicalDevice), logicalDeviceHandle(logicalDevice), windowHandle(window), graphicsQueue(graphicsQueue), presentQueue(presentQueue)
 	{
+		bool earth = false;
+		glm::vec2 ring0{ 14.0f, 22.0f };
+		float rho, theta;
+		std::default_random_engine rndGenerator((unsigned)time(nullptr));
+		std::uniform_real_distribution<float> uniformDist(0.0, 1.0);
+
+		for (int i = 0; i < 500; i++)
+		{
+			auto temp = std::make_unique<Cube>();
+
+			glm::vec3 pos;
+			rho = sqrt((pow(ring0[1], 2.0f) - pow(ring0[0], 2.0f)) * uniformDist(rndGenerator) + pow(ring0[0], 2.0f));
+			theta = 2.0 * 3.14 * uniformDist(rndGenerator);
+			pos = glm::vec3(rho * cos(theta), uniformDist(rndGenerator) * 0.5f - 0.25f, rho * sin(theta));
+
+			temp->scale = { 0.1f, 0.1f, 0.1f };
+
+			if (!earth)
+			{
+				pos = { 0.0f, 0.0f, 0.0f };
+				temp->scale = { 2.5f, 2.5f, 2.5f };
+				earth = true;
+			}
+
+			temp->position = pos;
+
+			cubes.emplace_back(std::move(temp));
+		}
+
 		createSwapChain();
 		createImageViews();
 
@@ -17,11 +46,10 @@ namespace Engine
 		createFramebuffers();
 		createCommandPool();
 
-		vertexBuffer = std::make_unique<VulkanVertexBuffer>(physicalDeviceHandle, logicalDeviceHandle, graphicsQueue, commandPool);
-		vertexBuffer->createVertexBuffer(vertices);
+		bufferAllocator = std::make_unique<VulkanBufferAllocator>(physicalDevice, logicalDevice, graphicsQueue, commandPool);
+		vertexBuffer = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices);
+		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices);
 
-		indexBuffer = std::make_unique<VulkanIndexBuffer>(physicalDeviceHandle, logicalDeviceHandle, graphicsQueue, commandPool);
-		indexBuffer->createIndexBuffer(indices);
 
 		createUniformBuffers();
 
@@ -612,12 +640,11 @@ namespace Engine
 			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);			  
 
 			
-			for (const auto cube : cubes)
+			for (const auto& cube : cubes)
 			{
-				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &cube.descriptorSet, 0, nullptr);
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
 			
 				vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
-				//lol++;
 			}
 			
 			//vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets, 0, nullptr);
@@ -640,36 +667,16 @@ namespace Engine
 
 	void VulkanSwapChain::createDescriptorSetLayout()
 	{
-		//descriptorSetLayout.resize(2);
-
 		VkDescriptorSetLayoutBinding uboLayoutBinding{};
 		uboLayoutBinding.binding = 0;
 		uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		uboLayoutBinding.descriptorCount = 1;
 		uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 		uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
-
-		//VkDescriptorSetLayoutCreateInfo layoutInfo{};
-		//layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		//layoutInfo.bindingCount = 1;
-		//layoutInfo.pBindings = &uboLayoutBinding;
-		//
-		//if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo, nullptr, &descriptorSetLayout[0]) != VK_SUCCESS)
-		//{
-		//	throw std::runtime_error("failed to create descriptor set layout!");
-		//}
-
-		// change
-		//VkDescriptorSetLayoutBinding uboLayoutBinding1{};
-		//uboLayoutBinding[1].binding = 1;
-		//uboLayoutBinding[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		//uboLayoutBinding[1].descriptorCount = 1;
-		//uboLayoutBinding[1].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-		//uboLayoutBinding[1].pImmutableSamplers = nullptr; // Optional
 		
 		VkDescriptorSetLayoutCreateInfo layoutInfo1{};
 		layoutInfo1.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layoutInfo1.bindingCount = 1;// static_cast<uint32_t>(uboLayoutBinding.size());
+		layoutInfo1.bindingCount = 1;
 		layoutInfo1.pBindings = &uboLayoutBinding;
 		
 		if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo1, nullptr, &descriptorSetLayout) != VK_SUCCESS)
@@ -680,85 +687,65 @@ namespace Engine
 
 	void VulkanSwapChain::createUniformBuffers()
 	{
-		//VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-		//uniformBuffers.resize(swapChainImages.size());
-		//uniformBuffersMemory.resize(swapChainImages.size());
-
 		for (size_t i = 0; i < swapChainImages.size(); i++)
 		{
-			for (auto& cube : cubes)
+			for (const auto& cube : cubes)
 			{
-				cube.uniformBuffer.resize(swapChainImages.size());
-				cube.uniformBuffersMemory.resize(swapChainImages.size());
-
-				createBuffer(sizeof(UniformBufferObject), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-					cube.uniformBuffer[i], cube.uniformBuffersMemory[i]);
+				cube->createUniformBuffer(bufferAllocator);
 			}
 		}
 	}
 
 	void VulkanSwapChain::updateUniformBuffer(uint32_t currentImage, float deltaTime)
 	{
-		///// to camera class
-		//UniformBufferObject ubo{};
-		//ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // in renderer
-		//
-		//ubo.view = cc.getCamera()->getViewMatrix();
-		//ubo.proj = cc.getCamera()->getProjectionMatrix();
-		/////////////////
-		//
-		//void* data;
-		//vkMapMemory(logicalDeviceHandle, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
-		//memcpy(data, &ubo, sizeof(ubo));
-		//vkUnmapMemory(logicalDeviceHandle, uniformBuffersMemory[currentImage]);
+		static auto startTime = std::chrono::high_resolution_clock::now();
 
-		/* ---------------------------------------------------------------------------------------------------------------------- */
+		auto currentTime = std::chrono::high_resolution_clock::now();
+		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
+		//cubes[0]->ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f));
+		//cubes[1]->ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.5f, 0.0f));
+		//cubes[2]->ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(3.5f, 0.5f, 0.0f));
 
-		cubes[0].ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f));
-		cubes[1].ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.5f, 0.0f));
-		cubes[2].ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(3.5f, 0.5f, 0.0f));
+		//cubes[0].ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cubes[0].rotation), glm::vec3(1.0f, 0.0f, 0.0f));
+		//cubes[1].ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cubes[0].rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+		//cubes[2].ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cubes[0].rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		for (auto& cube : cubes) 
+		for (auto& cube : cubes)
 		{
 			//cube.ubo.model = glm::rotate(glm::mat4(1.0f), deltaTime * glm::radians(90.0f), glm::vec3(0.0f, 10.0f, 1.0f));
-			cube.ubo.view = cc.getCamera()->getViewMatrix();
-			cube.ubo.proj = cc.getCamera()->getProjectionMatrix();
+			cube->ubo.view = cc.getCamera()->getViewMatrix();
+			cube->ubo.proj = cc.getCamera()->getProjectionMatrix();
+			
 
-			cube.ubo.model = glm::rotate(cube.ubo.model, glm::radians(cube.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-			cube.ubo.model = glm::rotate(cube.ubo.model, glm::radians(cube.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-			cube.ubo.model = glm::rotate(cube.ubo.model, glm::radians(cube.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-			cube.ubo.model = glm::scale(cube.ubo.model, glm::vec3(0.25f));
+			cube->ubo.model =  glm::translate(glm::mat4(1.0f), cube->position);
+			cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+			cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
 
-			//memcpy(cube.uniformBuffer.mapped, &cube.matrices, sizeof(cube.matrices));
+
+			//cube.ubo.model = glm::rotate(cube.ubo.model, glm::radians(cube.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+			//cube.ubo.model = glm::rotate(cube.ubo.model, glm::radians(cube.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+			//cube.ubo.model = glm::rotate(cube.ubo.model, glm::radians(cube.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
 			void* data;
-			vkMapMemory(logicalDeviceHandle, cube.uniformBuffersMemory[currentImage], 0, sizeof(cube.ubo), 0, &data);
-			memcpy(data, &cube.ubo, sizeof(cube.ubo));
-			vkUnmapMemory(logicalDeviceHandle, cube.uniformBuffersMemory[currentImage]);
+			vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(currentImage), 0, sizeof(cube->ubo), 0, &data);
+			memcpy(data, &cube->ubo, sizeof(cube->ubo));
+			vkUnmapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(currentImage));
 
 		}
-
-		//UniformBufferModel ubo1{};
-		//ubo1.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 10.0f, 1.0f)); // in renderer
-		//
-		//void* data1;
-		//vkMapMemory(logicalDeviceHandle, uniformBuffersMemory1[currentImage], 0, sizeof(ubo1), 0, &data1);
-		//memcpy(data1, &ubo1, sizeof(ubo1));
-		//vkUnmapMemory(logicalDeviceHandle, uniformBuffersMemory1[currentImage]);
 	}
 
 	void VulkanSwapChain::createDescriptorPool()
 	{
 		VkDescriptorPoolSize poolSize{};
 		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size()) * cubes.size(); // change
+		poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size()) * cubes.size();
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolInfo.poolSizeCount = 1;// static_cast<uint32_t>(poolSize.size()); // was 1
-		poolInfo.pPoolSizes = &poolSize; // was &
-		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size()) * cubes.size(); // change
+		poolInfo.poolSizeCount = 1;
+		poolInfo.pPoolSizes = &poolSize;
+		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size()) * cubes.size();
 
 		if (vkCreateDescriptorPool(logicalDeviceHandle, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
 		{
@@ -777,11 +764,11 @@ namespace Engine
 				allocateInfo.descriptorPool = descriptorPool;
 				allocateInfo.descriptorSetCount = 1;
 				allocateInfo.pSetLayouts = &descriptorSetLayout;
-				vkAllocateDescriptorSets(logicalDeviceHandle, &allocateInfo, &cube.descriptorSet);
+				vkAllocateDescriptorSets(logicalDeviceHandle, &allocateInfo, &cube->descriptorSet);
 
 
 				VkDescriptorBufferInfo bufferInfo{};
-				bufferInfo.buffer = cube.uniformBuffer[i];// uniformBuffers[i]; // change
+				bufferInfo.buffer = cube->getUniformBuffer(i);
 				bufferInfo.offset = 0;
 				bufferInfo.range = sizeof(UniformBufferObject);
 
@@ -789,7 +776,7 @@ namespace Engine
 				VkWriteDescriptorSet writeDescriptorSets{};
 
 				writeDescriptorSets.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-				writeDescriptorSets.dstSet = cube.descriptorSet;
+				writeDescriptorSets.dstSet = cube->descriptorSet;
 				writeDescriptorSets.dstBinding = 0;
 				writeDescriptorSets.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 				writeDescriptorSets.pBufferInfo = &bufferInfo;
@@ -798,82 +785,5 @@ namespace Engine
 				vkUpdateDescriptorSets(logicalDeviceHandle, 1, &writeDescriptorSets, 0, nullptr);
 			}
 		}
-
-		//std::vector<VkDescriptorSetLayout> layouts(swapChainImages.size(), descriptorSetLayout);
-		//VkDescriptorSetAllocateInfo allocInfo{};
-		//allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		//allocInfo.descriptorPool = descriptorPool;
-		//allocInfo.descriptorSetCount = static_cast<uint32_t>(swapChainImages.size());
-		//allocInfo.pSetLayouts = layouts.data();
-		//
-		//if (vkAllocateDescriptorSets(logicalDeviceHandle, &allocInfo, &descriptorSets) != VK_SUCCESS)
-		//{
-		//	throw std::runtime_error("failed to allocate descriptor sets!");
-		//}
-		//
-		//for (size_t i = 0; i < swapChainImages.size(); i++)
-		//{
-		//	VkDescriptorBufferInfo bufferInfo{};
-		//	bufferInfo.buffer = uniformBuffers[i]; // change
-		//	bufferInfo.offset = 0;
-		//	bufferInfo.range = sizeof(UniformBufferObject);
-		//
-		//	VkWriteDescriptorSet descriptorWrite{};
-		//	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		//	descriptorWrite.dstSet = descriptorSets[i];
-		//	descriptorWrite.dstBinding = 0;
-		//	descriptorWrite.dstArrayElement = 0;
-		//	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; // dynamic
-		//	descriptorWrite.descriptorCount = 1;
-		//	descriptorWrite.pBufferInfo = &bufferInfo;
-		//
-		//	vkUpdateDescriptorSets(logicalDeviceHandle, 1, &descriptorWrite, 0, nullptr);
-		//}
-	}
-
-	/* -------------------------------------------------------------------------------------------------------*/
-	void VulkanSwapChain::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
-	{
-		VkBufferCreateInfo bufferInfo{};
-		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		bufferInfo.size = size;
-		bufferInfo.usage = usage;
-		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-		if (vkCreateBuffer(logicalDeviceHandle, &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create vertex buffer!");
-		}
-
-		VkMemoryRequirements memRequirements;
-		vkGetBufferMemoryRequirements(logicalDeviceHandle, buffer, &memRequirements);
-
-		VkMemoryAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
-
-		if (vkAllocateMemory(logicalDeviceHandle, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to allocate vertex buffer memory!");
-		}
-
-		vkBindBufferMemory(logicalDeviceHandle, buffer, bufferMemory, 0);
-	}
-
-	uint32_t VulkanSwapChain::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
-	{
-		VkPhysicalDeviceMemoryProperties memProperties;
-		vkGetPhysicalDeviceMemoryProperties(physicalDeviceHandle, &memProperties);
-
-		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
-		{
-			if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
-			{
-				return i;
-			}
-		}
-
-		throw std::runtime_error("failed to find suitable memory type!");
 	}
 }

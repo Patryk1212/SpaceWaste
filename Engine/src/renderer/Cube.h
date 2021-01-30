@@ -9,17 +9,28 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "vulkan_core/VulkanUtility.h"
+#include "vulkan_buffers/VulkanUniformBuffer.h"
+
 namespace Engine
 {
-	struct Cube
+	class Cube
 	{
+	public:
 		UniformBufferObject ubo;
-		
-		//glm::vec3 position = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 rotation = { 90.0f, 90.0f, 90.0f };
+		float rotation = 45.0f;
 
-		VkDescriptorSet descriptorSet;
-		std::vector<VkBuffer> uniformBuffer;
-		std::vector<VkDeviceMemory> uniformBuffersMemory;
+		glm::vec3 scale = { 1.0f, 1.0f, 1.0f };
+		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+
+		VkDescriptorSet descriptorSet; // private
+
+		void createUniformBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc);
+
+		VkBuffer getUniformBuffer(int imageNumber) const;
+		VkDeviceMemory getUniformBufferMemory(int imageNumber) const;
+
+	private:
+		std::vector<std::unique_ptr<VulkanUniformBuffer>> uniformBuffer;
 	};
 }

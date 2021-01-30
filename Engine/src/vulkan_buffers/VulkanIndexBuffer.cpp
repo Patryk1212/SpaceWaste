@@ -3,33 +3,29 @@
 
 namespace Engine
 {
-	VulkanIndexBuffer::VulkanIndexBuffer(const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkCommandPool& commandPool)
-		: VulkanBufferAllocator(physicalDevice, logicalDevice, graphicsQueue, commandPool)
-	{
-	}
-
-	void VulkanIndexBuffer::createIndexBuffer(const std::vector<uint16_t>& indices)
+	VulkanIndexBuffer::VulkanIndexBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, const std::vector<uint16_t>& indices)
 	{
 		count = indices.size();
+
 		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
 
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
-		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		bufferAlloc->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			stagingBuffer, stagingBufferMemory);
 
 		void* data;
-		vkMapMemory(getLogicalDeviceHandle(), stagingBufferMemory, 0, bufferSize, 0, &data);
+		vkMapMemory(bufferAlloc->getLogicalDeviceHandle(), stagingBufferMemory, 0, bufferSize, 0, &data);
 		memcpy(data, indices.data(), (size_t)bufferSize);
-		vkUnmapMemory(getLogicalDeviceHandle(), stagingBufferMemory);
+		vkUnmapMemory(bufferAlloc->getLogicalDeviceHandle(), stagingBufferMemory);
 
-		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		bufferAlloc->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			indexBuffer, indexBufferMemory);
 
-		copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+		bufferAlloc->copyBuffer(stagingBuffer, indexBuffer, bufferSize);
 
-		vkDestroyBuffer(getLogicalDeviceHandle(), stagingBuffer, nullptr);
-		vkFreeMemory(getLogicalDeviceHandle(), stagingBufferMemory, nullptr);
+		vkDestroyBuffer(bufferAlloc->getLogicalDeviceHandle(), stagingBuffer, nullptr);
+		vkFreeMemory(bufferAlloc->getLogicalDeviceHandle(), stagingBufferMemory, nullptr);
 	}
 
 	VkBuffer VulkanIndexBuffer::getIndexBuffer() const

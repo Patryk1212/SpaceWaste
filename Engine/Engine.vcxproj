@@ -183,9 +183,11 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\renderer\Cube.cpp" />
     <ClCompile Include="src\renderer\Renderer3D.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanBufferAllocator.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanIndexBuffer.cpp" />
+    <ClCompile Include="src\vulkan_buffers\VulkanUniformBuffer.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanVertexBuffer.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanShader.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanContext.cpp" />
@@ -219,6 +221,7 @@
     <ClInclude Include="src\renderer\Renderer3D.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanBufferAllocator.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanIndexBuffer.h" />
+    <ClInclude Include="src\vulkan_buffers\VulkanUniformBuffer.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanVertexBuffer.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanShader.h" />
     <ClInclude Include="src\vulkan_core\VulkanContext.h" />

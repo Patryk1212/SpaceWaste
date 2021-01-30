@@ -4,13 +4,11 @@
 
 namespace Engine
 {
-	class VulkanVertexBuffer : protected VulkanBufferAllocator
+	class VulkanVertexBuffer
 	{
 	public:
-		VulkanVertexBuffer(const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkCommandPool& commandPool);
+		VulkanVertexBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, const std::vector<Vertex>& vertices);
 		~VulkanVertexBuffer() = default;
-
-		void createVertexBuffer(const std::vector<Vertex>& vertices);
 
 		VkBuffer getVertexBuffer() const;
 		VkDeviceMemory getVertexBufferMemory() const;
