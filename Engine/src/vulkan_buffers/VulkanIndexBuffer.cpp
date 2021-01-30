@@ -10,6 +10,7 @@ namespace Engine
 
 	void VulkanIndexBuffer::createIndexBuffer(const std::vector<uint16_t>& indices)
 	{
+		count = indices.size();
 		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
 
 		VkBuffer stagingBuffer;
@@ -39,5 +40,10 @@ namespace Engine
 	VkDeviceMemory VulkanIndexBuffer::getIndexBufferMemory() const
 	{
 		return indexBufferMemory;
+	}
+
+	uint32_t VulkanIndexBuffer::getCount() const
+	{
+		return count;
 	}
 }

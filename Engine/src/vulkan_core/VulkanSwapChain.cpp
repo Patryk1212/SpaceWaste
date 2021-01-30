@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "VulkanSwapChain.h"
 
-#include "renderer/VulkanShader.h"
+#include "vulkan_buffers/VulkanShader.h"
 
 namespace Engine
 {
@@ -208,8 +208,8 @@ namespace Engine
 
 		for (size_t i = 0; i < swapChainImages.size(); i++)
 		{
-			vkDestroyBuffer(logicalDeviceHandle, uniformBuffers[i], nullptr);
-			vkFreeMemory(logicalDeviceHandle, uniformBuffersMemory[i], nullptr);
+			//vkDestroyBuffer(logicalDeviceHandle, uniformBuffers[i], nullptr);
+			//vkFreeMemory(logicalDeviceHandle, uniformBuffersMemory[i], nullptr); ////////////////////////////////////////
 		}
 
 		vkDestroyDescriptorPool(logicalDeviceHandle, descriptorPool, nullptr);
@@ -369,10 +369,10 @@ namespace Engine
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexBindingDescriptionCount = 1;
+		vertexInputInfo.vertexBindingDescriptionCount = 1; // static_cast<uint32_t>(bindingDescription.size()); // change 1
 		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 
-		vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+		vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;// .data(); // change
 		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
@@ -603,18 +603,25 @@ namespace Engine
 			renderPassInfo.pClearValues = &clearColor;
 
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
 			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+
 
 			VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);			  
 
-			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
+			
+			
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
+			
+			vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
 
-			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+			
+			//vkCmdDraw(commandBuffers[i], 6, 1, 0, 0);
+
+			//vkCmdExecuteCommands();
 
 			vkCmdEndRenderPass(commandBuffers[i]);
 
@@ -643,19 +650,44 @@ namespace Engine
 		{
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
+
+		// change
+		//VkDescriptorSetLayoutBinding uboLayoutBinding1{};
+		//uboLayoutBinding1.binding = 1;
+		//uboLayoutBinding1.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		//uboLayoutBinding1.descriptorCount = 1;
+		//uboLayoutBinding1.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		//uboLayoutBinding1.pImmutableSamplers = nullptr; // Optional
+		//
+		//VkDescriptorSetLayoutCreateInfo layoutInfo1{};
+		//layoutInfo1.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		//layoutInfo1.bindingCount = 1;
+		//layoutInfo1.pBindings = &uboLayoutBinding1;
+		//
+		//if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo1, nullptr, &descriptorSetLayout) != VK_SUCCESS)
+		//{
+		//	throw std::runtime_error("failed to create descriptor set layout!");
+		//}
 	}
 
 	void VulkanSwapChain::createUniformBuffers()
 	{
 		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+		VkDeviceSize bufferSize1 = sizeof(UniformBufferModel);
 
 		uniformBuffers.resize(swapChainImages.size());
 		uniformBuffersMemory.resize(swapChainImages.size());
+
+		uniformBuffers1.resize(swapChainImages.size());
+		uniformBuffersMemory1.resize(swapChainImages.size());
 
 		for (size_t i = 0; i < swapChainImages.size(); i++)
 		{
 			createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 				uniformBuffers[i], uniformBuffersMemory[i]);
+
+			createBuffer(bufferSize1, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+				uniformBuffers1[i], uniformBuffersMemory1[i]);
 		}
 	}
 
@@ -663,7 +695,7 @@ namespace Engine
 	{
 		/// to camera class
 		UniformBufferObject ubo{};
-		ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // in renderer
+		ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // in renderer
 		
 		ubo.view = cc.getCamera()->getViewMatrix();
 		ubo.proj = cc.getCamera()->getProjectionMatrix();
@@ -674,19 +706,27 @@ namespace Engine
 		vkMapMemory(logicalDeviceHandle, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(logicalDeviceHandle, uniformBuffersMemory[currentImage]);
+
+		//UniformBufferModel ubo1{};
+		//ubo1.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 10.0f, 1.0f)); // in renderer
+		//
+		//void* data1;
+		//vkMapMemory(logicalDeviceHandle, uniformBuffersMemory1[currentImage], 0, sizeof(ubo1), 0, &data1);
+		//memcpy(data1, &ubo1, sizeof(ubo1));
+		//vkUnmapMemory(logicalDeviceHandle, uniformBuffersMemory1[currentImage]);
 	}
 
 	void VulkanSwapChain::createDescriptorPool()
 	{
 		VkDescriptorPoolSize poolSize{};
 		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size());
+		poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 2); // change
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		poolInfo.poolSizeCount = 1;
 		poolInfo.pPoolSizes = &poolSize;
-		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size());
+		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size() * 2); // change
 
 		if (vkCreateDescriptorPool(logicalDeviceHandle, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
 		{
@@ -709,10 +749,18 @@ namespace Engine
 			throw std::runtime_error("failed to allocate descriptor sets!");
 		}
 
+		// change
+		descriptorSets1.resize(swapChainImages.size());
+		if (vkAllocateDescriptorSets(logicalDeviceHandle, &allocInfo, descriptorSets1.data()) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to allocate descriptor sets!");
+		}
+		///
+
 		for (size_t i = 0; i < swapChainImages.size(); i++)
 		{
 			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = uniformBuffers[i];
+			bufferInfo.buffer = uniformBuffers[i]; // change
 			bufferInfo.offset = 0;
 			bufferInfo.range = sizeof(UniformBufferObject);
 
@@ -721,14 +769,33 @@ namespace Engine
 			descriptorWrite.dstSet = descriptorSets[i];
 			descriptorWrite.dstBinding = 0;
 			descriptorWrite.dstArrayElement = 0;
-			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; // dynamic
 			descriptorWrite.descriptorCount = 1;
 			descriptorWrite.pBufferInfo = &bufferInfo;
 
 			vkUpdateDescriptorSets(logicalDeviceHandle, 1, &descriptorWrite, 0, nullptr);
+
+			// change
+			VkDescriptorBufferInfo bufferInfo1{};
+			bufferInfo1.buffer = uniformBuffers1[i];
+			bufferInfo1.offset = 0;
+			bufferInfo1.range = sizeof(UniformBufferModel);
+
+			VkWriteDescriptorSet descriptorWrite1{};
+			descriptorWrite1.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrite1.dstSet = descriptorSets1[i];
+			descriptorWrite1.dstBinding = 0;
+			descriptorWrite1.dstArrayElement = 0;
+			descriptorWrite1.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; // dynamic
+			descriptorWrite1.descriptorCount = 1;
+			descriptorWrite1.pBufferInfo = &bufferInfo;
+
+			vkUpdateDescriptorSets(logicalDeviceHandle, 1, &descriptorWrite1, 0, nullptr);
+			//
 		}
 	}
 
+	/* -------------------------------------------------------------------------------------------------------*/
 	void VulkanSwapChain::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 	{
 		VkBufferCreateInfo bufferInfo{};

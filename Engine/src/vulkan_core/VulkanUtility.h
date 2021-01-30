@@ -19,6 +19,11 @@ namespace Engine
 		alignas(16) glm::mat4 proj;
 	};
 
+	struct UniformBufferModel
+	{
+		alignas(16) glm::mat4 model;
+	};
+
 	struct Vertex
 	{
 		glm::vec3 pos;
@@ -26,11 +31,17 @@ namespace Engine
 
 		static VkVertexInputBindingDescription getBindingDescription() 
 		{
+			//std::array<VkVertexInputBindingDescription, 2> bindingDescription{};
+
 			VkVertexInputBindingDescription bindingDescription{};
 
 			bindingDescription.binding = 0;
 			bindingDescription.stride = sizeof(Vertex);
 			bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+			//bindingDescription[1].binding = 1;
+			//bindingDescription[1].stride = sizeof(Vertex);
+			//bindingDescription[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 			return bindingDescription;
 		}

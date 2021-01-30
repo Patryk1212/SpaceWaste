@@ -5,28 +5,30 @@
 
 #include "core/CameraController.h"
 
-#include "renderer/VulkanVertexBuffer.h"
-#include "renderer/VulkanIndexBuffer.h"
+#include "vulkan_buffers/VulkanVertexBuffer.h"
+#include "vulkan_buffers/VulkanIndexBuffer.h"
+
+#include "renderer/Cube.h"
 
 namespace Engine
 {
 	const std::vector<Vertex> vertices = 
 	{
-			{{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-			{{ 1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-			{{-1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
-			{{ 1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
-	
-			{{-1.0f, -1.0f, 1.0f }, {1.0f, 0.0f, 1.0f}},
-			{{ 1.0f, -1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{ -1.0f, 1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{ 1.0f,  1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
-	
-			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{ 1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
-	
+			{{-1.0f, -1.0f, -1.0f}, {0.2f, 0.0f, 1.0f}},
+			{{ 1.0f, -1.0f, -1.0f}, {0.2f, 0.0f, 1.0f}},
+			{{-1.0f,  1.0f, -1.0f}, {0.2f, 0.3f, 1.0f}},
+			{{ 1.0f,  1.0f, -1.0f}, {0.2f, 0.3f, 1.0f}},
+													  
+			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.7f, 1.0f}},
+			{{ 1.0f, -1.0f,  1.0f}, {1.0f, 0.7f, 1.0f}},
+			{{-1.0f,  1.0f,  1.0f}, {1.0f, 0.7f, 1.0f}},
+			{{ 1.0f,  1.0f,  1.0f}, {1.0f, 0.7f, 1.0f}},
+													  
+			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 1.0f}},
+			{{ 1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 1.0f}},
+			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 1.0f}},
+			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.8f, 1.0f}},
+													  
 			{{ 1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
 			{{ 1.0f, -1.0f,  1.0f}, {0.0f, 1.0f, 1.0f}}
 	};
@@ -98,10 +100,10 @@ namespace Engine
 
 	private: // swap chain
 		VkSwapchainKHR swapChain;
-
-		std::vector<VkImage> swapChainImages;
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
+
+		std::vector<VkImage> swapChainImages;
 		std::vector<VkImageView> swapChainImageViews;
 
 	private: // graphics pipeline
@@ -131,11 +133,15 @@ namespace Engine
 		std::vector<VkBuffer> uniformBuffers;
 		std::vector<VkDeviceMemory> uniformBuffersMemory;
 
+		std::vector<VkBuffer> uniformBuffers1;
+		std::vector<VkDeviceMemory> uniformBuffersMemory1;
+
 	private: // descriptor sets
 		VkDescriptorPool descriptorPool;
 		std::vector<VkDescriptorSet> descriptorSets;
+		std::vector<VkDescriptorSet> descriptorSets1;
 
-
+		/* - - - - - - - - - - - - - - - - - - - - - - - */
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 
@@ -145,5 +151,8 @@ namespace Engine
 		/// camera
 		CameraController cc;
 
+
+		// cube test
+		std::array<Cube, 2> cubes;
 	};
 }

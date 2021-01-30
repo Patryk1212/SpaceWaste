@@ -183,19 +183,20 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\core\Window.cpp" />
-    <ClCompile Include="src\renderer\VulkanBufferAllocator.cpp" />
-    <ClCompile Include="src\renderer\VulkanIndexBuffer.cpp" />
-    <ClCompile Include="src\renderer\VulkanVertexBuffer.cpp" />
-    <ClCompile Include="src\renderer\VulkanShader.cpp" />
-    <ClCompile Include="src\vulkan\VulkanContext.cpp" />
-    <ClCompile Include="src\vulkan\VulkanCore.cpp" />
-    <ClCompile Include="src\vulkan\VulkanDebug.cpp" />
-    <ClCompile Include="src\vulkan\VulkanGraphicsPipeline.cpp" />
-    <ClCompile Include="src\vulkan\VulkanLogicalDevice.cpp" />
-    <ClCompile Include="src\vulkan\VulkanPhysicalDevice.cpp" />
-    <ClCompile Include="src\vulkan\VulkanSurface.cpp" />
-    <ClCompile Include="src\vulkan\VulkanSwapChain.cpp" />
-    <ClCompile Include="src\vulkan\VulkanUtility.cpp" />
+    <ClCompile Include="src\renderer\Renderer3D.cpp" />
+    <ClCompile Include="src\vulkan_buffers\VulkanBufferAllocator.cpp" />
+    <ClCompile Include="src\vulkan_buffers\VulkanIndexBuffer.cpp" />
+    <ClCompile Include="src\vulkan_buffers\VulkanVertexBuffer.cpp" />
+    <ClCompile Include="src\vulkan_buffers\VulkanShader.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanContext.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanCore.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanDebug.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanGraphicsPipeline.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanLogicalDevice.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanPhysicalDevice.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanSurface.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanSwapChain.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Application.h" />
@@ -214,19 +215,21 @@
     <ClInclude Include="src\events+input\WindowEvent.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\core\Window.h" />
-    <ClInclude Include="src\renderer\VulkanBufferAllocator.h" />
-    <ClInclude Include="src\renderer\VulkanIndexBuffer.h" />
-    <ClInclude Include="src\renderer\VulkanVertexBuffer.h" />
-    <ClInclude Include="src\renderer\VulkanShader.h" />
-    <ClInclude Include="src\vulkan\VulkanContext.h" />
-    <ClInclude Include="src\vulkan\VulkanCore.h" />
-    <ClInclude Include="src\vulkan\VulkanDebug.h" />
-    <ClInclude Include="src\vulkan\VulkanGraphicsPipeline.h" />
-    <ClInclude Include="src\vulkan\VulkanLogicalDevice.h" />
-    <ClInclude Include="src\vulkan\VulkanPhysicalDevice.h" />
-    <ClInclude Include="src\vulkan\VulkanSurface.h" />
-    <ClInclude Include="src\vulkan\VulkanSwapChain.h" />
-    <ClInclude Include="src\vulkan\VulkanUtility.h" />
+    <ClInclude Include="src\renderer\Cube.h" />
+    <ClInclude Include="src\renderer\Renderer3D.h" />
+    <ClInclude Include="src\vulkan_buffers\VulkanBufferAllocator.h" />
+    <ClInclude Include="src\vulkan_buffers\VulkanIndexBuffer.h" />
+    <ClInclude Include="src\vulkan_buffers\VulkanVertexBuffer.h" />
+    <ClInclude Include="src\vulkan_buffers\VulkanShader.h" />
+    <ClInclude Include="src\vulkan_core\VulkanContext.h" />
+    <ClInclude Include="src\vulkan_core\VulkanCore.h" />
+    <ClInclude Include="src\vulkan_core\VulkanDebug.h" />
+    <ClInclude Include="src\vulkan_core\VulkanGraphicsPipeline.h" />
+    <ClInclude Include="src\vulkan_core\VulkanLogicalDevice.h" />
+    <ClInclude Include="src\vulkan_core\VulkanPhysicalDevice.h" />
+    <ClInclude Include="src\vulkan_core\VulkanSurface.h" />
+    <ClInclude Include="src\vulkan_core\VulkanSwapChain.h" />
+    <ClInclude Include="src\vulkan_core\VulkanUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

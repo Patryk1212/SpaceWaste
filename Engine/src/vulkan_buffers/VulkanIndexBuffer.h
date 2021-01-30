@@ -14,9 +14,11 @@ namespace Engine
 
 		VkBuffer getIndexBuffer() const;
 		VkDeviceMemory getIndexBufferMemory() const;
+		uint32_t getCount() const;
 
 	private:
 		VkBuffer indexBuffer = nullptr;
 		VkDeviceMemory indexBufferMemory = nullptr;
+		uint32_t count = 0;
 	};
 }
