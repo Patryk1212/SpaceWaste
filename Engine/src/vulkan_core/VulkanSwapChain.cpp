@@ -54,7 +54,7 @@ namespace Engine
 		}
 		imagesInFlight[imageIndex] = inFlightFences[currentFrame];
 
-		updateUniformBuffer(imageIndex);
+		updateUniformBuffer(imageIndex, deltaTime);
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -117,7 +117,7 @@ namespace Engine
 	{
 		cleanupSwapChain();
 
-		vkDestroyDescriptorSetLayout(logicalDeviceHandle, descriptorSetLayout, nullptr);
+		//vkDestroyDescriptorSetLayout(logicalDeviceHandle, descriptorSetLayout, nullptr); //////////////////////
 
 		vkDestroyBuffer(logicalDeviceHandle, indexBuffer->getIndexBuffer(), nullptr);
 		vkFreeMemory(logicalDeviceHandle, indexBuffer->getIndexBufferMemory(), nullptr);
@@ -439,7 +439,7 @@ namespace Engine
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 1;
-		pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
+		pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;// .data(); // change from &
 		//pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
 		//pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
@@ -611,12 +611,18 @@ namespace Engine
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);			  
 
-
 			
+			for (const auto cube : cubes)
+			{
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &cube.descriptorSet, 0, nullptr);
 			
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
+				vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
+				//lol++;
+			}
 			
-			vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
+			//vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets, 0, nullptr);
+			//
+			//vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
 
 			
 			//vkCmdDraw(commandBuffers[i], 6, 1, 0, 0);
@@ -634,6 +640,8 @@ namespace Engine
 
 	void VulkanSwapChain::createDescriptorSetLayout()
 	{
+		//descriptorSetLayout.resize(2);
+
 		VkDescriptorSetLayoutBinding uboLayoutBinding{};
 		uboLayoutBinding.binding = 0;
 		uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -641,71 +649,95 @@ namespace Engine
 		uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 		uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
 
-		VkDescriptorSetLayoutCreateInfo layoutInfo{};
-		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layoutInfo.bindingCount = 1;
-		layoutInfo.pBindings = &uboLayoutBinding;
-
-		if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create descriptor set layout!");
-		}
-
-		// change
-		//VkDescriptorSetLayoutBinding uboLayoutBinding1{};
-		//uboLayoutBinding1.binding = 1;
-		//uboLayoutBinding1.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		//uboLayoutBinding1.descriptorCount = 1;
-		//uboLayoutBinding1.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-		//uboLayoutBinding1.pImmutableSamplers = nullptr; // Optional
+		//VkDescriptorSetLayoutCreateInfo layoutInfo{};
+		//layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		//layoutInfo.bindingCount = 1;
+		//layoutInfo.pBindings = &uboLayoutBinding;
 		//
-		//VkDescriptorSetLayoutCreateInfo layoutInfo1{};
-		//layoutInfo1.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		//layoutInfo1.bindingCount = 1;
-		//layoutInfo1.pBindings = &uboLayoutBinding1;
-		//
-		//if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo1, nullptr, &descriptorSetLayout) != VK_SUCCESS)
+		//if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo, nullptr, &descriptorSetLayout[0]) != VK_SUCCESS)
 		//{
 		//	throw std::runtime_error("failed to create descriptor set layout!");
 		//}
+
+		// change
+		//VkDescriptorSetLayoutBinding uboLayoutBinding1{};
+		//uboLayoutBinding[1].binding = 1;
+		//uboLayoutBinding[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		//uboLayoutBinding[1].descriptorCount = 1;
+		//uboLayoutBinding[1].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		//uboLayoutBinding[1].pImmutableSamplers = nullptr; // Optional
+		
+		VkDescriptorSetLayoutCreateInfo layoutInfo1{};
+		layoutInfo1.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		layoutInfo1.bindingCount = 1;// static_cast<uint32_t>(uboLayoutBinding.size());
+		layoutInfo1.pBindings = &uboLayoutBinding;
+		
+		if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo1, nullptr, &descriptorSetLayout) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create descriptor set layout!");
+		}
 	}
 
 	void VulkanSwapChain::createUniformBuffers()
 	{
-		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-		VkDeviceSize bufferSize1 = sizeof(UniformBufferModel);
-
-		uniformBuffers.resize(swapChainImages.size());
-		uniformBuffersMemory.resize(swapChainImages.size());
-
-		uniformBuffers1.resize(swapChainImages.size());
-		uniformBuffersMemory1.resize(swapChainImages.size());
+		//VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+		//uniformBuffers.resize(swapChainImages.size());
+		//uniformBuffersMemory.resize(swapChainImages.size());
 
 		for (size_t i = 0; i < swapChainImages.size(); i++)
 		{
-			createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-				uniformBuffers[i], uniformBuffersMemory[i]);
+			for (auto& cube : cubes)
+			{
+				cube.uniformBuffer.resize(swapChainImages.size());
+				cube.uniformBuffersMemory.resize(swapChainImages.size());
 
-			createBuffer(bufferSize1, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-				uniformBuffers1[i], uniformBuffersMemory1[i]);
+				createBuffer(sizeof(UniformBufferObject), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+					cube.uniformBuffer[i], cube.uniformBuffersMemory[i]);
+			}
 		}
 	}
 
-	void VulkanSwapChain::updateUniformBuffer(uint32_t currentImage)
+	void VulkanSwapChain::updateUniformBuffer(uint32_t currentImage, float deltaTime)
 	{
-		/// to camera class
-		UniformBufferObject ubo{};
-		ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // in renderer
-		
-		ubo.view = cc.getCamera()->getViewMatrix();
-		ubo.proj = cc.getCamera()->getProjectionMatrix();
-		///////////////
+		///// to camera class
+		//UniformBufferObject ubo{};
+		//ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // in renderer
+		//
+		//ubo.view = cc.getCamera()->getViewMatrix();
+		//ubo.proj = cc.getCamera()->getProjectionMatrix();
+		/////////////////
+		//
+		//void* data;
+		//vkMapMemory(logicalDeviceHandle, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
+		//memcpy(data, &ubo, sizeof(ubo));
+		//vkUnmapMemory(logicalDeviceHandle, uniformBuffersMemory[currentImage]);
+
+		/* ---------------------------------------------------------------------------------------------------------------------- */
 
 
-		void* data;
-		vkMapMemory(logicalDeviceHandle, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(logicalDeviceHandle, uniformBuffersMemory[currentImage]);
+		cubes[0].ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f));
+		cubes[1].ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.5f, 0.0f));
+		cubes[2].ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(3.5f, 0.5f, 0.0f));
+
+		for (auto& cube : cubes) 
+		{
+			//cube.ubo.model = glm::rotate(glm::mat4(1.0f), deltaTime * glm::radians(90.0f), glm::vec3(0.0f, 10.0f, 1.0f));
+			cube.ubo.view = cc.getCamera()->getViewMatrix();
+			cube.ubo.proj = cc.getCamera()->getProjectionMatrix();
+
+			cube.ubo.model = glm::rotate(cube.ubo.model, glm::radians(cube.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+			cube.ubo.model = glm::rotate(cube.ubo.model, glm::radians(cube.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+			cube.ubo.model = glm::rotate(cube.ubo.model, glm::radians(cube.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			cube.ubo.model = glm::scale(cube.ubo.model, glm::vec3(0.25f));
+
+			//memcpy(cube.uniformBuffer.mapped, &cube.matrices, sizeof(cube.matrices));
+
+			void* data;
+			vkMapMemory(logicalDeviceHandle, cube.uniformBuffersMemory[currentImage], 0, sizeof(cube.ubo), 0, &data);
+			memcpy(data, &cube.ubo, sizeof(cube.ubo));
+			vkUnmapMemory(logicalDeviceHandle, cube.uniformBuffersMemory[currentImage]);
+
+		}
 
 		//UniformBufferModel ubo1{};
 		//ubo1.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 10.0f, 1.0f)); // in renderer
@@ -720,13 +752,13 @@ namespace Engine
 	{
 		VkDescriptorPoolSize poolSize{};
 		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 2); // change
+		poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size()) * cubes.size(); // change
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolInfo.poolSizeCount = 1;
-		poolInfo.pPoolSizes = &poolSize;
-		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size() * 2); // change
+		poolInfo.poolSizeCount = 1;// static_cast<uint32_t>(poolSize.size()); // was 1
+		poolInfo.pPoolSizes = &poolSize; // was &
+		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size()) * cubes.size(); // change
 
 		if (vkCreateDescriptorPool(logicalDeviceHandle, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
 		{
@@ -736,63 +768,67 @@ namespace Engine
 
 	void VulkanSwapChain::createDescriptorSets()
 	{
-		std::vector<VkDescriptorSetLayout> layouts(swapChainImages.size(), descriptorSetLayout);
-		VkDescriptorSetAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = descriptorPool;
-		allocInfo.descriptorSetCount = static_cast<uint32_t>(swapChainImages.size());
-		allocInfo.pSetLayouts = layouts.data();
-
-		descriptorSets.resize(swapChainImages.size());
-		if (vkAllocateDescriptorSets(logicalDeviceHandle, &allocInfo, descriptorSets.data()) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to allocate descriptor sets!");
-		}
-
-		// change
-		descriptorSets1.resize(swapChainImages.size());
-		if (vkAllocateDescriptorSets(logicalDeviceHandle, &allocInfo, descriptorSets1.data()) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to allocate descriptor sets!");
-		}
-		///
-
 		for (size_t i = 0; i < swapChainImages.size(); i++)
 		{
-			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = uniformBuffers[i]; // change
-			bufferInfo.offset = 0;
-			bufferInfo.range = sizeof(UniformBufferObject);
+			for (auto& cube : cubes)
+			{
+				VkDescriptorSetAllocateInfo allocateInfo{};
+				allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+				allocateInfo.descriptorPool = descriptorPool;
+				allocateInfo.descriptorSetCount = 1;
+				allocateInfo.pSetLayouts = &descriptorSetLayout;
+				vkAllocateDescriptorSets(logicalDeviceHandle, &allocateInfo, &cube.descriptorSet);
 
-			VkWriteDescriptorSet descriptorWrite{};
-			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrite.dstSet = descriptorSets[i];
-			descriptorWrite.dstBinding = 0;
-			descriptorWrite.dstArrayElement = 0;
-			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; // dynamic
-			descriptorWrite.descriptorCount = 1;
-			descriptorWrite.pBufferInfo = &bufferInfo;
 
-			vkUpdateDescriptorSets(logicalDeviceHandle, 1, &descriptorWrite, 0, nullptr);
+				VkDescriptorBufferInfo bufferInfo{};
+				bufferInfo.buffer = cube.uniformBuffer[i];// uniformBuffers[i]; // change
+				bufferInfo.offset = 0;
+				bufferInfo.range = sizeof(UniformBufferObject);
 
-			// change
-			VkDescriptorBufferInfo bufferInfo1{};
-			bufferInfo1.buffer = uniformBuffers1[i];
-			bufferInfo1.offset = 0;
-			bufferInfo1.range = sizeof(UniformBufferModel);
 
-			VkWriteDescriptorSet descriptorWrite1{};
-			descriptorWrite1.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrite1.dstSet = descriptorSets1[i];
-			descriptorWrite1.dstBinding = 0;
-			descriptorWrite1.dstArrayElement = 0;
-			descriptorWrite1.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; // dynamic
-			descriptorWrite1.descriptorCount = 1;
-			descriptorWrite1.pBufferInfo = &bufferInfo;
+				VkWriteDescriptorSet writeDescriptorSets{};
 
-			vkUpdateDescriptorSets(logicalDeviceHandle, 1, &descriptorWrite1, 0, nullptr);
-			//
+				writeDescriptorSets.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				writeDescriptorSets.dstSet = cube.descriptorSet;
+				writeDescriptorSets.dstBinding = 0;
+				writeDescriptorSets.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+				writeDescriptorSets.pBufferInfo = &bufferInfo;
+				writeDescriptorSets.descriptorCount = 1;
+
+				vkUpdateDescriptorSets(logicalDeviceHandle, 1, &writeDescriptorSets, 0, nullptr);
+			}
 		}
+
+		//std::vector<VkDescriptorSetLayout> layouts(swapChainImages.size(), descriptorSetLayout);
+		//VkDescriptorSetAllocateInfo allocInfo{};
+		//allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		//allocInfo.descriptorPool = descriptorPool;
+		//allocInfo.descriptorSetCount = static_cast<uint32_t>(swapChainImages.size());
+		//allocInfo.pSetLayouts = layouts.data();
+		//
+		//if (vkAllocateDescriptorSets(logicalDeviceHandle, &allocInfo, &descriptorSets) != VK_SUCCESS)
+		//{
+		//	throw std::runtime_error("failed to allocate descriptor sets!");
+		//}
+		//
+		//for (size_t i = 0; i < swapChainImages.size(); i++)
+		//{
+		//	VkDescriptorBufferInfo bufferInfo{};
+		//	bufferInfo.buffer = uniformBuffers[i]; // change
+		//	bufferInfo.offset = 0;
+		//	bufferInfo.range = sizeof(UniformBufferObject);
+		//
+		//	VkWriteDescriptorSet descriptorWrite{};
+		//	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		//	descriptorWrite.dstSet = descriptorSets[i];
+		//	descriptorWrite.dstBinding = 0;
+		//	descriptorWrite.dstArrayElement = 0;
+		//	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER; // dynamic
+		//	descriptorWrite.descriptorCount = 1;
+		//	descriptorWrite.pBufferInfo = &bufferInfo;
+		//
+		//	vkUpdateDescriptorSets(logicalDeviceHandle, 1, &descriptorWrite, 0, nullptr);
+		//}
 	}
 
 	/* -------------------------------------------------------------------------------------------------------*/

@@ -92,7 +92,7 @@ namespace Engine
 	private: // uniforms buffers
 		void createDescriptorSetLayout();
 		void createUniformBuffers();
-		void updateUniformBuffer(uint32_t currentImage);
+		void updateUniformBuffer(uint32_t currentImage, float deltaTime);
 
 	private: // descriptor sets
 		void createDescriptorPool();
@@ -130,16 +130,16 @@ namespace Engine
 		size_t currentFrame = 0;
 
 	private: // uniform buffers
-		std::vector<VkBuffer> uniformBuffers;
-		std::vector<VkDeviceMemory> uniformBuffersMemory;
+		//std::vector<VkBuffer> uniformBuffers;
+		//std::vector<VkDeviceMemory> uniformBuffersMemory;
 
-		std::vector<VkBuffer> uniformBuffers1;
-		std::vector<VkDeviceMemory> uniformBuffersMemory1;
+		//std::vector<VkBuffer> uniformBuffers1;
+		//std::vector<VkDeviceMemory> uniformBuffersMemory1;
 
 	private: // descriptor sets
 		VkDescriptorPool descriptorPool;
-		std::vector<VkDescriptorSet> descriptorSets;
-		std::vector<VkDescriptorSet> descriptorSets1;
+		VkDescriptorSet descriptorSets; // global 
+		//std::vector<VkDescriptorSet> descriptorSets1; // per object
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
@@ -153,6 +153,6 @@ namespace Engine
 
 
 		// cube test
-		std::array<Cube, 2> cubes;
+		std::array<Cube, 3> cubes;
 	};
 }

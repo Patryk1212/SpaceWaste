@@ -11,11 +11,15 @@
 
 namespace Engine
 {
-	class Cube
+	struct Cube
 	{
-	public:
-		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 rotation = { 0.0f, 0.0f, 0.0f };
+		UniformBufferObject ubo;
+		
+		//glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 rotation = { 90.0f, 90.0f, 90.0f };
 
+		VkDescriptorSet descriptorSet;
+		std::vector<VkBuffer> uniformBuffer;
+		std::vector<VkDeviceMemory> uniformBuffersMemory;
 	};
 }
