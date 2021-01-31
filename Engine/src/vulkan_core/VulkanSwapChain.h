@@ -5,30 +5,53 @@
 
 #include "core/CameraController.h"
 
-#include "renderer/VulkanVertexBuffer.h"
-#include "renderer/VulkanIndexBuffer.h"
+#include "vulkan_buffers/VulkanVertexBuffer.h"
+#include "vulkan_buffers/VulkanIndexBuffer.h"
+
+#include "renderer/Cube.h"
 
 namespace Engine
 {
 	const std::vector<Vertex> vertices = 
 	{
-			{{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-			{{ 1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-			{{-1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
-			{{ 1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
-	
-			{{-1.0f, -1.0f, 1.0f }, {1.0f, 0.0f, 1.0f}},
-			{{ 1.0f, -1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{ -1.0f, 1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{ 1.0f,  1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
-	
-			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{ 1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 1.0f}},
-			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.0f, 1.0f}},
-	
-			{{ 1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
-			{{ 1.0f, -1.0f,  1.0f}, {0.0f, 1.0f, 1.0f}}
+			{{-1.0f, -1.0f, -1.0f}, {0.6f, 0.75f, 0.9f}},
+			{{ 1.0f, -1.0f, -1.0f}, {0.13f, 0.3f, 0.4f}},
+			{{-1.0f,  1.0f, -1.0f}, {0.6f, 0.75f, 0.9f}},
+			{{ 1.0f,  1.0f, -1.0f}, {0.13f, 0.3f, 0.4f}},
+													  
+			{{-1.0f, -1.0f,  1.0f}, {1.13f, 0.3f, 0.4f}},
+			{{ 1.0f, -1.0f,  1.0f}, {1.6f, 0.75f, 0.9f}},
+			{{-1.0f,  1.0f,  1.0f}, {1.13f, 0.3f, 0.4f}},
+			{{ 1.0f,  1.0f,  1.0f}, {1.6f, 0.75f, 0.9f}},
+													  
+			{{-1.0f, -1.0f, -1.0f}, {1.f, 1.f, 0.4f}},
+			{{ 1.0f, -1.0f, -1.0f}, {1.f, 1.f, 0.9f}},
+			{{-1.0f, -1.0f, -1.0f}, {1.f, 1.f, 0.4f}},
+			{{-1.0f, -1.0f,  1.0f}, {1.f, 1.f, 0.9f}},
+													  
+			{{ 1.0f, -1.0f, -1.0f}, {0.13f, 0.3f, 0.4f}},
+			{{ 1.0f, -1.0f,  1.0f}, {0.6f, 0.75f, 0.9f}}
+	};
+
+	const std::vector<Vertex> vertices1 =
+	{
+			{{-1.0f, -1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f, -1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
+			{{-1.0f,  1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f,  1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
+
+			{{-1.0f, -1.0f,  1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f, -1.0f,  1.0f}, {0.16f, 0.36f, 0.58f}},
+			{{-1.0f,  1.0f,  1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f,  1.0f,  1.0f}, {0.16f, 0.36f, 0.58f}},
+
+			{{-1.0f, -1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f, -1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
+			{{-1.0f, -1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{-1.0f, -1.0f,  1.0f}, {0.16f, 0.36f, 0.58f}},
+
+			{{ 1.0f, -1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
+			{{ 1.0f, -1.0f,  1.0f}, {0.3f, 0.5f, 0.1f}}
 	};
 
 	const std::vector<uint16_t> indices =
@@ -90,7 +113,7 @@ namespace Engine
 	private: // uniforms buffers
 		void createDescriptorSetLayout();
 		void createUniformBuffers();
-		void updateUniformBuffer(uint32_t currentImage);
+		void updateUniformBuffer(uint32_t currentImage, float deltaTime);
 
 	private: // descriptor sets
 		void createDescriptorPool();
@@ -98,10 +121,10 @@ namespace Engine
 
 	private: // swap chain
 		VkSwapchainKHR swapChain;
-
-		std::vector<VkImage> swapChainImages;
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
+
+		std::vector<VkImage> swapChainImages;
 		std::vector<VkImageView> swapChainImageViews;
 
 	private: // graphics pipeline
@@ -127,23 +150,33 @@ namespace Engine
 		const int MAX_FRAMES_IN_FLIGHT = 2;
 		size_t currentFrame = 0;
 
-	private: // uniform buffers
-		std::vector<VkBuffer> uniformBuffers;
-		std::vector<VkDeviceMemory> uniformBuffersMemory;
-
 	private: // descriptor sets
 		VkDescriptorPool descriptorPool;
-		std::vector<VkDescriptorSet> descriptorSets;
+		VkDescriptorSet descriptorSets;
 
-
+		/* - - - - - - - - - - - - - - - - - - - - - - - */
+		std::unique_ptr<VulkanBufferAllocator> bufferAllocator;
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
+		std::unique_ptr<VulkanVertexBuffer> vertexBuffer1;
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 
-		void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-		uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+		void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+
+		/// depth
+		void createDepthResources();
+		VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+		VkFormat findDepthFormat();
+		bool hasStencilComponent(VkFormat format);
+		VkImage depthImage;
+		VkDeviceMemory depthImageMemory;
+		VkImageView depthImageView;
 
 		/// camera
 		CameraController cc;
 
+
+		// cube test
+		std::vector<std::unique_ptr<Cube>> cubes;
 	};
 }
