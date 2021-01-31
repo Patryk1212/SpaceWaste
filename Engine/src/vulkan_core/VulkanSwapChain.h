@@ -14,23 +14,44 @@ namespace Engine
 {
 	const std::vector<Vertex> vertices = 
 	{
-			{{-1.0f, -1.0f, -1.0f}, {0.2f, 1.0f, 1.0f}},
-			{{ 1.0f, -1.0f, -1.0f}, {0.2f, 1.0f, 1.0f}},
-			{{-1.0f,  1.0f, -1.0f}, {0.2f, 1.0f, 1.0f}},
-			{{ 1.0f,  1.0f, -1.0f}, {0.2f, 1.0f, 1.0f}},
+			{{-1.0f, -1.0f, -1.0f}, {0.6f, 0.75f, 0.9f}},
+			{{ 1.0f, -1.0f, -1.0f}, {0.13f, 0.3f, 0.4f}},
+			{{-1.0f,  1.0f, -1.0f}, {0.6f, 0.75f, 0.9f}},
+			{{ 1.0f,  1.0f, -1.0f}, {0.13f, 0.3f, 0.4f}},
 													  
-			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.7f, 0.0f}},
-			{{ 1.0f, -1.0f,  1.0f}, {1.0f, 0.7f, 0.0f}},
-			{{-1.0f,  1.0f,  1.0f}, {1.0f, 0.7f, 0.0f}},
-			{{ 1.0f,  1.0f,  1.0f}, {1.0f, 0.7f, 0.0f}},
+			{{-1.0f, -1.0f,  1.0f}, {1.13f, 0.3f, 0.4f}},
+			{{ 1.0f, -1.0f,  1.0f}, {1.6f, 0.75f, 0.9f}},
+			{{-1.0f,  1.0f,  1.0f}, {1.13f, 0.3f, 0.4f}},
+			{{ 1.0f,  1.0f,  1.0f}, {1.6f, 0.75f, 0.9f}},
 													  
-			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 0.3f}},
-			{{ 1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 0.3f}},
-			{{-1.0f, -1.0f, -1.0f}, {1.0f, 0.8f, 0.3f}},
-			{{-1.0f, -1.0f,  1.0f}, {1.0f, 0.8f, 0.3f}},
+			{{-1.0f, -1.0f, -1.0f}, {1.f, 1.f, 0.4f}},
+			{{ 1.0f, -1.0f, -1.0f}, {1.f, 1.f, 0.9f}},
+			{{-1.0f, -1.0f, -1.0f}, {1.f, 1.f, 0.4f}},
+			{{-1.0f, -1.0f,  1.0f}, {1.f, 1.f, 0.9f}},
 													  
-			{{ 1.0f, -1.0f, -1.0f}, {0.0f, 1.0f, 1.0f}},
-			{{ 1.0f, -1.0f,  1.0f}, {0.0f, 1.0f, 1.0f}}
+			{{ 1.0f, -1.0f, -1.0f}, {0.13f, 0.3f, 0.4f}},
+			{{ 1.0f, -1.0f,  1.0f}, {0.6f, 0.75f, 0.9f}}
+	};
+
+	const std::vector<Vertex> vertices1 =
+	{
+			{{-1.0f, -1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f, -1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
+			{{-1.0f,  1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f,  1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
+
+			{{-1.0f, -1.0f,  1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f, -1.0f,  1.0f}, {0.16f, 0.36f, 0.58f}},
+			{{-1.0f,  1.0f,  1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f,  1.0f,  1.0f}, {0.16f, 0.36f, 0.58f}},
+
+			{{-1.0f, -1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{ 1.0f, -1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
+			{{-1.0f, -1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
+			{{-1.0f, -1.0f,  1.0f}, {0.16f, 0.36f, 0.58f}},
+
+			{{ 1.0f, -1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
+			{{ 1.0f, -1.0f,  1.0f}, {0.3f, 0.5f, 0.1f}}
 	};
 
 	const std::vector<uint16_t> indices =
@@ -136,6 +157,7 @@ namespace Engine
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
 		std::unique_ptr<VulkanBufferAllocator> bufferAllocator;
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
+		std::unique_ptr<VulkanVertexBuffer> vertexBuffer1;
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 
 		void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);

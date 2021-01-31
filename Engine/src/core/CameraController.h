@@ -19,8 +19,10 @@ namespace Engine
 	private:
 		ViewMatrixData viewData;
 		float moveSpeed = 0.01f;
+		glm::vec3 right;
 
 		glm::vec3 direction;
+		glm::vec3 rotation;
 		float yaw = 0.0f;
 		float pitch = 0.0f;
 		float rotationSpeed = 1.0f;

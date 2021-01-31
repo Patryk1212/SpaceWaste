@@ -50,6 +50,7 @@ namespace Engine
 		createFramebuffers();
 
 		vertexBuffer = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices);
+		vertexBuffer1 = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices1); //temp
 		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices);
 
 
@@ -668,13 +669,23 @@ namespace Engine
 
 
 			VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
+			VkBuffer vertexBuffers1[] = { vertexBuffer1->getVertexBuffer() };
+
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);			  
 
-			
+			bool earth = false;
 			for (const auto& cube : cubes)
 			{
+				if (!earth) // temp
+				{
+					earth = true;
+					vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers1, offsets);
+				}
+				else vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+
+
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
 			
 				vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
@@ -736,15 +747,26 @@ namespace Engine
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
+		bool earth = false;
 		for (auto& cube : cubes)
 		{
 			cube->ubo.view = cc.getCamera()->getViewMatrix();
 			cube->ubo.proj = cc.getCamera()->getProjectionMatrix();
 			
-
-			cube->ubo.model =  glm::translate(glm::mat4(1.0f), cube->position);
-			cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-			cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
+			if (!earth)
+			{
+				cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
+				cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation / 3), glm::vec3(0.0f, 1.0f, 0.0f));
+				cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
+				earth = true;
+			}
+			else
+			{
+				cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
+				cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+				cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
+			}
+			
 
 			void* data;
 			vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(currentImage), 0, sizeof(cube->ubo), 0, &data);
