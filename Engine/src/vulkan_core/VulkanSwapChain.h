@@ -10,6 +10,10 @@
 
 #include "renderer/Cube.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
+
 namespace Engine
 {
 	const std::vector<Vertex> vertices = 
@@ -160,6 +164,8 @@ namespace Engine
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer1;
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 
+
+		/* - - - - - - - - - - - - - - - - - - - - - - - */
 		void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 		VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 

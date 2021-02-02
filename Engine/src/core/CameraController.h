@@ -27,6 +27,9 @@ namespace Engine
 		float pitch = 0.0f;
 		float rotationSpeed = 1.0f;
 
+
+		float phi{ 3.14f / 2 }, theta{ 0 };
+
 	private:
 		std::unique_ptr<Camera> camera;
 	};

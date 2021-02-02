@@ -2,6 +2,9 @@
 #include "VulkanSwapChain.h"
 
 #include "vulkan_buffers/VulkanShader.h"
+#include "VulkanContext.h"
+
+
 
 namespace Engine
 {
@@ -60,6 +63,100 @@ namespace Engine
 		createDescriptorSets();
 		createCommandBuffers();
 		createSyncObjects();
+
+		/// imgui shit
+
+		////step one
+		//VkDescriptorPoolSize pool_sizes[] =
+		//{
+		//	{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+		//	{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+		//};
+		//
+		//VkDescriptorPoolCreateInfo pool_info = {};
+		//pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		//pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+		//pool_info.maxSets = 1000;
+		//pool_info.poolSizeCount = std::size(pool_sizes);
+		//pool_info.pPoolSizes = pool_sizes;
+		//
+		//VkDescriptorPool imguiPool;
+		//vkCreateDescriptorPool(logicalDeviceHandle, &pool_info, nullptr, &imguiPool);
+		//
+		//
+		////step two
+		//ImGui::CreateContext();
+		//ImGui_ImplGlfw_InitForVulkan(window->getWindow(), true);
+		//
+		//ImGui_ImplVulkan_InitInfo init_info = {};
+		//init_info.Instance = VulkanContext::getInstance();
+		//init_info.PhysicalDevice = physicalDeviceHandle;
+		//init_info.Device = logicalDeviceHandle;
+		//init_info.QueueFamily = 1;
+		//init_info.Queue = graphicsQueue;
+		//init_info.PipelineCache = nullptr; //g_PipelineCache;
+		//init_info.DescriptorPool = imguiPool;
+		//init_info.Allocator = nullptr; //g_Allocator;
+		//init_info.MinImageCount = 2;
+		//init_info.ImageCount = static_cast<uint32_t>(swapChainImages.size());;
+		//init_info.CheckVkResultFn = nullptr;// check_vk_result;
+		//ImGui_ImplVulkan_Init(&init_info, renderPass);
+		//
+		//// step 3
+		//VkCommandBuffer cmdBuffer;
+		//
+		//VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
+		//cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		//cmdBufAllocateInfo.commandPool = commandPool;
+		//cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		//cmdBufAllocateInfo.commandBufferCount = 1;
+		//
+		//vkAllocateCommandBuffers(logicalDeviceHandle, &cmdBufAllocateInfo, &cmdBuffer);
+		//
+		//// If requested, also start the new command buffer
+		//
+		//	VkCommandBufferBeginInfo cmdBufferBeginInfo{};
+		//	cmdBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		//	vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo);
+		//
+		//
+		//
+		//VkCommandBuffer commandBuffer = cmdBuffer;// vulkanContext->GetCurrentDevice()->GetCommandBuffer(true);
+		//ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+		//
+		//// step 4
+		//VkSubmitInfo submitInfo = {};
+		//submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		//submitInfo.commandBufferCount = 1;
+		//submitInfo.pCommandBuffers = &commandBuffer;
+		//
+		//// Create fence to ensure that the command buffer has finished executing
+		//VkFenceCreateInfo fenceCreateInfo = {};
+		//fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		//fenceCreateInfo.flags = 0;
+		//VkFence fence;
+		//vkCreateFence(logicalDeviceHandle, &fenceCreateInfo, nullptr, &fence);
+		//
+		//// Submit to the queue
+		//vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence);
+		//// Wait for the fence to signal that command buffer has finished executing
+		//vkWaitForFences(logicalDeviceHandle, 1, &fence, VK_TRUE, 10000000);
+		//
+		//vkDestroyFence(logicalDeviceHandle, fence, nullptr);
+		//vkFreeCommandBuffers(logicalDeviceHandle, commandPool, 1, &commandBuffer);
+		//
+		//
+		//vkDeviceWaitIdle(logicalDeviceHandle);
+		//ImGui_ImplVulkan_DestroyFontUploadObjects();
 	}
 
 	void VulkanSwapChain::onUpdate(float deltaTime)
@@ -105,6 +202,17 @@ namespace Engine
 
 		vkResetFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame]);
 
+		//bool show_demo_window = true;
+		//ImGui_ImplVulkan_NewFrame();
+		//ImGui_ImplGlfw_NewFrame();
+		//ImGui::NewFrame();
+		////
+		////// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+		////if (true)
+		//ImGui::ShowDemoWindow(&show_demo_window);
+		//
+		
+
 		if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to submit draw command buffer!");
@@ -122,8 +230,10 @@ namespace Engine
 
 		presentInfo.pImageIndices = &imageIndex;
 
-		result = vkQueuePresentKHR(presentQueue, &presentInfo);
 
+		result = vkQueuePresentKHR(presentQueue, &presentInfo);
+		//ImGui::Render();
+		//ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[imageIndex], graphicsPipeline);
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windowHandle->framebufferResized)
 		{
 			windowHandle->framebufferResized = false;

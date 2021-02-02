@@ -3,6 +3,7 @@
 
 void MainLayer::onAttach()
 {
+	
 }
 
 void MainLayer::onUpdate(float deltaTime)

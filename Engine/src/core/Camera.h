@@ -2,12 +2,6 @@
 
 #include "vulkan_core/VulkanUtility.h"
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <GLFW/glfw3.h>
 
 struct ViewMatrixData
@@ -33,7 +27,7 @@ namespace Engine
 		Camera(const ViewMatrixData& vData);
 		~Camera() = default;
 
-		void onUpdateViewMatrix(const ViewMatrixData& data);
+		void onUpdateViewMatrix(const ViewMatrixData& data, float phi, float theta);
 
 		const glm::mat4& getProjectionMatrix() const { return proj; }
 		const glm::mat4& getViewMatrix() const { return view; }
