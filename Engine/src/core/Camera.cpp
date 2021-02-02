@@ -12,15 +12,20 @@ namespace Engine
 
 	void Camera::onUpdateViewMatrix(const ViewMatrixData& data, float phi, float theta)
 	{
-		float DistanceToOrigin = data.cameraPos.z;
+		viewData = data;
+
+		float DistanceToOrigin = viewData.cameraPos.z;
 		
 
 		float x = DistanceToOrigin * sin(phi) * cos(theta);
 		float y = DistanceToOrigin * cos(phi);
 		float z = DistanceToOrigin * sin(phi) * sin(theta);
 
-		viewData = data;
+		glm::vec3 orbit = { x, y, z };
+
+		viewData.cameraPos = orbit;
+		
 		//view = glm::lookAt(viewData.cameraPos, viewData.cameraPos + viewData.cameraFront, viewData.cameraUp);
-		view = glm::lookAt(glm::vec3(x, y, z), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		view = glm::lookAt(orbit, glm::vec3(0, 0, 0) /*target*/ , viewData.cameraUp);
 	}
 }

@@ -184,5 +184,8 @@ namespace Engine
 
 		// cube test
 		std::vector<std::unique_ptr<Cube>> cubes;
+
+		//imgui
+		VkCommandBuffer cmdBuffer;
 	};
 }

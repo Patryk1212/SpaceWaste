@@ -9,12 +9,7 @@ Engine::CameraController::CameraController()
 	viewData.cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	viewData.cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	//direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	//direction.y = sin(glm::radians(pitch));
-	//direction.z = -1.0f;
-	//viewData.cameraFront = glm::normalize(direction);
-
-	rotation = { 1.0f, 1.0f, 1.0f };
+	//rotation = { 1.0f, 1.0f, 1.0f };
 	camera = std::make_unique<Camera>(viewData);
 }
 
@@ -30,13 +25,11 @@ void Engine::CameraController::onUpdate(float deltaTime)
 	//else if (Input::isKeyPressed(EN_KEY_W))
 		//cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * deltaTime; // right
 
-	direction.x = -cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
-	direction.y = sin(glm::radians(rotation.x));
-	direction.z = -1;
-
-	viewData.cameraFront = glm::normalize(direction);
-	//right = glm::normalize(glm::cross(viewData.cameraFront, viewData.cameraUp));
-	//viewData.cameraUp = glm::normalize(glm::cross(right, viewData.cameraFront));
+	//direction.x = -cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
+	//direction.y = sin(glm::radians(rotation.x));
+	//direction.z = -1;
+	//
+	//viewData.cameraFront = glm::normalize(direction);
 
 	camera->onUpdateViewMatrix(viewData, phi, theta);
 }
@@ -47,17 +40,17 @@ void Engine::CameraController::onEvent(Event& event)
 	
 	float help = 100.0f; // delta time in future
 
-	// move
+	// move works 
 	if (e.getKeyCode() == EN_KEY_Q)
 	{
-		viewData.cameraPos -= moveSpeed * viewData.cameraFront * help;
+		viewData.cameraPos -= zoomSpeed * viewData.cameraFront * help;
 	}
 
 	if (e.getKeyCode() == EN_KEY_E)
 	{
-		viewData.cameraPos += moveSpeed * viewData.cameraFront * help;
+		viewData.cameraPos += zoomSpeed * viewData.cameraFront * help;
 	}
-	//// works 
+
 
 
 	if (e.getKeyCode() == EN_KEY_W)
@@ -80,28 +73,29 @@ void Engine::CameraController::onEvent(Event& event)
 		viewData.cameraPos -= glm::normalize(glm::cross(viewData.cameraFront, viewData.cameraUp)) * moveSpeed * help;
 	}
 
-	// rot
-	float rotSpped = 0.1f;
+	// rot works 
 	if (e.getKeyCode() == EN_KEY_LEFT)
 	{
-		theta += rotSpped;
+		theta += rotationSpeed;
 		//rotation.y -= rotSpped;
 	}
 
 	if (e.getKeyCode() == EN_KEY_RIGHT)
 	{
-		theta -= rotSpped;
+		theta -= rotationSpeed;
 		//rotation.y += rotSpped;
 	}
 
 	if (e.getKeyCode() == EN_KEY_UP)
 	{
-		phi += rotSpped;
+		if (phi > 2.5f) phi = 2.5f;
+		else phi += rotationSpeed;
 	}
 
 	if (e.getKeyCode() == EN_KEY_DOWN)
-	{		
+	{	
+		if (phi < 0.5f) phi = 0.5f;
+		else phi -= rotationSpeed;
 		//rotation.x += rotSpped;
-		phi -=  rotSpped;
 	}
 }
