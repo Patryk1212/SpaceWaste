@@ -4,8 +4,6 @@
 #include "vulkan_buffers/VulkanShader.h"
 #include "VulkanContext.h"
 
-
-
 namespace Engine
 {
 	VulkanSwapChain::VulkanSwapChain(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
@@ -58,11 +56,13 @@ namespace Engine
 			cubes.emplace_back(std::move(temp));
 		}
 
+		/////////////////////////////////////////////////////////////////
+
 		createSwapChain();
 		createImageViews();
 
 		createRenderPass();
-		createImGuiRenderPass(); // imgui render pass !!!!
+		
 		createDescriptorSetLayout();
 		createGraphicsPipeline();
 		createCommandPool();
@@ -82,10 +82,10 @@ namespace Engine
 		createDescriptorSets();
 		createCommandBuffers();
 		createSyncObjects();
-		createSyncObjects1();
+		//createSyncObjects1();
 
 		/// imgui shit
-
+		createImGuiRenderPass();
 		createCommandPoolImgui();
 
 		////step one
@@ -132,7 +132,11 @@ namespace Engine
 		init_info.CheckVkResultFn = nullptr;// check_vk_result;
 		ImGui_ImplVulkan_Init(&init_info, imguiRenderPass);
 		
-		// step from google
+		VkCommandBuffer command_buffer = beginSingleTimeCommands();
+		ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+		endSingleTimeCommands(command_buffer);
+
+		// step from google // dont know if needed
 		// Use any command queue
 		//VkCommandPool command_pool = commandPool;
 		//VkCommandBuffer command_buffer = commandBuffers[0];
@@ -155,55 +159,51 @@ namespace Engine
 		//vkDeviceWaitIdle(logicalDeviceHandle);
 		//ImGui_ImplVulkan_DestroyFontUploadObjects();
 
-		// step 3 command buffer create
-		cmdBuffer.resize(swapChainFramebuffers.size());
-
-		VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
-		cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		cmdBufAllocateInfo.commandPool = imguiCommandPool;
-		cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		cmdBufAllocateInfo.commandBufferCount = (uint32_t)cmdBuffer.size();
-
-		
-
-		
-
-		for (int i = 0; i < static_cast<uint32_t>(swapChainImages.size()); i++)
-		{
-			VkRenderPassBeginInfo renderPassInfo{};
-			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = imguiRenderPass;
-			renderPassInfo.framebuffer = swapChainFramebuffers[i];
-			renderPassInfo.renderArea.offset = { 0, 0 };
-			renderPassInfo.renderArea.extent = swapChainExtent;
-
-			std::array<VkClearValue, 2> clearValues{};
-			clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-			clearValues[1].depthStencil = { 1.0f, 0 };
-
-			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-			renderPassInfo.pClearValues = clearValues.data();
-
-			vkAllocateCommandBuffers(logicalDeviceHandle, &cmdBufAllocateInfo, &cmdBuffer[i]);
-
-			// If requested, also start the new command buffer
-
-			VkCommandBufferBeginInfo cmdBufferBeginInfo{};
-			cmdBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			cmdBufferBeginInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; // added from reddit
-			vkBeginCommandBuffer(cmdBuffer[i], &cmdBufferBeginInfo);
-
-				//vkCmdBeginRenderPass(cmdBuffer[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-				
-				ImGui_ImplVulkan_CreateFontsTexture(cmdBuffer[i]);
-
-				//vkCmdEndRenderPass(cmdBuffer[i]);
-
-			if (vkEndCommandBuffer(cmdBuffer[i]) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to record command buffer!");
-			}
-		}
+		//**** this should be fine // step 3 command buffer create
+		//cmdBuffer.resize(swapChainFramebuffers.size());
+		//
+		//VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
+		//cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		//cmdBufAllocateInfo.commandPool = imguiCommandPool;
+		//cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		//cmdBufAllocateInfo.commandBufferCount = (uint32_t)cmdBuffer.size();
+		//
+		//for (int i = 0; i < static_cast<uint32_t>(swapChainImages.size()); i++)
+		//{
+		//	VkRenderPassBeginInfo renderPassInfo{};
+		//	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		//	renderPassInfo.renderPass = imguiRenderPass;
+		//	renderPassInfo.framebuffer = swapChainFramebuffers[i];
+		//	renderPassInfo.renderArea.offset = { 0, 0 };
+		//	renderPassInfo.renderArea.extent = swapChainExtent;
+		//
+		//	std::array<VkClearValue, 2> clearValues{};
+		//	clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+		//	clearValues[1].depthStencil = { 1.0f, 0 };
+		//
+		//	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		//	renderPassInfo.pClearValues = clearValues.data();
+		//
+		//	vkAllocateCommandBuffers(logicalDeviceHandle, &cmdBufAllocateInfo, &cmdBuffer[i]);
+		//
+		//	// If requested, also start the new command buffer
+		//
+		//	VkCommandBufferBeginInfo cmdBufferBeginInfo{};
+		//	cmdBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		//	cmdBufferBeginInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; // added from reddit
+		//	vkBeginCommandBuffer(cmdBuffer[i], &cmdBufferBeginInfo);
+		//
+		//		//vkCmdBeginRenderPass(cmdBuffer[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		//		
+		//		ImGui_ImplVulkan_CreateFontsTexture(cmdBuffer[i]);
+		//
+		//		//vkCmdEndRenderPass(cmdBuffer[i]);
+		//
+		//	if (vkEndCommandBuffer(cmdBuffer[i]) != VK_SUCCESS)
+		//	{
+		//		throw std::runtime_error("failed to record command buffer!");
+		//	}
+		//}
 		
 
 		//// step 4
@@ -236,8 +236,7 @@ namespace Engine
 	void VulkanSwapChain::onUpdate(float deltaTime)
 	{
 		vkWaitForFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-
-		uint32_t imageIndex;
+		
 		VkResult result = vkAcquireNextImageKHR(logicalDeviceHandle, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
@@ -258,6 +257,26 @@ namespace Engine
 
 		updateUniformBuffer(imageIndex, deltaTime);
 
+		/* imgui */
+		bool show_demo_window = true;
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		////
+		////// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+		////if (true)
+		ImGui::ShowDemoWindow(&show_demo_window);
+
+		ImGui::Render();
+
+		ImDrawData* draw_data = ImGui::GetDrawData();
+		//const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
+		//if (!is_minimized)
+		//{
+			//memcpy(&windowHandle->ClearValue.color.float32[0], &clear_color, 4 * sizeof(float));
+		frameRender(draw_data);
+		//
+
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -267,8 +286,11 @@ namespace Engine
 		submitInfo.pWaitSemaphores = waitSemaphores;
 		submitInfo.pWaitDstStageMask = waitStages;
 
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+		std::array<VkCommandBuffer, 2> submitCommandBuffers =
+		{ commandBuffers[imageIndex], cmdBuffer[imageIndex] };
+
+		submitInfo.commandBufferCount = static_cast<uint32_t>(submitCommandBuffers.size());
+		submitInfo.pCommandBuffers = submitCommandBuffers.data();// &commandBuffers[imageIndex];
 
 		VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
 		submitInfo.signalSemaphoreCount = 1;
@@ -303,29 +325,7 @@ namespace Engine
 		else if (result != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to present swap chain image!");
-		}
-
-
-		/* imgui */
-		//bool show_demo_window = true;
-		//ImGui_ImplVulkan_NewFrame();
-		//ImGui_ImplGlfw_NewFrame();
-		//ImGui::NewFrame();
-		////
-		////// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-		////if (true)
-		//ImGui::ShowDemoWindow(&show_demo_window);
-		//
-		//ImGui::Render();
-		//
-		//
-		//ImDrawData* draw_data = ImGui::GetDrawData();
-		//const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
-		//if (!is_minimized)
-		//{
-			//memcpy(&windowHandle->ClearValue.color.float32[0], &clear_color, 4 * sizeof(float));
-			//FrameRender(draw_data);
-		//
+		}	
 		
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
@@ -385,31 +385,31 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::createSyncObjects1()
-	{
-		imageAvailableSemaphores1.resize(MAX_FRAMES_IN_FLIGHT);
-		renderFinishedSemaphores1.resize(MAX_FRAMES_IN_FLIGHT);
-		inFlightFences1.resize(MAX_FRAMES_IN_FLIGHT);
-		imagesInFlight1.resize(swapChainImages.size(), VK_NULL_HANDLE);
-
-
-		VkSemaphoreCreateInfo semaphoreInfo{};
-		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-		VkFenceCreateInfo fenceInfo{};
-		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
-		{
-			if (vkCreateSemaphore(logicalDeviceHandle, &semaphoreInfo, nullptr, &imageAvailableSemaphores1[i]) != VK_SUCCESS ||
-				vkCreateSemaphore(logicalDeviceHandle, &semaphoreInfo, nullptr, &renderFinishedSemaphores1[i]) != VK_SUCCESS ||
-				vkCreateFence(logicalDeviceHandle, &fenceInfo, nullptr, &inFlightFences1[i]) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to create synchronization objects for a frame!");
-			}
-		}
-	}
+	//void VulkanSwapChain::createSyncObjects1()
+	//{
+	//	imageAvailableSemaphores1.resize(MAX_FRAMES_IN_FLIGHT);
+	//	renderFinishedSemaphores1.resize(MAX_FRAMES_IN_FLIGHT);
+	//	inFlightFences1.resize(MAX_FRAMES_IN_FLIGHT);
+	//	imagesInFlight1.resize(swapChainImages.size(), VK_NULL_HANDLE);
+	//
+	//
+	//	VkSemaphoreCreateInfo semaphoreInfo{};
+	//	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+	//
+	//	VkFenceCreateInfo fenceInfo{};
+	//	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	//	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+	//
+	//	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	//	{
+	//		if (vkCreateSemaphore(logicalDeviceHandle, &semaphoreInfo, nullptr, &imageAvailableSemaphores1[i]) != VK_SUCCESS ||
+	//			vkCreateSemaphore(logicalDeviceHandle, &semaphoreInfo, nullptr, &renderFinishedSemaphores1[i]) != VK_SUCCESS ||
+	//			vkCreateFence(logicalDeviceHandle, &fenceInfo, nullptr, &inFlightFences1[i]) != VK_SUCCESS)
+	//		{
+	//			throw std::runtime_error("failed to create synchronization objects for a frame!");
+	//		}
+	//	}
+	//}
 
 	void VulkanSwapChain::recreateSwapChain()
 	{
@@ -420,6 +420,11 @@ namespace Engine
 			glfwGetFramebufferSize(windowHandle->getWindow(), &width, &height);
 			glfwWaitEvents();
 		}
+
+		//ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
+		//ImGui_ImplVulkanH_CreateWindow(g_Instance, g_PhysicalDevice, g_Device, &g_MainWindowData,
+		//	g_QueueFamily, g_Allocator, g_SwapChainResizeWidth, g_SwapChainResizeHeight, g_MinImageCount);
+		//g_MainWindowData.FrameIndex = 0;
 
 		vkDeviceWaitIdle(logicalDeviceHandle);
 
@@ -746,7 +751,7 @@ namespace Engine
 		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		VkAttachmentReference colorAttachmentRef{};
 		colorAttachmentRef.attachment = 0;
@@ -1158,54 +1163,37 @@ namespace Engine
 		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;// VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-		VkAttachmentDescription depthAttachment = {};
-		depthAttachment.format = findDepthFormat();
-		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		VkAttachmentReference colorAttachmentRef = {};
 		colorAttachmentRef.attachment = 0;
 		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-		VkAttachmentReference depthAttachmentRef = {};
-		depthAttachmentRef.attachment = 1;
-		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
 		VkSubpassDescription subpass = {};
 		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		subpass.colorAttachmentCount = 1;
 		subpass.pColorAttachments = &colorAttachmentRef;
-		subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
 		VkSubpassDependency dependency = {};
 		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 		dependency.dstSubpass = 0;
-		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.srcAccessMask = 0;
+		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;// VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		dependency.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-		std::array<VkAttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
-		VkRenderPassCreateInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-		renderPassInfo.pAttachments = attachments.data();
-		renderPassInfo.subpassCount = 1;
-		renderPassInfo.pSubpasses = &subpass;
-		//        renderPassInfo.dependencyCount = 1;
-		//        renderPassInfo.pDependencies = &dependency;
-
-		if (vkCreateRenderPass(logicalDeviceHandle, &renderPassInfo, nullptr, &imguiRenderPass) != VK_SUCCESS) 
+		VkRenderPassCreateInfo info = {};
+		info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		info.attachmentCount = 1;
+		info.pAttachments = &colorAttachment;
+		info.subpassCount = 1;
+		info.pSubpasses = &subpass;
+		info.dependencyCount = 1;
+		info.pDependencies = &dependency;
+		if (vkCreateRenderPass(logicalDeviceHandle, &info, nullptr, &imguiRenderPass) != VK_SUCCESS)
 		{
-			throw std::runtime_error("failed to create render pass!");
+			throw std::runtime_error("Could not create Dear ImGui's render pass");
 		}
 	}
 }
