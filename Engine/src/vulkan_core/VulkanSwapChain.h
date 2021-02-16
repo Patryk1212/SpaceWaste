@@ -2,6 +2,8 @@
 
 #include "VulkanSurface.h"
 #include "VulkanUtility.h"
+#include "dear_imgui/ImguiLayer.h"
+
 
 #include "core/CameraController.h"
 
@@ -10,9 +12,6 @@
 
 #include "renderer/Cube.h"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_vulkan.h"
 
 namespace Engine
 {
@@ -124,21 +123,13 @@ namespace Engine
 		void createDescriptorSets();
 
 	private: // swap chain
-		VkSwapchainKHR swapChain;
-		VkFormat swapChainImageFormat;
-		VkExtent2D swapChainExtent;
-
-		std::vector<VkImage> swapChainImages;
-		std::vector<VkImageView> swapChainImageViews;
+		SwapChainData swapChainData;
 
 	private: // graphics pipeline
 		VkPipeline graphicsPipeline;
 		VkDescriptorSetLayout descriptorSetLayout;
 		VkPipelineLayout pipelineLayout;
 		VkRenderPass renderPass;
-
-	private: // frame buffer
-		std::vector<VkFramebuffer> swapChainFramebuffers;
 
 	private: // command pool
 		VkCommandPool commandPool;
@@ -152,11 +143,10 @@ namespace Engine
 		std::vector<VkFence> inFlightFences;
 		std::vector<VkFence> imagesInFlight;
 		const int MAX_FRAMES_IN_FLIGHT = 2;
-		size_t currentFrame = 0;
+		uint32_t currentFrame = 0;
 
 	private: // descriptor sets
 		VkDescriptorPool descriptorPool;
-		VkDescriptorSet descriptorSets;
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
 		std::unique_ptr<VulkanBufferAllocator> bufferAllocator;
@@ -165,7 +155,14 @@ namespace Engine
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 
 
+		std::unique_ptr<ImguiLayer> imguiLayer;
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
+		
+		/* TO DO: */
+		// depth buffer seperate class
+		// commandbuffer class
+		// swapchain class
+
 		void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 		VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 
@@ -181,11 +178,8 @@ namespace Engine
 		/// camera
 		CameraController cc;
 
-
 		// cube test
 		std::vector<std::unique_ptr<Cube>> cubes;
 
-		//imgui
-		VkCommandBuffer cmdBuffer;
 	};
 }

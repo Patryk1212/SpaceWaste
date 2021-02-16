@@ -4,8 +4,6 @@
 #include "vulkan_buffers/VulkanShader.h"
 #include "VulkanContext.h"
 
-
-
 namespace Engine
 {
 	VulkanSwapChain::VulkanSwapChain(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
@@ -40,10 +38,31 @@ namespace Engine
 			cubes.emplace_back(std::move(temp));
 		}
 
+		glm::vec2 ring1{ 70.0f, 90.0f };
+		float rho1, theta1;
+
+		for (int i = 0; i < 800; i++)
+		{
+			auto temp = std::make_unique<Cube>();
+
+			glm::vec3 pos;
+			rho1 = sqrt((pow(ring1[1], 2.0f) - pow(ring1[0], 2.0f)) * uniformDist(rndGenerator) + pow(ring1[0], 2.0f));
+			theta1 = 2.0 * 3.14 * uniformDist(rndGenerator);
+			pos = glm::vec3(rho1 * cos(theta1), uniformDist(rndGenerator) * 0.5f - 0.25f, rho1 * sin(theta1));
+			
+			temp->scale = { 0.1f, 0.1f, 0.1f };
+			temp->position = pos;
+
+			cubes.emplace_back(std::move(temp));
+		}
+
+		/////////////////////////////////////////////////////////////////
+
 		createSwapChain();
 		createImageViews();
 
 		createRenderPass();
+		
 		createDescriptorSetLayout();
 		createGraphicsPipeline();
 		createCommandPool();
@@ -64,112 +83,14 @@ namespace Engine
 		createCommandBuffers();
 		createSyncObjects();
 
-		/// imgui shit
-
-		////step one
-		VkDescriptorPoolSize pool_sizes[] =
-		{
-			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-			{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
-		};
-		
-		VkDescriptorPoolCreateInfo pool_info = {};
-		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		pool_info.maxSets = 1000;
-		pool_info.poolSizeCount = std::size(pool_sizes);
-		pool_info.pPoolSizes = pool_sizes;
-		
-		VkDescriptorPool imguiPool;
-		vkCreateDescriptorPool(logicalDeviceHandle, &pool_info, nullptr, &imguiPool);
-		
-		
-		//step two
-		ImGui::CreateContext();
-		ImGui_ImplGlfw_InitForVulkan(window->getWindow(), true);
-		
-		ImGui_ImplVulkan_InitInfo init_info = {};
-		init_info.Instance = VulkanContext::getInstance();
-		init_info.PhysicalDevice = physicalDeviceHandle;
-		init_info.Device = logicalDeviceHandle;
-		init_info.QueueFamily = 1;
-		init_info.Queue = graphicsQueue;
-		init_info.PipelineCache = nullptr; //g_PipelineCache;
-		init_info.DescriptorPool = imguiPool;
-		init_info.Allocator = nullptr; //g_Allocator;
-		init_info.MinImageCount = 2;
-		init_info.ImageCount = static_cast<uint32_t>(swapChainImages.size());;
-		init_info.CheckVkResultFn = nullptr;// check_vk_result;
-		ImGui_ImplVulkan_Init(&init_info, renderPass);
-		
-		// step 3
-		VkCommandBuffer cmdBuffer;
-		
-		VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
-		cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		cmdBufAllocateInfo.commandPool = commandPool;
-		cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		cmdBufAllocateInfo.commandBufferCount = 1;
-		
-		vkAllocateCommandBuffers(logicalDeviceHandle, &cmdBufAllocateInfo, &cmdBuffer);
-		
-		// If requested, also start the new command buffer
-		
-			VkCommandBufferBeginInfo cmdBufferBeginInfo{};
-			cmdBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo);
-		
-		
-		
-		cmdBuffer;// vulkanContext->GetCurrentDevice()->GetCommandBuffer(true);
-		ImGui_ImplVulkan_CreateFontsTexture(cmdBuffer);
-		
-		if (vkEndCommandBuffer(cmdBuffer) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to record command buffer!");
-		}
-
-		//// step 4
-		//VkSubmitInfo submitInfo = {};
-		//submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		//submitInfo.commandBufferCount = 1;
-		//submitInfo.pCommandBuffers = &commandBuffer;
-		//
-		//// Create fence to ensure that the command buffer has finished executing
-		//VkFenceCreateInfo fenceCreateInfo = {};
-		//fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		//fenceCreateInfo.flags = 0;
-		//VkFence fence;
-		//vkCreateFence(logicalDeviceHandle, &fenceCreateInfo, nullptr, &fence);
-		//
-		//// Submit to the queue
-		//vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence);
-		//// Wait for the fence to signal that command buffer has finished executing
-		//vkWaitForFences(logicalDeviceHandle, 1, &fence, VK_TRUE, 10000000);
-		//
-		//vkDestroyFence(logicalDeviceHandle, fence, nullptr);
-		//vkFreeCommandBuffers(logicalDeviceHandle, commandPool, 1, &commandBuffer);
-		//
-		//
-		//vkDeviceWaitIdle(logicalDeviceHandle);
-		ImGui_ImplVulkan_DestroyFontUploadObjects();
+		imguiLayer = std::make_unique<ImguiLayer>(window, logicalDevice, physicalDevice, graphicsQueue, swapChainData);
 	}
 
 	void VulkanSwapChain::onUpdate(float deltaTime)
 	{
 		vkWaitForFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-
-		uint32_t imageIndex;
-		VkResult result = vkAcquireNextImageKHR(logicalDeviceHandle, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+		
+		VkResult result = vkAcquireNextImageKHR(logicalDeviceHandle, swapChainData.swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &swapChainData.imageIndex);
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
 		{
@@ -181,13 +102,18 @@ namespace Engine
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		if (imagesInFlight[imageIndex] != VK_NULL_HANDLE)
+		if (imagesInFlight[swapChainData.imageIndex] != VK_NULL_HANDLE)
 		{
-			vkWaitForFences(logicalDeviceHandle, 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+			vkWaitForFences(logicalDeviceHandle, 1, &imagesInFlight[swapChainData.imageIndex], VK_TRUE, UINT64_MAX);
 		}
-		imagesInFlight[imageIndex] = inFlightFences[currentFrame];
+		imagesInFlight[swapChainData.imageIndex] = inFlightFences[currentFrame];
 
-		updateUniformBuffer(imageIndex, deltaTime);
+		updateUniformBuffer(swapChainData.imageIndex, deltaTime);
+
+		/* imgui */
+		imguiLayer->startFrame();
+		imguiLayer->endFrame(swapChainData.imageIndex);
+
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -198,26 +124,17 @@ namespace Engine
 		submitInfo.pWaitSemaphores = waitSemaphores;
 		submitInfo.pWaitDstStageMask = waitStages;
 
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+		std::array<VkCommandBuffer, 2> submitCommandBuffers =
+		{ commandBuffers[swapChainData.imageIndex], imguiLayer->getCurrentlyUsedCmdBuffer(swapChainData.imageIndex) };
+
+		submitInfo.commandBufferCount = static_cast<uint32_t>(submitCommandBuffers.size());
+		submitInfo.pCommandBuffers = submitCommandBuffers.data();// &commandBuffers[imageIndex];
 
 		VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = signalSemaphores;
 
 		vkResetFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame]);
-
-		bool show_demo_window = true;
-		ImGui_ImplVulkan_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		//
-		//// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-		//if (true)
-		ImGui::ShowDemoWindow(&show_demo_window);
-		
-		ImGui::Render();
-		//ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[imageIndex]);
 
 		if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
 		{
@@ -230,12 +147,11 @@ namespace Engine
 		presentInfo.waitSemaphoreCount = 1;
 		presentInfo.pWaitSemaphores = signalSemaphores;
 
-		VkSwapchainKHR swapChains[] = { swapChain };
+		VkSwapchainKHR swapChains[] = { swapChainData.swapChain };
 		presentInfo.swapchainCount = 1;
 		presentInfo.pSwapchains = swapChains;
 
-		presentInfo.pImageIndices = &imageIndex;
-
+		presentInfo.pImageIndices = &swapChainData.imageIndex;
 
 		result = vkQueuePresentKHR(presentQueue, &presentInfo);
 		
@@ -247,8 +163,8 @@ namespace Engine
 		else if (result != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to present swap chain image!");
-		}
-
+		}	
+		
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
 		cc.onUpdate(deltaTime);
@@ -258,8 +174,8 @@ namespace Engine
 	{
 		cc.onEvent(event);
 	}
-
-	void VulkanSwapChain::onShutDown()
+	
+	void VulkanSwapChain::onShutDown() // needs to be done properly
 	{
 		cleanupSwapChain();
 
@@ -279,6 +195,8 @@ namespace Engine
 		}
 
 		vkDestroyCommandPool(logicalDeviceHandle, commandPool, nullptr);
+
+		imguiLayer->onShutDown();
 	}
 
 	void VulkanSwapChain::createSyncObjects()
@@ -286,7 +204,7 @@ namespace Engine
 		imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 		renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 		inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
-		imagesInFlight.resize(swapChainImages.size(), VK_NULL_HANDLE);
+		imagesInFlight.resize(swapChainData.swapChainImages.size(), VK_NULL_HANDLE);
 
 
 		VkSemaphoreCreateInfo semaphoreInfo{};
@@ -317,6 +235,11 @@ namespace Engine
 			glfwWaitEvents();
 		}
 
+		//ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
+		//ImGui_ImplVulkanH_CreateWindow(g_Instance, g_PhysicalDevice, g_Device, &g_MainWindowData,
+		//	g_QueueFamily, g_Allocator, g_SwapChainResizeWidth, g_SwapChainResizeHeight, g_MinImageCount);
+		//g_MainWindowData.FrameIndex = 0;
+
 		vkDeviceWaitIdle(logicalDeviceHandle);
 
 		cleanupSwapChain();
@@ -334,9 +257,9 @@ namespace Engine
 
 	void VulkanSwapChain::cleanupSwapChain()
 	{
-		for (size_t i = 0; i < swapChainFramebuffers.size(); i++)
+		for (size_t i = 0; i < swapChainData.swapChainFramebuffers.size(); i++)
 		{
-			vkDestroyFramebuffer(logicalDeviceHandle, swapChainFramebuffers[i], nullptr);
+			vkDestroyFramebuffer(logicalDeviceHandle, swapChainData.swapChainFramebuffers[i], nullptr);
 		}
 
 		vkFreeCommandBuffers(logicalDeviceHandle, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
@@ -345,14 +268,14 @@ namespace Engine
 		vkDestroyPipelineLayout(logicalDeviceHandle, pipelineLayout, nullptr);
 		vkDestroyRenderPass(logicalDeviceHandle, renderPass, nullptr);
 
-		for (size_t i = 0; i < swapChainImageViews.size(); i++)
+		for (size_t i = 0; i < swapChainData.swapChainImageViews.size(); i++)
 		{
-			vkDestroyImageView(logicalDeviceHandle, swapChainImageViews[i], nullptr);
+			vkDestroyImageView(logicalDeviceHandle, swapChainData.swapChainImageViews[i], nullptr);
 		}
 
-		vkDestroySwapchainKHR(logicalDeviceHandle, swapChain, nullptr);
+		vkDestroySwapchainKHR(logicalDeviceHandle, swapChainData.swapChain, nullptr);
 
-		for (size_t i = 0; i < swapChainImages.size(); i++)
+		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
 		{
 			//vkDestroyBuffer(logicalDeviceHandle, uniformBuffers[i], nullptr);
 			//vkFreeMemory(logicalDeviceHandle, uniformBuffersMemory[i], nullptr); ////////////////////////////////////////
@@ -457,30 +380,30 @@ namespace Engine
 
 		createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-		if (vkCreateSwapchainKHR(logicalDeviceHandle, &createInfo, nullptr, &swapChain) != VK_SUCCESS)
+		if (vkCreateSwapchainKHR(logicalDeviceHandle, &createInfo, nullptr, &swapChainData.swapChain) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create swap chain!");
 		}
 
-		vkGetSwapchainImagesKHR(logicalDeviceHandle, swapChain, &imageCount, nullptr);
-		swapChainImages.resize(imageCount);
-		vkGetSwapchainImagesKHR(logicalDeviceHandle, swapChain, &imageCount, swapChainImages.data());
+		vkGetSwapchainImagesKHR(logicalDeviceHandle, swapChainData.swapChain, &imageCount, nullptr);
+		swapChainData.swapChainImages.resize(imageCount);
+		vkGetSwapchainImagesKHR(logicalDeviceHandle, swapChainData.swapChain, &imageCount, swapChainData.swapChainImages.data());
 
-		swapChainImageFormat = surfaceFormat.format;
-		swapChainExtent = extent;
+		swapChainData.swapChainImageFormat = surfaceFormat.format;
+		swapChainData.swapChainExtent = extent;
 	}
 
 	void VulkanSwapChain::createImageViews()
 	{
-		swapChainImageViews.resize(swapChainImages.size());
+		swapChainData.swapChainImageViews.resize(swapChainData.swapChainImages.size());
 
-		for (size_t i = 0; i < swapChainImages.size(); i++)
+		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
 		{
 			VkImageViewCreateInfo createInfo{};
 			createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-			createInfo.image = swapChainImages[i];
+			createInfo.image = swapChainData.swapChainImages[i];
 			createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-			createInfo.format = swapChainImageFormat;
+			createInfo.format = swapChainData.swapChainImageFormat;
 			createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
 			createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
 			createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -491,7 +414,7 @@ namespace Engine
 			createInfo.subresourceRange.baseArrayLayer = 0;
 			createInfo.subresourceRange.layerCount = 1;
 
-			if (vkCreateImageView(logicalDeviceHandle, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS)
+			if (vkCreateImageView(logicalDeviceHandle, &createInfo, nullptr, &swapChainData.swapChainImageViews[i]) != VK_SUCCESS)
 			{
 				throw std::runtime_error("failed to create image views!");
 			}
@@ -529,14 +452,14 @@ namespace Engine
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = (float)swapChainExtent.width;
-		viewport.height = (float)swapChainExtent.height;
+		viewport.width = (float)swapChainData.swapChainExtent.width;
+		viewport.height = (float)swapChainData.swapChainExtent.height;
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 
 		VkRect2D scissor{};
 		scissor.offset = { 0, 0 };
-		scissor.extent = swapChainExtent;
+		scissor.extent = swapChainData.swapChainExtent;
 
 		VkPipelineViewportStateCreateInfo viewportState{};
 		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -632,7 +555,7 @@ namespace Engine
 	void VulkanSwapChain::createRenderPass()
 	{
 		VkAttachmentDescription colorAttachment{};
-		colorAttachment.format = swapChainImageFormat;
+		colorAttachment.format = swapChainData.swapChainImageFormat;
 		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 
 		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -642,7 +565,7 @@ namespace Engine
 		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		VkAttachmentReference colorAttachmentRef{};
 		colorAttachmentRef.attachment = 0;
@@ -696,13 +619,13 @@ namespace Engine
 
 	void VulkanSwapChain::createFramebuffers()
 	{
-		swapChainFramebuffers.resize(swapChainImageViews.size());
+		swapChainData.swapChainFramebuffers.resize(swapChainData.swapChainImageViews.size());
 
-		for (size_t i = 0; i < swapChainImageViews.size(); i++)
+		for (size_t i = 0; i < swapChainData.swapChainImageViews.size(); i++)
 		{
 			std::array<VkImageView, 2> attachments =
 			{
-				swapChainImageViews[i],
+				swapChainData.swapChainImageViews[i],
 				depthImageView
 			};
 
@@ -711,11 +634,11 @@ namespace Engine
 			framebufferInfo.renderPass = renderPass;
 			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 			framebufferInfo.pAttachments = attachments.data();
-			framebufferInfo.width = swapChainExtent.width;
-			framebufferInfo.height = swapChainExtent.height;
+			framebufferInfo.width = swapChainData.swapChainExtent.width;
+			framebufferInfo.height = swapChainData.swapChainExtent.height;
 			framebufferInfo.layers = 1;
 
-			if (vkCreateFramebuffer(logicalDeviceHandle, &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS)
+			if (vkCreateFramebuffer(logicalDeviceHandle, &framebufferInfo, nullptr, &swapChainData.swapChainFramebuffers[i]) != VK_SUCCESS)
 			{
 				throw std::runtime_error("failed to create framebuffer!");
 			}
@@ -739,7 +662,7 @@ namespace Engine
 
 	void VulkanSwapChain::createCommandBuffers()
 	{
-		commandBuffers.resize(swapChainFramebuffers.size());
+		commandBuffers.resize(swapChainData.swapChainFramebuffers.size());
 
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -767,9 +690,9 @@ namespace Engine
 			VkRenderPassBeginInfo renderPassInfo{};
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			renderPassInfo.renderPass = renderPass;
-			renderPassInfo.framebuffer = swapChainFramebuffers[i];
+			renderPassInfo.framebuffer = swapChainData.swapChainFramebuffers[i];
 			renderPassInfo.renderArea.offset = { 0, 0 };
-			renderPassInfo.renderArea.extent = swapChainExtent;
+			renderPassInfo.renderArea.extent = swapChainData.swapChainExtent;
 
 			std::array<VkClearValue, 2> clearValues{}; 
 			clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -846,7 +769,7 @@ namespace Engine
 
 	void VulkanSwapChain::createUniformBuffers()
 	{
-		for (size_t i = 0; i < swapChainImages.size(); i++)
+		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
 		{
 			for (const auto& cube : cubes)
 			{
@@ -894,13 +817,13 @@ namespace Engine
 	{
 		VkDescriptorPoolSize poolSize{};
 		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size()) * cubes.size();
+		poolSize.descriptorCount = static_cast<uint32_t>(swapChainData.swapChainImages.size()) * cubes.size();
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		poolInfo.poolSizeCount = 1;
 		poolInfo.pPoolSizes = &poolSize;
-		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size()) * cubes.size();
+		poolInfo.maxSets = static_cast<uint32_t>(swapChainData.swapChainImages.size()) * cubes.size();
 
 		if (vkCreateDescriptorPool(logicalDeviceHandle, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
 		{
@@ -910,7 +833,7 @@ namespace Engine
 
 	void VulkanSwapChain::createDescriptorSets()
 	{
-		for (size_t i = 0; i < swapChainImages.size(); i++)
+		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
 		{
 			for (auto& cube : cubes)
 			{
@@ -1005,7 +928,7 @@ namespace Engine
 	{
 		VkFormat depthFormat = findDepthFormat();
 
-		createImage(swapChainExtent.width, swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
+		createImage(swapChainData.swapChainExtent.width, swapChainData.swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
 		depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 
 	}
