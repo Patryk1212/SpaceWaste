@@ -7,19 +7,10 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
 
+#include "vulkan_core/SwapChain.h"
+
 namespace Engine
 {
-	struct SwapChainData
-	{
-		VkSwapchainKHR swapChain;
-		VkFormat swapChainImageFormat;
-		VkExtent2D swapChainExtent;
-		uint32_t imageIndex;
-		std::vector<VkImage> swapChainImages;
-		std::vector<VkImageView> swapChainImageViews;
-		std::vector<VkFramebuffer> swapChainFramebuffers;
-	};
-
 	class ImguiLayer
 	{
 	public:

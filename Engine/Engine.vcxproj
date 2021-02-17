@@ -203,10 +203,11 @@
     <ClCompile Include="src\vulkan_buffers\VulkanUniformBuffer.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanVertexBuffer.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanShader.cpp" />
+    <ClCompile Include="src\vulkan_core\SwapChain.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanContext.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanCore.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanDebug.cpp" />
-    <ClCompile Include="src\vulkan_core\VulkanGraphicsPipeline.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanDepthImage.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanLogicalDevice.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanPhysicalDevice.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanSurface.cpp" />
@@ -280,9 +281,11 @@
     <ClInclude Include="src\vulkan_buffers\VulkanUniformBuffer.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanVertexBuffer.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanShader.h" />
+    <ClInclude Include="src\vulkan_core\SwapChain.h" />
     <ClInclude Include="src\vulkan_core\VulkanContext.h" />
     <ClInclude Include="src\vulkan_core\VulkanCore.h" />
     <ClInclude Include="src\vulkan_core\VulkanDebug.h" />
+    <ClInclude Include="src\vulkan_core\VulkanDepthImage.h" />
     <ClInclude Include="src\vulkan_core\VulkanGraphicsPipeline.h" />
     <ClInclude Include="src\vulkan_core\VulkanLogicalDevice.h" />
     <ClInclude Include="src\vulkan_core\VulkanPhysicalDevice.h" />

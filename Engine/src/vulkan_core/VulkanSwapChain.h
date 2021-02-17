@@ -3,7 +3,7 @@
 #include "VulkanSurface.h"
 #include "VulkanUtility.h"
 #include "dear_imgui/ImguiLayer.h"
-
+#include "VulkanDepthImage.h"
 
 #include "core/CameraController.h"
 
@@ -156,24 +156,9 @@ namespace Engine
 
 
 		std::unique_ptr<ImguiLayer> imguiLayer;
+
+		std::unique_ptr<VulkanDepthImage> depthImage;
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
-		
-		/* TO DO: */
-		// depth buffer seperate class
-		// commandbuffer class
-		// swapchain class
-
-		void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
-		VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
-
-		/// depth
-		void createDepthResources();
-		VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
-		VkFormat findDepthFormat();
-		bool hasStencilComponent(VkFormat format);
-		VkImage depthImage;
-		VkDeviceMemory depthImageMemory;
-		VkImageView depthImageView;
 
 		/// camera
 		CameraController cc;
