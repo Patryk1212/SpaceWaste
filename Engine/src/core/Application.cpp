@@ -54,14 +54,18 @@ namespace Engine
 		{
 			timer.onUpdate((float)glfwGetTime());
 
+			window->onUpdate();
+			cameraController.onUpdate(timer.getDeltaTime());
+
+			vulkanContext->startFrame();
+			
 			for (const auto& layer : layerStack.getAllLayers())
 			{
 				layer->onUpdate(timer.getDeltaTime());
-				layer->onRender();
 			}
 
-			window->onUpdate();
-			vulkanContext->onUpdate(timer.getDeltaTime());
+			vulkanContext->updateFrame(timer.getDeltaTime(), cameraController.getCamera());// , layerStack.getLayerWithTag("Main Layer")); // camera
+			vulkanContext->endFrame();
 		}
 
 		vulkanContext->onShutDown();
@@ -70,7 +74,7 @@ namespace Engine
 
 	void Application::onEvent(Event& event)
 	{
-		vulkanContext->onEvent(event);
+		//vulkanContext->onEvent(event);
 
 		EventDispatcher dispatcher(event);
 		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
@@ -80,6 +84,7 @@ namespace Engine
 			if (layer->onEvent(event)) break;
 		}
 
+		cameraController.onEvent(event);
 		// debug only
 		//std::cout << event.getNameString() << std::endl;
 

@@ -15,7 +15,7 @@ namespace Engine
 		std::default_random_engine rndGenerator((unsigned)time(nullptr));
 		std::uniform_real_distribution<float> uniformDist(0.0, 1.0);
 
-		for (int i = 0; i < 500; i++)
+		for (int i = 0; i < 1000; i++)
 		{
 			auto temp = std::make_unique<Cube>();
 
@@ -76,28 +76,27 @@ namespace Engine
 
 		createFramebuffers();
 
-		vertexBuffer = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices);
-		vertexBuffer1 = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices1); //temp
-		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices);
+		vertexBuffer = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices); // renderer 3d
+		vertexBuffer1 = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices1); //temp // renderer 3d
+		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices); // renderer 3d
 
 
-		createUniformBuffers();
+		createUniformBuffers(); // renderer 3d
 
-		createDescriptorPool();
-		createDescriptorSets();
+		createDescriptorPool(); // renderer 3d
+		createDescriptorSets(); // renderer 3d
 		createCommandBuffers();
+
 		createSyncObjects();
 
-		imguiLayer = std::make_unique<ImguiLayer>(window, logicalDevice, physicalDevice, graphicsQueue, swapChainData);
-
-		
+		imguiLayer = std::make_unique<ImguiLayer>(window, logicalDevice, physicalDevice, graphicsQueue, swapChainData);		
 	}
 
-	void VulkanSwapChain::onUpdate(float deltaTime)
+	void VulkanSwapChain::startFrame()
 	{
 		vkWaitForFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-		
-		VkResult result = vkAcquireNextImageKHR(logicalDeviceHandle, swapChainData.swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &swapChainData.imageIndex);
+
+		result = vkAcquireNextImageKHR(logicalDeviceHandle, swapChainData.swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &swapChainData.imageIndex);
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
 		{
@@ -115,12 +114,12 @@ namespace Engine
 		}
 		imagesInFlight[swapChainData.imageIndex] = inFlightFences[currentFrame];
 
-		updateUniformBuffer(swapChainData.imageIndex, deltaTime);
-
-		/* imgui */
 		imguiLayer->startFrame();
-		imguiLayer->endFrame(swapChainData.imageIndex);
+	}
 
+	void VulkanSwapChain::endFrame()
+	{
+		imguiLayer->endFrame(swapChainData.imageIndex);
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -161,7 +160,7 @@ namespace Engine
 		presentInfo.pImageIndices = &swapChainData.imageIndex;
 
 		result = vkQueuePresentKHR(presentQueue, &presentInfo);
-		
+
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windowHandle->framebufferResized)
 		{
 			windowHandle->framebufferResized = false;
@@ -170,16 +169,98 @@ namespace Engine
 		else if (result != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to present swap chain image!");
-		}	
-		
-		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+		}
 
-		cc.onUpdate(deltaTime);
+		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+	}
+
+	void VulkanSwapChain::updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera)
+	{
+		//vkWaitForFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+		//
+		//VkResult result = vkAcquireNextImageKHR(logicalDeviceHandle, swapChainData.swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &swapChainData.imageIndex);
+		//
+		//if (result == VK_ERROR_OUT_OF_DATE_KHR)
+		//{
+		//	recreateSwapChain();
+		//	return;
+		//}
+		//else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+		//{
+		//	throw std::runtime_error("failed to acquire swap chain image!");
+		//}
+		//
+		//if (imagesInFlight[swapChainData.imageIndex] != VK_NULL_HANDLE)
+		//{
+		//	vkWaitForFences(logicalDeviceHandle, 1, &imagesInFlight[swapChainData.imageIndex], VK_TRUE, UINT64_MAX);
+		//}
+		//imagesInFlight[swapChainData.imageIndex] = inFlightFences[currentFrame];
+
+		updateUniformBuffer(camera);
+
+		///* imgui */
+		//imguiLayer->startFrame();
+		//imguiLayer->endFrame(swapChainData.imageIndex);
+		//
+		//
+		//VkSubmitInfo submitInfo{};
+		//submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		//
+		//VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
+		//VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		//submitInfo.waitSemaphoreCount = 1;
+		//submitInfo.pWaitSemaphores = waitSemaphores;
+		//submitInfo.pWaitDstStageMask = waitStages;
+		//
+		//std::array<VkCommandBuffer, 2> submitCommandBuffers =
+		//{ commandBuffers[swapChainData.imageIndex], imguiLayer->getCurrentlyUsedCmdBuffer(swapChainData.imageIndex) };
+		//
+		//submitInfo.commandBufferCount = static_cast<uint32_t>(submitCommandBuffers.size());
+		//submitInfo.pCommandBuffers = submitCommandBuffers.data();// &commandBuffers[imageIndex];
+		//
+		//VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+		//submitInfo.signalSemaphoreCount = 1;
+		//submitInfo.pSignalSemaphores = signalSemaphores;
+		//
+		//vkResetFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame]);
+		//
+		//if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
+		//{
+		//	throw std::runtime_error("failed to submit draw command buffer!");
+		//}
+		//
+		//VkPresentInfoKHR presentInfo{};
+		//presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		//
+		//presentInfo.waitSemaphoreCount = 1;
+		//presentInfo.pWaitSemaphores = signalSemaphores;
+		//
+		//VkSwapchainKHR swapChains[] = { swapChainData.swapChain };
+		//presentInfo.swapchainCount = 1;
+		//presentInfo.pSwapchains = swapChains;
+		//
+		//presentInfo.pImageIndices = &swapChainData.imageIndex;
+		//
+		//result = vkQueuePresentKHR(presentQueue, &presentInfo);
+		//
+		//if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windowHandle->framebufferResized)
+		//{
+		//	windowHandle->framebufferResized = false;
+		//	recreateSwapChain();
+		//}
+		//else if (result != VK_SUCCESS)
+		//{
+		//	throw std::runtime_error("failed to present swap chain image!");
+		//}	
+		//
+		//currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+		//cc.onUpdate(deltaTime);
 	}
 
 	void VulkanSwapChain::onEvent(Event& event)
 	{
-		cc.onEvent(event);
+		//cc.onEvent(event);
 	}
 	
 	void VulkanSwapChain::onShutDown() // needs to be done properly
@@ -785,7 +866,7 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::updateUniformBuffer(uint32_t currentImage, float deltaTime)
+	void VulkanSwapChain::updateUniformBuffer(const std::unique_ptr<Camera>& camera)
 	{
 		static auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -795,8 +876,8 @@ namespace Engine
 		bool earth = false;
 		for (auto& cube : cubes)
 		{
-			cube->ubo.view = cc.getCamera()->getViewMatrix();
-			cube->ubo.proj = cc.getCamera()->getProjectionMatrix();
+			cube->ubo.view = camera->getViewMatrix();
+			cube->ubo.proj = camera->getProjectionMatrix();
 			
 			if (!earth)
 			{
@@ -814,9 +895,9 @@ namespace Engine
 			
 
 			void* data;
-			vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(currentImage), 0, sizeof(cube->ubo), 0, &data);
+			vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex), 0, sizeof(cube->ubo), 0, &data);
 			memcpy(data, &cube->ubo, sizeof(cube->ubo));
-			vkUnmapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(currentImage));
+			vkUnmapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex));
 		}
 	}
 

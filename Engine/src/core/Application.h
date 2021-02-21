@@ -35,6 +35,7 @@ namespace Engine
 	private:
 		LayerStack layerStack;
 		Time timer;
+		CameraController cameraController;
 	};
 
 	Application* createApplication();

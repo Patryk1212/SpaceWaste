@@ -10,12 +10,21 @@ namespace Engine
 		static void init();
 		static void shutDown();
 
+
+		// start recording command buffers
+		// pass objects
+		// end recording
+
 		static void beginScene();
+		
+		static void draw(const CameraController& camera);
+		
 		static void endScene();
 
-		static void draw(const CameraController& camera);
 
 	private:
-		//std::vector<Object>  
+		//std::vector<Object>
+
+		// command buffers
 	};
 }

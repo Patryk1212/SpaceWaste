@@ -72,13 +72,17 @@ namespace Engine
 	public:
 		VulkanSwapChain(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
 		~VulkanSwapChain() = default;
+		
+		void startFrame();
+		void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
+		void endFrame();
 
-		void onUpdate(float deltaTime);
-		void onEvent(Event& event);
 		void onShutDown();
+		
+		void onEvent(Event& event); // to be deleted
 
+	public:
 		void createSyncObjects();
-
 		void recreateSwapChain();
 		void cleanupSwapChain();
 
@@ -116,7 +120,7 @@ namespace Engine
 	private: // uniforms buffers
 		void createDescriptorSetLayout();
 		void createUniformBuffers();
-		void updateUniformBuffer(uint32_t currentImage, float deltaTime);
+		void updateUniformBuffer(const std::unique_ptr<Camera>& camera);
 
 	private: // descriptor sets
 		void createDescriptorPool();
@@ -147,6 +151,9 @@ namespace Engine
 
 	private: // descriptor sets
 		VkDescriptorPool descriptorPool;
+		std::unique_ptr<VulkanDepthImage> depthImage;
+
+		VkResult result;
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
 		std::unique_ptr<VulkanBufferAllocator> bufferAllocator;
@@ -157,14 +164,12 @@ namespace Engine
 
 		std::unique_ptr<ImguiLayer> imguiLayer;
 
-		std::unique_ptr<VulkanDepthImage> depthImage;
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
 
 		/// camera
-		CameraController cc;
+		//CameraController cc;
 
 		// cube test
-		std::vector<std::unique_ptr<Cube>> cubes;
-
+		std::vector<std::unique_ptr<Cube>> cubes; // renderer 3d
 	};
 }

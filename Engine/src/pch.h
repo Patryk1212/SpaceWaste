@@ -1,5 +1,6 @@
 #pragma once
 
+/* glm maths lib */
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
@@ -10,6 +11,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+/* rest */
 #include <iostream>
 #include <memory>
 #include <utility>

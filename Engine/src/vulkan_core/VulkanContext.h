@@ -17,7 +17,12 @@ namespace Engine
 
 		void initSurfaceAndDevices(const std::shared_ptr<Window>& window);
 
-		void onUpdate(float deltaTime);
+		void startFrame();
+		void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
+		void endFrame();
+
+
+
 		void onEvent(Event& event); // temp
 		void onShutDown();
 
@@ -48,6 +53,5 @@ namespace Engine
 		std::unique_ptr<VulkanSurface> surface;
 		std::unique_ptr<VulkanPhysicalDevice> physicalDevice;
 		std::unique_ptr<VulkanLogicalDevice> logicalDevice;
-
 	};
 }

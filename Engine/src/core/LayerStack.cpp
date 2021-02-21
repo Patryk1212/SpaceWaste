@@ -8,8 +8,19 @@ namespace Engine
 		layers.emplace_back(std::move(layer));
 	}
 
-	std::vector<std::unique_ptr<Layer>>& LayerStack::getAllLayers()
+	const std::vector<std::unique_ptr<Layer>>& LayerStack::getAllLayers() const
 	{
 		return layers;
+	}
+
+	const std::unique_ptr<Layer>& LayerStack::getLayerWithTag(const std::string& name) const
+	{
+		for (const auto& layer : layers)
+		{
+			if (layer->getLayerName() == name)
+			{
+				return layer;
+			}
+		}
 	}
 }

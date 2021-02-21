@@ -13,7 +13,10 @@ namespace Engine
 
 		void createGraphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice);
 
-		void onUpdate(float deltaTime);
+		void startFrame();
+		void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
+		void endFrame();
+
 		void onEvent(Event& event);
 		void onShutDown();
 

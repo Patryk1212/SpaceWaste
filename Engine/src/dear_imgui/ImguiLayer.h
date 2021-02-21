@@ -52,7 +52,7 @@ namespace Engine
 		VkRenderPassBeginInfo renderPassInfo;
 
 
-	private:
+	private: // to be abstratced 
 		VkCommandBuffer beginSingleTimeCommands()
 		{
 			VkCommandBufferAllocateInfo allocInfo{};
@@ -72,7 +72,6 @@ namespace Engine
 
 			return commandBuffer;
 		}
-
 		void endSingleTimeCommands(VkCommandBuffer commandBuffer)
 		{
 			vkEndCommandBuffer(commandBuffer);

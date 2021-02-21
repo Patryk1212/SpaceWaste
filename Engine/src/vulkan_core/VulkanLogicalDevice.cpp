@@ -63,9 +63,19 @@ namespace Engine
 		swapChain = std::make_unique<VulkanSwapChain>(window, physicalDevice, logicalDevice, graphicsQueue, presentQueue);
 	}
 
-	void VulkanLogicalDevice::onUpdate(float deltaTime)
+	void VulkanLogicalDevice::startFrame()
 	{
-		swapChain->onUpdate(deltaTime);
+		swapChain->startFrame();
+	}
+
+	void VulkanLogicalDevice::updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera)
+	{
+		swapChain->updateFrame(deltaTime, camera);
+	}
+
+	void VulkanLogicalDevice::endFrame()
+	{
+		swapChain->endFrame();
 	}
 
 	void VulkanLogicalDevice::onEvent(Event& event)

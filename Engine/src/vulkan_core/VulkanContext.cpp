@@ -68,10 +68,21 @@ namespace Engine
 		logicalDevice->createGraphics(window, physicalDevice->getPhysicalDevice(), logicalDevice->getLogicalDevice());
 	}
 
-	void VulkanContext::onUpdate(float deltaTime)
+	void VulkanContext::startFrame()
 	{
-		logicalDevice->onUpdate(deltaTime);
+		logicalDevice->startFrame();
 	}
+
+	void VulkanContext::updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera)
+	{
+		logicalDevice->updateFrame(deltaTime, camera);
+	}
+
+	void VulkanContext::endFrame()
+	{
+		logicalDevice->endFrame();
+	}
+
 
 	void VulkanContext::onEvent(Event& event)
 	{

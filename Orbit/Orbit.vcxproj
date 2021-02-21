@@ -161,10 +161,12 @@
     <ClInclude Include="src\MainLayer.h" />
     <ClInclude Include="src\SpaceDebrisVisualization.h" />
     <ClInclude Include="src\spacetrack\SpaceTrackData.h" />
+    <ClInclude Include="src\UILayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MainLayer.cpp" />
     <ClCompile Include="src\SpaceDebrisVisualization.cpp" />
+    <ClCompile Include="src\UILayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
