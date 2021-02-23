@@ -40,6 +40,15 @@ namespace Engine
 
 		bool framebufferResized = false;
 
+		bool isKeyPressed(int key_code)
+		{
+			//auto window = static_cast<GLFWwindow*>(windowHandle->getWindow());
+			//auto window = Application::get().getWindow().getWindow();
+			auto state = glfwGetKey(window, key_code);
+			std::cout << "chuj " << std::endl;
+			return true;// state == GLFW_PRESS;// || state == GLFW_REPEAT;
+		}
+
 	private:
 		GLFWwindow* window = nullptr;
 		WindowSpec windowSpec;

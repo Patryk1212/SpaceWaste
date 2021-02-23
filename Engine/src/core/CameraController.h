@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Window.h"
 #include "Camera.h"
-#include "events+input/Event.h"
+
 
 namespace Engine
 {
@@ -11,6 +12,7 @@ namespace Engine
 		CameraController();
 		~CameraController() = default;
 
+		void init(const std::shared_ptr<Window>& window);
 		void onUpdate(float deltaTime);
 		void onEvent(Event& event);
 
@@ -25,6 +27,8 @@ namespace Engine
 		float phi{ 3.14f / 2 }, theta{ 0 };
 
 	private:
+		//std::unique_ptr<Input> input;
+		std::shared_ptr<Window> windowHandle;
 		std::unique_ptr<Camera> camera;
 	};
 }

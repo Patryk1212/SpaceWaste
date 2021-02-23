@@ -12,7 +12,7 @@ void MainLayer::onUpdate(float deltaTime)
 {
 	// update objects' scale etc
 
-	cameraController.onUpdate(deltaTime);
+
 }
 
 void MainLayer::onRender()
@@ -21,12 +21,9 @@ void MainLayer::onRender()
 
 bool MainLayer::onEvent(Engine::Event& event)
 {
-	cameraController.onEvent(event);
+
 
 	return true;
 }
 
-std::unique_ptr<Engine::Camera>& MainLayer::getCamera()
-{
-	return cameraController.getCamera();
-}
+

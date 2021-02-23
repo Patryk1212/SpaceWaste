@@ -12,8 +12,12 @@ namespace Engine
 		window->init();
 		window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
+		cameraController = std::make_unique<CameraController>();
+		cameraController->init(window);
+		
 		vulkanContext = std::make_unique<VulkanContext>();
 		vulkanContext->initSurfaceAndDevices(window);
+
 	}
 
 	Application::~Application()
@@ -55,7 +59,9 @@ namespace Engine
 			timer.onUpdate((float)glfwGetTime());
 
 			window->onUpdate();
-			cameraController.onUpdate(timer.getDeltaTime());
+			cameraController->onUpdate(timer.getDeltaTime());
+
+			//input.isKeyPressed(EN_KEY_A);
 
 			vulkanContext->startFrame();
 			
@@ -64,7 +70,7 @@ namespace Engine
 				layer->onUpdate(timer.getDeltaTime());
 			}
 
-			vulkanContext->updateFrame(timer.getDeltaTime(), cameraController.getCamera());// , layerStack.getLayerWithTag("Main Layer")); // camera
+			vulkanContext->updateFrame(timer.getDeltaTime(), cameraController->getCamera());// , layerStack.getLayerWithTag("Main Layer")); // camera
 			vulkanContext->endFrame();
 		}
 
@@ -74,17 +80,16 @@ namespace Engine
 
 	void Application::onEvent(Event& event)
 	{
-		//vulkanContext->onEvent(event);
-
 		EventDispatcher dispatcher(event);
 		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
 
+		cameraController->onEvent(event);
+		
 		for (const auto& layer : layerStack.getAllLayers())
 		{
 			if (layer->onEvent(event)) break;
 		}
 
-		cameraController.onEvent(event);
 		// debug only
 		//std::cout << event.getNameString() << std::endl;
 

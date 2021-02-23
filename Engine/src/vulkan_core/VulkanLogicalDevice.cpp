@@ -78,11 +78,6 @@ namespace Engine
 		swapChain->endFrame();
 	}
 
-	void VulkanLogicalDevice::onEvent(Event& event)
-	{
-		swapChain->onEvent(event);
-	}
-
 	void VulkanLogicalDevice::onShutDown()
 	{
 		swapChain->onShutDown();

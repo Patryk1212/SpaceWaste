@@ -1,23 +1,31 @@
 #pragma once
 
-#include "GLFW/glfw3.h"
-#include "KeyCodes.h"
+
+//#include "core/Application.h"
+//#include "core/Window.h"
+//#include "GLFW/glfw3.h"
+//#include "KeyCodes.h"
+
+//class Window;
 
 namespace Engine
 {
 	class Input
 	{
 	public:
-		Input() = default;
+		//Input(const std::shared_ptr<Window>& window);
 		~Input() = default;
 
 		// keyboard
-		static bool isKeyPressed(int key_code);
+		bool isKeyPressed(int key_code);
 
 		// mouse
-		static bool isMouseButtonPressed(int button);
-		static float getMouseX();
-		static float getMouseY();
-		static std::pair<float, float> getMousePos();
+		//bool isMouseButtonPressed(int button);
+		//float getMouseX();
+		//float getMouseY();
+		//std::pair<float, float> getMousePos();
+
+	private:
+		//std::shared_ptr<Window> windowHandle;
 	};
 }

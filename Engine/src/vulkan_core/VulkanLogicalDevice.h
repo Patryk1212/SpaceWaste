@@ -17,7 +17,6 @@ namespace Engine
 		void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
 		void endFrame();
 
-		void onEvent(Event& event);
 		void onShutDown();
 
 		VkDevice getLogicalDevice() const;
