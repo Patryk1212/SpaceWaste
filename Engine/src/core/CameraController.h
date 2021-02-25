@@ -3,7 +3,6 @@
 #include "Window.h"
 #include "Camera.h"
 
-
 namespace Engine
 {
 	class CameraController
@@ -20,14 +19,16 @@ namespace Engine
 
 	private:
 		ViewMatrixData viewData;
-		float moveSpeed = 1.f;
-		float zoomSpeed = 0.02f;
+		float zoomSpeed = 3.f;
 
-		float rotationSpeed = 0.05f;
-		float phi{ 3.14f / 2 }, theta{ 0 };
+		float phi{ 3.14f / 2 };
+		float theta{ 0 };
+
+		float sensitivity = 0.001f;
+		float lastX;
+		float lastY;
 
 	private:
-		//std::unique_ptr<Input> input;
 		std::shared_ptr<Window> windowHandle;
 		std::unique_ptr<Camera> camera;
 	};

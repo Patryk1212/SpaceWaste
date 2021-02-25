@@ -15,7 +15,7 @@ namespace Engine
 		std::default_random_engine rndGenerator((unsigned)time(nullptr));
 		std::uniform_real_distribution<float> uniformDist(0.0, 1.0);
 
-		for (int i = 0; i < 1000; i++)
+		for (int i = 0; i < 500; i++)
 		{
 			auto temp = std::make_unique<Cube>();
 

@@ -138,6 +138,38 @@ namespace Engine
 		return window;
 	}
 
+	bool Window::isKeyPressed(int key_code)
+	{
+		auto state = glfwGetKey(window, key_code);
+		return state == GLFW_PRESS;
+	}
+
+	bool Window::isMouseButtonPressed(int button)
+	{
+		auto state = glfwGetMouseButton(window, button);
+		return state == GLFW_PRESS;
+	}
+
+	float Window::getMouseX()
+	{
+		auto [x, y] = getMousePos();
+		return x;
+	}
+
+	float Window::getMouseY()
+	{
+		auto [x, y] = getMousePos();
+		return y;
+	}
+
+	std::pair<float, float> Window::getMousePos()
+	{
+		double x_pos = 0, y_pos = 0;
+		glfwGetCursorPos(window, &x_pos, &y_pos);
+		
+		return { (float)x_pos, (float)y_pos };
+	}
+
 	void Window::setVSync(bool activate)
 	{
 		if (activate)

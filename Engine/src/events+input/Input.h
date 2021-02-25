@@ -20,10 +20,10 @@ namespace Engine
 		bool isKeyPressed(int key_code);
 
 		// mouse
-		//bool isMouseButtonPressed(int button);
-		//float getMouseX();
-		//float getMouseY();
-		//std::pair<float, float> getMousePos();
+		bool isMouseButtonPressed(int button);
+		float getMouseX();
+		float getMouseY();
+		std::pair<float, float> getMousePos();
 
 	private:
 		//std::shared_ptr<Window> windowHandle;

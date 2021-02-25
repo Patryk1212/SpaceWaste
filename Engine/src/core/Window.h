@@ -40,14 +40,15 @@ namespace Engine
 
 		bool framebufferResized = false;
 
-		bool isKeyPressed(int key_code)
-		{
-			//auto window = static_cast<GLFWwindow*>(windowHandle->getWindow());
-			//auto window = Application::get().getWindow().getWindow();
-			auto state = glfwGetKey(window, key_code);
-			std::cout << "chuj " << std::endl;
-			return true;// state == GLFW_PRESS;// || state == GLFW_REPEAT;
-		}
+	public:
+		// keyboard input
+		bool isKeyPressed(int key_code);
+
+		// mouse input
+		bool isMouseButtonPressed(int button);
+		float getMouseX();
+		float getMouseY();
+		std::pair<float, float> getMousePos();
 
 	private:
 		GLFWwindow* window = nullptr;
