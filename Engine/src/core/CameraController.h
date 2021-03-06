@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Window.h"
 #include "Camera.h"
-#include "events+input/Event.h"
 
 namespace Engine
 {
@@ -11,6 +11,7 @@ namespace Engine
 		CameraController();
 		~CameraController() = default;
 
+		void init(const std::shared_ptr<Window>& window);
 		void onUpdate(float deltaTime);
 		void onEvent(Event& event);
 
@@ -18,13 +19,17 @@ namespace Engine
 
 	private:
 		ViewMatrixData viewData;
-		float moveSpeed = 1.f;
-		float zoomSpeed = 0.02f;
+		float zoomSpeed = 3.f;
 
-		float rotationSpeed = 0.05f;
-		float phi{ 3.14f / 2 }, theta{ 0 };
+		float phi{ 3.14f / 2 };
+		float theta{ 0 };
+
+		float sensitivity = 0.001f;
+		float lastX;
+		float lastY;
 
 	private:
+		std::shared_ptr<Window> windowHandle;
 		std::unique_ptr<Camera> camera;
 	};
 }

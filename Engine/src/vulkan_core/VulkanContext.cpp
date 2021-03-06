@@ -83,12 +83,6 @@ namespace Engine
 		logicalDevice->endFrame();
 	}
 
-
-	void VulkanContext::onEvent(Event& event)
-	{
-		logicalDevice->onEvent(event);
-	}
-
 	void VulkanContext::onShutDown()
 	{
 		logicalDevice->onShutDown();

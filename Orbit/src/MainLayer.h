@@ -12,10 +12,9 @@ public:
 	virtual void onRender() override;
 	virtual bool onEvent(Engine::Event& event) override;
 
-	std::unique_ptr<Engine::Camera>& getCamera();
 
 public:
 
 private:
-	Engine::CameraController cameraController;
+
 };

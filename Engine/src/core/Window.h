@@ -40,6 +40,16 @@ namespace Engine
 
 		bool framebufferResized = false;
 
+	public:
+		// keyboard input
+		bool isKeyPressed(int key_code);
+
+		// mouse input
+		bool isMouseButtonPressed(int button);
+		float getMouseX();
+		float getMouseY();
+		std::pair<float, float> getMousePos();
+
 	private:
 		GLFWwindow* window = nullptr;
 		WindowSpec windowSpec;

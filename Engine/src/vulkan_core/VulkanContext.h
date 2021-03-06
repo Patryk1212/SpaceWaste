@@ -21,9 +21,6 @@ namespace Engine
 		void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
 		void endFrame();
 
-
-
-		void onEvent(Event& event); // temp
 		void onShutDown();
 
 		static VkInstance getInstance() { return instance; }

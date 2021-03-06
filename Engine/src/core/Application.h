@@ -4,6 +4,7 @@
 #include "Time.h"
 #include "vulkan_core/VulkanContext.h"
 #include "LayerStack.h"
+#include "events+input/Input.h"
 
 namespace Engine
 {
@@ -18,8 +19,8 @@ namespace Engine
 
 		void addNewLayer(std::unique_ptr<Layer>& layer);
 
-		//inline static Application& get() { return *appInstance; }
-		//inline Window& getWindow() { return *window.get(); }
+		inline static Application& get() { return *appInstance; }
+		inline Window& getWindow() { return *window; }
 
 	private:
 		bool shutdown(WindowCloseEvent event);
@@ -35,7 +36,7 @@ namespace Engine
 	private:
 		LayerStack layerStack;
 		Time timer;
-		CameraController cameraController;
+		std::unique_ptr<CameraController> cameraController;
 	};
 
 	Application* createApplication();

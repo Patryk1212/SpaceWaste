@@ -78,8 +78,6 @@ namespace Engine
 		void endFrame();
 
 		void onShutDown();
-		
-		void onEvent(Event& event); // to be deleted
 
 	public:
 		void createSyncObjects();
@@ -165,9 +163,6 @@ namespace Engine
 		std::unique_ptr<ImguiLayer> imguiLayer;
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
-
-		/// camera
-		//CameraController cc;
 
 		// cube test
 		std::vector<std::unique_ptr<Cube>> cubes; // renderer 3d
