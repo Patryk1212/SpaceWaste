@@ -3,6 +3,7 @@
 
 void UILayer::onAttach()
 {
+	std::cout << "UI Layer Attached" << std::endl;
 }
 
 void UILayer::onUpdate(float deltaTime)

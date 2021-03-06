@@ -101,6 +101,7 @@ namespace Engine
 
 	void Application::addNewLayer(std::unique_ptr<Layer>& layer)
 	{
+		layer->onAttach();
 		layerStack.addLayer(layer);
 	}
 

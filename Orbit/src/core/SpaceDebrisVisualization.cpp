@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "SpaceDebrisVisualization.h"
 
-#include "MainLayer.h"
-#include "UILayer.h"
+#include "Layers/MainLayer.h"
+#include "Layers/UILayer.h"
 
 SpaceDebrisVisualization::SpaceDebrisVisualization()
 {
