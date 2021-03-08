@@ -9,5 +9,9 @@ public:
 	~FileLoader() = default;
 
 public:
-	void createObjectsAndLoadTLE(std::vector<std::unique_ptr<SpaceObject>>& objects);
+	void loadFileNames();
+	void loadTLEandCreateObjects(std::vector<std::unique_ptr<SpaceObject>>& objects);
+
+private:
+	std::vector<std::string> fileNames;
 };

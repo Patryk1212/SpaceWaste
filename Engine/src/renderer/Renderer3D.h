@@ -1,6 +1,11 @@
 #pragma once
 
+#include "cube.h"
+
 #include "core/CameraController.h"
+
+#include "vulkan_buffers/VulkanVertexBuffer.h"
+#include "vulkan_buffers/VulkanIndexBuffer.h"
 
 namespace Engine
 {
@@ -23,7 +28,7 @@ namespace Engine
 
 
 	private:
-		//std::vector<Object>
+		
 
 		// command buffers
 	};

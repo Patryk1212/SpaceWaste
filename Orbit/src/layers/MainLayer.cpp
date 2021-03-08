@@ -5,41 +5,12 @@ void MainLayer::onAttach()
 {
     std::cout << "MAIN Layer Attached" << std::endl;
 
-    fileLoader.createObjectsAndLoadTLE(spaceObjects);
+    fileLoader.loadFileNames();
+    fileLoader.loadTLEandCreateObjects(spaceObjects);
 
 	// download data
 	// calculate info
 	// create objects
-
-     // Test SGP4 TLE data
-    string str1 = "SGP4 Test";
-    string str2 = "1 88888U          80275.98708465  .00073094  13844-3  66816-4 0     8";
-    string str3 = "2 88888  72.8435 115.9689 0086731  52.6988 110.5714 16.05824518   105";
-
-    // Create a TLE object using the data above
-    cTle tleSGP4(str1, str2, str3);
-
-    // Create a satellite object from the TLE object
-    cSatellite satSGP4(tleSGP4);
-
-    // Print the position and velocity information of the satellite
-    PrintPosVel(satSGP4);
-
-    // Test SDP4 TLE data
-    str1 = "SDP4 Test";
-    str2 = "1 11801U          80230.29629788  .01431103  00000-0  14311-1       8";
-    str3 = "2 11801  46.7916 230.4354 7318036  47.4722  10.4117  2.28537848     6";
-
-    // Create a TLE object using the data above
-    cTle tleSDP4(str1, str2, str3);
-
-    // Create a satellite object from the TLE object
-    cSatellite satSDP4(tleSDP4);
-
-    // Print the position and velocity information of the satellite
-    PrintPosVel(satSDP4);
-
-    printf("Example output:\n");
 
     // Example: Define a location on the earth, then determine the look-angle
     // to the SDP4 satellite defined above.
@@ -48,23 +19,23 @@ void MainLayer::onAttach()
     // information is placed into eciSDP4.
     // Here we ask for the location of the satellite 90 minutes after
     // the TLE epoch.
-    cEciTime eciSDP4 = satSDP4.PositionEci(90.0);
+    //cEciTime eciSDP4 = satSDP4.PositionEci(90.0);
 
     // Now create a site object. Site objects represent a location on the 
     // surface of the earth. Here we arbitrarily select a point on the
     // equator.
-    cSite siteEquator(0.0, -100.0, 0); // 0.00 N, 100.00 W, 0 km altitude
+    //cSite siteEquator(0.0, -100.0, 0); // 0.00 N, 100.00 W, 0 km altitude
 
     // Now get the "look angle" from the site to the satellite. 
     // Note that the ECI object "eciSDP4" contains a time associated
     // with the coordinates it contains; this is the time at which
     // the look angle is valid.
-    cTopo topoLook = siteEquator.GetLookAngle(eciSDP4);
+   // cTopo topoLook = siteEquator.GetLookAngle(eciSDP4);
 
     // Print out the results.
-    printf("AZ: %.3f  EL: %.3f\n",
-        topoLook.AzimuthDeg(),
-        topoLook.ElevationDeg());
+    //printf("AZ: %.3f  EL: %.3f\n",
+       // topoLook.AzimuthDeg(),
+       // topoLook.ElevationDeg());
 }
 
 void MainLayer::PrintPosVel(const cSatellite& sat)
@@ -134,5 +105,3 @@ bool MainLayer::onEvent(Engine::Event& event)
 
 	return true;
 }
-
-

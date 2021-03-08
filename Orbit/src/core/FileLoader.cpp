@@ -1,26 +1,51 @@
 #include "pch.h"
 #include "FileLoader.h"
 
-void FileLoader::createObjectsAndLoadTLE(std::vector<std::unique_ptr<SpaceObject>>& objects)
+void FileLoader::loadFileNames()
 {
     std::fstream file;
-    file.open("files/SCORE.txt", std::ios::in);
+    file.open("files/filenames.txt", std::ios::in);
 
     if (file.good())
     {
-        int number = 0;
-        std::string name;
-        std::string one;
-        std::string two;
+        std::cout << "Loading file names:" << std::endl;
 
         std::string line;
+        while (std::getline(file, line))
+        {
+            if (line == "") break;
+            std::cout << line.c_str() << std::endl;
+            fileNames.emplace_back(line);
+        }
+        
+        std::cout << "Total number of files: " << fileNames.size() << std::endl;
+    }
 
-        while (std::getline(file, line)) 
-        {            
-           // std::cout << line.c_str() << std::endl;
+    file.close();
+}
 
-            switch (number)
+void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<SpaceObject>>& objects)
+{
+    std::fstream file;
+
+    for (const auto& name : fileNames)
+    {
+        file.open("files/" + name + ".txt", std::ios::in);
+
+        if (file.good())
+        {
+            int number = 0;
+            std::string name;
+            std::string one;
+            std::string two;
+
+            std::string line;
+
+            while (std::getline(file, line))
             {
+                std::cout << line.c_str() << std::endl;
+                switch (number)
+                {
                 case 0:
                 {
                     name = line;
@@ -37,18 +62,21 @@ void FileLoader::createObjectsAndLoadTLE(std::vector<std::unique_ptr<SpaceObject
                     break;
                 }
                 default: break;
-            }
+                }
 
-            if (number == 2)
-            {
-                std::unique_ptr<SpaceObject> object = std::make_unique<SpaceObject>(name, one, two);
-                std::cout << object->showName() << std::endl;
-                objects.emplace_back(std::move(object));
-                number = 0;
+                if (number == 2)
+                {
+                    std::unique_ptr<SpaceObject> object = std::make_unique<SpaceObject>(name, one, two);
+                    //std::cout << object->showName() << std::endl;
+                    objects.emplace_back(std::move(object));
+                    number = 0;
+                }
+                else number++;
             }
-            else number++;
         }
+
+        file.close();
     }
-   
-    file.close();
+
+    //std::cout << objects.size() << std::endl;
 }

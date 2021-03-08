@@ -76,6 +76,7 @@ namespace Engine
 
 		createFramebuffers();
 
+		// renderer 3d
 		vertexBuffer = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices); // renderer 3d
 		vertexBuffer1 = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices1); //temp // renderer 3d
 		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices); // renderer 3d

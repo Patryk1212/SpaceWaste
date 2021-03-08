@@ -10,11 +10,8 @@ public:
 	~SpaceObject() = default;
 
 	std::string showName() const;
-
-private: // 3 line TLE format // not needed
-	std::string name;
-	std::string one;
-	std::string two;
+	std::string showFirstTLELine() const;
+	std::string showSecondTLELine() const;
 
 private:
 	std::unique_ptr<cTle> tleSGP4;
