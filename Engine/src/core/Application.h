@@ -6,6 +6,8 @@
 #include "LayerStack.h"
 #include "events+input/Input.h"
 
+#include "renderer/Renderer3D.h"
+
 namespace Engine
 {
 	class Application

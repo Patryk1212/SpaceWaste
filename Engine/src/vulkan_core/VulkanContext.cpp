@@ -65,7 +65,10 @@ namespace Engine
 
 		physicalDevice = std::make_unique<VulkanPhysicalDevice>(deviceExtensions);
 		logicalDevice = std::make_unique<VulkanLogicalDevice>(physicalDevice->getPhysicalDevice(), validationLayers, deviceExtensions);
-		logicalDevice->createGraphics(window, physicalDevice->getPhysicalDevice(), logicalDevice->getLogicalDevice());
+
+		//Renderer3D::init(window, physicalDevice->getPhysicalDevice(), logicalDevice->getLogicalDevice());
+
+		logicalDevice->createGraphics(window, physicalDevice->getPhysicalDevice(), logicalDevice->getLogicalDevice()); // why passing ld?
 	}
 
 	void VulkanContext::startFrame()

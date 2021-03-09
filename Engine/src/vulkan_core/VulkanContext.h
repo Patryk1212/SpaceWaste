@@ -7,6 +7,8 @@
 #include "VulkanPhysicalDevice.h"
 #include "VulkanLogicalDevice.h"
 
+#include "renderer/Renderer3D.h"
+
 namespace Engine
 {
 	class VulkanContext

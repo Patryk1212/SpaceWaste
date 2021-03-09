@@ -3,6 +3,8 @@
 #include "VulkanSurface.h"
 #include "VulkanSwapChain.h"
 
+#include "renderer/Renderer3D.h"
+
 namespace Engine
 {
 	class VulkanLogicalDevice
@@ -27,6 +29,6 @@ namespace Engine
 		VkQueue graphicsQueue;
 		VkQueue presentQueue;
 
-		std::unique_ptr<VulkanSwapChain> swapChain; // remember to init
+		std::unique_ptr<VulkanSwapChain> swapChain; // remember to init// not needed
 	};
 }

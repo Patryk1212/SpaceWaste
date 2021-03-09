@@ -15,6 +15,7 @@
 
 namespace Engine
 {
+	/* to cube class */
 	const std::vector<Vertex> vertices = 
 	{
 			{{-1.0f, -1.0f, -1.0f}, {0.6f, 0.75f, 0.9f}},
@@ -66,6 +67,8 @@ namespace Engine
 		2,10,11, 2,11,6,
 		12,3,7,  12,7,13
 	};
+	/* - */
+
 
 	class VulkanSwapChain
 	{
@@ -78,6 +81,11 @@ namespace Engine
 		void endFrame();
 
 		void onShutDown();
+
+		void test()
+		{
+			std::cout << "testsaasdadadsadqrfowqufwofuiwhfoisfwhrf [owhf[wouyt9[uwhfo[whfe9wehfgwb;vowuhf" << std::endl;
+		};
 
 	public:
 		void createSyncObjects();
@@ -117,27 +125,24 @@ namespace Engine
 
 	private: // uniforms buffers
 		void createDescriptorSetLayout();
-		void createUniformBuffers();
-		void updateUniformBuffer(const std::unique_ptr<Camera>& camera);
+		void createUniformBuffers();//
+		void updateUniformBuffer(const std::unique_ptr<Camera>& camera);//
 
 	private: // descriptor sets
-		void createDescriptorPool();
-		void createDescriptorSets();
+		void createDescriptorPool();//
+		void createDescriptorSets();//
 
 	private: // swap chain
 		SwapChainData swapChainData;
 
 	private: // graphics pipeline
-		VkPipeline graphicsPipeline;
-		VkDescriptorSetLayout descriptorSetLayout;
-		VkPipelineLayout pipelineLayout;
-		VkRenderPass renderPass;
+		PipeLineData pipeline;
 
 	private: // command pool
-		VkCommandPool commandPool;
+		VkCommandPool commandPool; // possible 3d
 
 	private: // command buffer
-		std::vector<VkCommandBuffer> commandBuffers;
+		std::vector<VkCommandBuffer> commandBuffers; // possible 3d
 
 	private: // semaphores and fences
 		std::vector<VkSemaphore> imageAvailableSemaphores;
@@ -147,20 +152,20 @@ namespace Engine
 		const int MAX_FRAMES_IN_FLIGHT = 2;
 		uint32_t currentFrame = 0;
 
-	private: // descriptor sets
-		VkDescriptorPool descriptorPool;
+	private:
 		std::unique_ptr<VulkanDepthImage> depthImage;
-
+		std::unique_ptr<ImguiLayer> imguiLayer;
 		VkResult result;
 
+		//to be deleted
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
+		VkDescriptorPool descriptorPool; // 3d
 		std::unique_ptr<VulkanBufferAllocator> bufferAllocator;
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer1;
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 
 
-		std::unique_ptr<ImguiLayer> imguiLayer;
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
 

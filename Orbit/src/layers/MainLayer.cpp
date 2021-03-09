@@ -8,6 +8,7 @@ void MainLayer::onAttach()
     fileLoader.loadFileNames();
     fileLoader.loadTLEandCreateObjects(spaceObjects);
 
+    std::cout << "Data Ready" << std::endl << std::endl << std::endl;
 	// download data
 	// calculate info
 	// create objects

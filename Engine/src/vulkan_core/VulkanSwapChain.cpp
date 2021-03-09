@@ -70,10 +70,6 @@ namespace Engine
 		createDescriptorSetLayout();
 		createGraphicsPipeline();
 		
-
-
-		
-
 		createFramebuffers();
 
 		// renderer 3d
@@ -184,7 +180,7 @@ namespace Engine
 	{
 		cleanupSwapChain();
 
-		vkDestroyDescriptorSetLayout(logicalDeviceHandle, descriptorSetLayout, nullptr); //////////////////////
+		vkDestroyDescriptorSetLayout(logicalDeviceHandle, pipeline.descriptorSetLayout, nullptr); //////////////////////
 
 		vkDestroyBuffer(logicalDeviceHandle, indexBuffer->getIndexBuffer(), nullptr);
 		vkFreeMemory(logicalDeviceHandle, indexBuffer->getIndexBufferMemory(), nullptr);
@@ -269,9 +265,9 @@ namespace Engine
 
 		vkFreeCommandBuffers(logicalDeviceHandle, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
-		vkDestroyPipeline(logicalDeviceHandle, graphicsPipeline, nullptr);
-		vkDestroyPipelineLayout(logicalDeviceHandle, pipelineLayout, nullptr);
-		vkDestroyRenderPass(logicalDeviceHandle, renderPass, nullptr);
+		vkDestroyPipeline(logicalDeviceHandle, pipeline.graphicsPipeline, nullptr);
+		vkDestroyPipelineLayout(logicalDeviceHandle, pipeline.pipelineLayout, nullptr);
+		vkDestroyRenderPass(logicalDeviceHandle, pipeline.renderPass, nullptr);
 
 		for (size_t i = 0; i < swapChainData.swapChainImageViews.size(); i++)
 		{
@@ -521,11 +517,11 @@ namespace Engine
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 1;
-		pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;// .data(); // change from &
+		pipelineLayoutInfo.pSetLayouts = &pipeline.descriptorSetLayout;// .data(); // change from &
 		//pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
 		//pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
-		if (vkCreatePipelineLayout(logicalDeviceHandle, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
+		if (vkCreatePipelineLayout(logicalDeviceHandle, &pipelineLayoutInfo, nullptr, &pipeline.pipelineLayout) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
@@ -542,13 +538,13 @@ namespace Engine
 		pipelineInfo.pDepthStencilState = &depthStencil;; // Optional
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.pDynamicState = nullptr; // Optional
-		pipelineInfo.layout = pipelineLayout;
-		pipelineInfo.renderPass = renderPass;
+		pipelineInfo.layout = pipeline.pipelineLayout;
+		pipelineInfo.renderPass = pipeline.renderPass;
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 		pipelineInfo.basePipelineIndex = -1; // Optional
 
-		if (vkCreateGraphicsPipelines(logicalDeviceHandle, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
+		if (vkCreateGraphicsPipelines(logicalDeviceHandle, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.graphicsPipeline) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
@@ -616,7 +612,7 @@ namespace Engine
 		renderPassInfo.dependencyCount = 1;
 		renderPassInfo.pDependencies = &dependency;
 
-		if (vkCreateRenderPass(logicalDeviceHandle, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
+		if (vkCreateRenderPass(logicalDeviceHandle, &renderPassInfo, nullptr, &pipeline.renderPass) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create render pass!");
 		}
@@ -636,7 +632,7 @@ namespace Engine
 
 			VkFramebufferCreateInfo framebufferInfo{};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			framebufferInfo.renderPass = renderPass;
+			framebufferInfo.renderPass = pipeline.renderPass;
 			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 			framebufferInfo.pAttachments = attachments.data();
 			framebufferInfo.width = swapChainData.swapChainExtent.width;
@@ -657,7 +653,7 @@ namespace Engine
 		VkCommandPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
-		poolInfo.flags = 0; // Optional
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; // Optional
 
 		if (vkCreateCommandPool(logicalDeviceHandle, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
 		{
@@ -694,7 +690,7 @@ namespace Engine
 
 			VkRenderPassBeginInfo renderPassInfo{};
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = renderPass;
+			renderPassInfo.renderPass = pipeline.renderPass;
 			renderPassInfo.framebuffer = swapChainData.swapChainFramebuffers[i];
 			renderPassInfo.renderArea.offset = { 0, 0 };
 			renderPassInfo.renderArea.extent = swapChainData.swapChainExtent;
@@ -708,7 +704,7 @@ namespace Engine
 
 			/* --------------------------------------------------------------------------------- */
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.graphicsPipeline);
 
 
 			VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
@@ -729,7 +725,7 @@ namespace Engine
 				else vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
 
-				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
 			
 				vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
 			}
@@ -766,7 +762,7 @@ namespace Engine
 		layoutInfo1.bindingCount = 1;
 		layoutInfo1.pBindings = &uboLayoutBinding;
 		
-		if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo1, nullptr, &descriptorSetLayout) != VK_SUCCESS)
+		if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo1, nullptr, &pipeline.descriptorSetLayout) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
@@ -846,7 +842,7 @@ namespace Engine
 				allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 				allocateInfo.descriptorPool = descriptorPool;
 				allocateInfo.descriptorSetCount = 1;
-				allocateInfo.pSetLayouts = &descriptorSetLayout;
+				allocateInfo.pSetLayouts = &pipeline.descriptorSetLayout;
 				vkAllocateDescriptorSets(logicalDeviceHandle, &allocateInfo, &cube->descriptorSet);
 
 
