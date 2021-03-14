@@ -15,13 +15,9 @@ namespace Engine
 	{
 	public:
 		VulkanContext();
-		~VulkanContext();
+		~VulkanContext() = default;
 
 		void initSurfaceAndDevices(const std::shared_ptr<Window>& window);
-
-		void startFrame();
-		void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
-		void endFrame();
 
 		void onShutDown();
 

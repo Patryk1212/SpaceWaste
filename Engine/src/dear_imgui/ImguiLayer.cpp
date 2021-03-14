@@ -41,7 +41,8 @@ namespace Engine
 	{
 		ImGui::Render();
 
-		vkResetCommandPool(logicalDeviceHandle, imguiCommandPool, 0);
+		//vkResetCommandPool(logicalDeviceHandle, imguiCommandPool, 0); causes some errors
+
 		vkBeginCommandBuffer(cmdBuffer[imageIndex], &commandBufferInfo);
 
 		renderPassInfo.framebuffer = imguiFrameBuffers[imageIndex];

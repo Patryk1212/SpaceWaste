@@ -53,36 +53,13 @@ namespace Engine
 		vkGetDeviceQueue(logicaldevice, indices.presentFamily.value(), 0, &presentQueue);
 	}
 
-	VulkanLogicalDevice::~VulkanLogicalDevice()
-	{
-		//vkDestroyDevice(logicaldevice, nullptr);
-	}
-
 	void VulkanLogicalDevice::createGraphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice)
 	{
 		Renderer3D::init(window, physicalDevice, logicalDevice, graphicsQueue, presentQueue);
-
-		//swapChain = std::make_unique<VulkanSwapChain>(window, physicalDevice, logicalDevice, graphicsQueue, presentQueue); // dont need to pass queues
-	}
-
-	void VulkanLogicalDevice::startFrame()
-	{
-		swapChain->startFrame(); //
-	}
-
-	void VulkanLogicalDevice::updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera)
-	{
-		swapChain->updateFrame(deltaTime, camera); //
-	}
-
-	void VulkanLogicalDevice::endFrame()
-	{
-		swapChain->endFrame(); //
 	}
 
 	void VulkanLogicalDevice::onShutDown()
 	{
-		swapChain->onShutDown(); //
 		vkDestroyDevice(logicaldevice, nullptr);
 	}
 

@@ -24,7 +24,7 @@ void FileLoader::loadFileNames()
     file.close();
 }
 
-void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<SpaceObject>>& objects)
+void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<Engine::Object>>& objects)
 {
     std::fstream file;
 
@@ -66,8 +66,7 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<SpaceObject
 
                 if (number == 2)
                 {
-                    std::unique_ptr<SpaceObject> object = std::make_unique<SpaceObject>(name, one, two);
-                    //std::cout << object->showName() << std::endl;
+                    std::unique_ptr<Engine::Object> object = std::make_unique<SpaceObject>(name, one, two);
                     objects.emplace_back(std::move(object));
                     number = 0;
                 }
@@ -77,6 +76,4 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<SpaceObject
 
         file.close();
     }
-
-    //std::cout << objects.size() << std::endl;
 }

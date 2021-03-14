@@ -18,12 +18,12 @@ public:
 	virtual void onRender() override;
 	virtual bool onEvent(Engine::Event& event) override;
 
-public:
-	void PrintPosVel(const cSatellite& sat);
-
 private:
 	FileLoader fileLoader;
+	// camera here
+	std::unique_ptr<Engine::CameraController> cameraController;
 
 private:
-	std::vector<std::unique_ptr<SpaceObject>> spaceObjects;
+	bool xd = true;
+	std::vector<std::unique_ptr<Engine::Object>> spaceObjects;
 };

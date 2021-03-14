@@ -54,36 +54,13 @@ namespace Engine
 		}
 	}
 
-	VulkanContext::~VulkanContext()
-	{
-		//vkDestroyInstance(instance, nullptr);
-	}
-
 	void VulkanContext::initSurfaceAndDevices(const std::shared_ptr<Window>& window)
 	{
 		surface = std::make_unique<VulkanSurface>(window);
 
 		physicalDevice = std::make_unique<VulkanPhysicalDevice>(deviceExtensions);
 		logicalDevice = std::make_unique<VulkanLogicalDevice>(physicalDevice->getPhysicalDevice(), validationLayers, deviceExtensions);
-
-		//Renderer3D::init(window, physicalDevice->getPhysicalDevice(), logicalDevice->getLogicalDevice());
-
-		logicalDevice->createGraphics(window, physicalDevice->getPhysicalDevice(), logicalDevice->getLogicalDevice()); // why passing ld?
-	}
-
-	void VulkanContext::startFrame()
-	{
-		logicalDevice->startFrame();
-	}
-
-	void VulkanContext::updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera)
-	{
-		logicalDevice->updateFrame(deltaTime, camera);
-	}
-
-	void VulkanContext::endFrame()
-	{
-		logicalDevice->endFrame();
+		logicalDevice->createGraphics(window, physicalDevice->getPhysicalDevice(), logicalDevice->getLogicalDevice());
 	}
 
 	void VulkanContext::onShutDown()

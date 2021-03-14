@@ -54,8 +54,6 @@ namespace Engine
 
 	void Application::run()
 	{
-		//Renderer3D::x();
-
 		while (running)
 		{
 			timer.onUpdate((float)glfwGetTime());
@@ -63,24 +61,18 @@ namespace Engine
 			window->onUpdate();
 			cameraController->onUpdate(timer.getDeltaTime());
 
-
-			//Renderer3D::startFrame();
 			Renderer3D::beginFrame();
-			//vulkanContext->startFrame();
 			
 			for (const auto& layer : layerStack.getAllLayers())
 			{
 				layer->onUpdate(timer.getDeltaTime());
 			}
 
-
 			Renderer3D::updateFrame(timer.getDeltaTime(), cameraController->getCamera());
 			Renderer3D::endFrame();
-
-			//vulkanContext->updateFrame(timer.getDeltaTime(), cameraController->getCamera());// , layerStack.getLayerWithTag("Main Layer")); // camera
-			//vulkanContext->endFrame();
 		}
 
+		Renderer3D::shutDown();
 		vulkanContext->onShutDown();
 		//vkDeviceWaitIdle(vulkanContext->getLogicalDevice());
 	}

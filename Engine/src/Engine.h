@@ -10,3 +10,6 @@
 #include "events+input/Event.h"
 #include "events+input/KeyEvent.h"
 #include "events+input/MouseEvent.h"
+
+/* --- Renderer --- */
+#include "renderer/Renderer3D.h"

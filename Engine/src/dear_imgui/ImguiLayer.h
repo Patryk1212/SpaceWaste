@@ -7,7 +7,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
 
-#include "vulkan_core/SwapChain.h"
+#include "vulkan_core/VulkanData.h"
 
 namespace Engine
 {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "VulkanSurface.h"
-#include "VulkanSwapChain.h"
 
+#include "renderer/Graphics.h"
 #include "renderer/Renderer3D.h"
 
 namespace Engine
@@ -11,13 +11,9 @@ namespace Engine
 	{
 	public:
 		VulkanLogicalDevice(const VkPhysicalDevice& physicalDevice, const std::vector<const char*>& validationLayers, const std::vector<const char*>& deviceExtensions);
-		~VulkanLogicalDevice();
+		~VulkanLogicalDevice() = default;
 
 		void createGraphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice);
-
-		void startFrame();
-		void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
-		void endFrame();
 
 		void onShutDown();
 
@@ -28,7 +24,5 @@ namespace Engine
 
 		VkQueue graphicsQueue;
 		VkQueue presentQueue;
-
-		std::unique_ptr<VulkanSwapChain> swapChain; // remember to init// not needed
 	};
 }

@@ -23,6 +23,7 @@ namespace Engine
 
 		inline static Application& get() { return *appInstance; }
 		inline Window& getWindow() { return *window; }
+		inline std::shared_ptr<Window> getWindows() { return window; }
 
 	private:
 		bool shutdown(WindowCloseEvent event);
