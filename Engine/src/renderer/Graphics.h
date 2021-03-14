@@ -20,7 +20,7 @@ namespace Engine
 		Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
 		~Graphics() = default;
 		
-		//std::unique_ptr<CameraController> cameraController;
+		std::unique_ptr<CameraController> cameraController;
 		void createObjectsAndRecord(const std::vector<std::unique_ptr<Object>>& objects);
 
 		void startFrame();

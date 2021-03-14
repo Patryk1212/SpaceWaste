@@ -9,8 +9,8 @@ namespace Engine
 	Graphics::Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
 		: physicalDeviceHandle(physicalDevice), logicalDeviceHandle(logicalDevice), windowHandle(window), graphicsQueue(graphicsQueue), presentQueue(presentQueue)
 	{
-		//cameraController = std::make_unique<CameraController>();
-		//cameraController->init(window);
+		cameraController = std::make_unique<CameraController>();
+		cameraController->init(window);
 
 		bool earth = false;
 		glm::vec2 ring0{ 14.0f, 22.0f };
@@ -63,11 +63,11 @@ namespace Engine
 		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices); // renderer 3d
 
 
-		createUniformBuffers(); // renderer 3d // needed for object
-		
-		createDescriptorPool(); // renderer 3d // needed for object
-		createDescriptorSets(); // renderer 3d // needed for object
-		createCommandBuffers(); // needed for object
+		//createUniformBuffers(); // renderer 3d // needed for object
+		//
+		//createDescriptorPool(); // renderer 3d // needed for object
+		//createDescriptorSets(); // renderer 3d // needed for object
+		//createCommandBuffers(); // needed for object
 
 		createSyncObjects();
 
@@ -78,11 +78,11 @@ namespace Engine
 	{
 		// reset or delete them if used more than once
 		
-		createUniformBuffers(); // renderer 3d // needed for object
+		createUniformBuffers(objects); // renderer 3d // needed for object
 		
-		createDescriptorPool(); // renderer 3d // needed for object
-		createDescriptorSets(); // renderer 3d // needed for object
-		createCommandBuffers();
+		createDescriptorPool(objects); // renderer 3d // needed for object
+		createDescriptorSets(objects); // renderer 3d // needed for object
+		createCommandBuffers(objects);
 		std::cout << "ASASAS" << std::endl;
 	}
 
@@ -110,7 +110,7 @@ namespace Engine
 
 		imguiLayer->startFrame();
 
-		//cameraController->onUpdate();
+		cameraController->onUpdate();
 	}
 
 	void Graphics::endFrame()
@@ -868,8 +868,8 @@ namespace Engine
 		bool earth = false;
 		for (const auto& cube : cubes)
 		{
-			cube->ubo.view = camera->getProjectionMatrix();
-			cube->ubo.proj = camera->getViewMatrix();
+			cube->ubo.view = camera->getViewMatrix(); 
+			cube->ubo.proj = camera->getProjectionMatrix();
 			
 			if (!earth)
 			{
@@ -903,8 +903,8 @@ namespace Engine
 		bool earth = true;
 		for (const auto& cube : objects)
 		{
-			//cube->ubo.view = camera->getProjectionMatrix();
-			//cube->ubo.proj = camera->getViewMatrix();
+			cube->ubo.view = cameraController->getCamera()->getViewMatrix(); 
+			cube->ubo.proj = cameraController->getCamera()->getProjectionMatrix();
 
 		
 			

@@ -31,7 +31,7 @@ void SpaceObject::calcualateSpacePosition()
 
 	vecPos.push_back(eci);
 
-	position = { 1,1,1 };// vecPos[0].Position().m_x, vecPos[0].Position().m_y, vecPos[0].Position().m_z
+	position = { vecPos[0].Position().m_x, vecPos[0].Position().m_y, vecPos[0].Position().m_z };
 
 	setPosition(position);
 

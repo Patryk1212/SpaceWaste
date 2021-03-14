@@ -91,7 +91,7 @@ namespace Engine
 				layer->onUpdate(timer.getDeltaTime());
 			}
 
-			Renderer3D::updateFrame(timer.getDeltaTime(), cameraController->getCamera());
+			//Renderer3D::updateFrame(timer.getDeltaTime(), cameraController->getCamera());
 			Renderer3D::endFrame();
 		}
 
