@@ -35,11 +35,11 @@ void SpaceObject::calcualateSpacePosition()
 
 	setPosition(position);
 
-	std::cout << "Position: " << vecPos[0].Position().m_x << std::endl;
-	std::cout << "Position: " << vecPos[0].Position().m_y << std::endl;
-	std::cout << "Position: " << vecPos[0].Position().m_z << std::endl;
-	
-	std::cout << "Velocity: " << vecPos[0].Velocity().m_x << std::endl;
-	std::cout << "Velocity: " << vecPos[0].Velocity().m_y << std::endl;
-	std::cout << "Velocity: " << vecPos[0].Velocity().m_z << std::endl;
+	//std::cout << "Position: " << vecPos[0].Position().m_x << std::endl;
+	//std::cout << "Position: " << vecPos[0].Position().m_y << std::endl;
+	//std::cout << "Position: " << vecPos[0].Position().m_z << std::endl;
+	//
+	//std::cout << "Velocity: " << vecPos[0].Velocity().m_x << std::endl;
+	//std::cout << "Velocity: " << vecPos[0].Velocity().m_y << std::endl;
+	//std::cout << "Velocity: " << vecPos[0].Velocity().m_z << std::endl;
 }

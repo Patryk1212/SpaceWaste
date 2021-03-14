@@ -7,7 +7,7 @@ namespace Engine
 
 	Application::Application()
 	{
-		Engine::WindowSpec ws("Space Debris", 800, 600);
+		/*Engine::WindowSpec ws("Space Debris", 800, 600);
 		window = std::make_shared<Window>(ws);
 		window->init();
 		window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
@@ -17,7 +17,7 @@ namespace Engine
 		
 		vulkanContext = std::make_unique<VulkanContext>();
 		vulkanContext->initSurfaceAndDevices(window);
-
+		std::cout << "Finish App constructor" << std::endl;*/
 	}
 
 	Application::~Application()
@@ -52,14 +52,37 @@ namespace Engine
 		//vkDestroyInstance(instance, nullptr); // already in class
 	}
 
+	void Application::init()
+	{
+		std::cout << "START INIT" << std::endl << std::endl << std::endl;
+
+		Engine::WindowSpec ws("Space Debris", 800, 600);
+		window = std::make_shared<Window>(ws);
+		window->init();
+		window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
+
+		cameraController = std::make_unique<CameraController>();
+		cameraController->init(window);
+
+		vulkanContext = std::make_unique<VulkanContext>();
+		vulkanContext->initSurfaceAndDevices(window);
+
+		for (const auto& layer : layerStack.getAllLayers())
+		{
+			layer->onAttach();
+		}
+	}
+
 	void Application::run()
 	{
+		std::cout << "START RUN" << std::endl << std::endl << std::endl;
+
 		while (running)
 		{
 			timer.onUpdate((float)glfwGetTime());
 
 			window->onUpdate();
-			cameraController->onUpdate(timer.getDeltaTime());
+			cameraController->onUpdate();
 
 			Renderer3D::beginFrame();
 			
@@ -100,7 +123,7 @@ namespace Engine
 
 	void Application::addNewLayer(std::unique_ptr<Layer>& layer)
 	{
-		layer->onAttach();
+		//layer->onAttach();
 		layerStack.addLayer(layer);
 	}
 

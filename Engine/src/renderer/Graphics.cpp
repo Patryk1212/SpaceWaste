@@ -9,8 +9,8 @@ namespace Engine
 	Graphics::Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
 		: physicalDeviceHandle(physicalDevice), logicalDeviceHandle(logicalDevice), windowHandle(window), graphicsQueue(graphicsQueue), presentQueue(presentQueue)
 	{
-		cameraController = std::make_unique<CameraController>();
-		cameraController->init(window);
+		//cameraController = std::make_unique<CameraController>();
+		//cameraController->init(window);
 
 		bool earth = false;
 		glm::vec2 ring0{ 14.0f, 22.0f };
@@ -27,7 +27,7 @@ namespace Engine
 			theta = 2.0 * 3.14 * uniformDist(rndGenerator);
 			pos = glm::vec3(rho * cos(theta), uniformDist(rndGenerator) * 0.5f - 0.25f, rho * sin(theta));
 
-			temp->scale = { 0.1f, 0.1f, 0.1f };
+			temp->scale = { 1.0f, 1.0f, 1.0f };
 
 			if (!earth)
 			{
@@ -64,7 +64,7 @@ namespace Engine
 
 
 		createUniformBuffers(); // renderer 3d // needed for object
-
+		
 		createDescriptorPool(); // renderer 3d // needed for object
 		createDescriptorSets(); // renderer 3d // needed for object
 		createCommandBuffers(); // needed for object
@@ -78,14 +78,11 @@ namespace Engine
 	{
 		// reset or delete them if used more than once
 		
-		createUniformBuffers(objects); // renderer 3d // needed for object
+		createUniformBuffers(); // renderer 3d // needed for object
 		
-		vkDestroyDescriptorPool(logicalDeviceHandle, descriptorPool, nullptr);
-		createDescriptorPool(objects); // renderer 3d // needed for object
-		createDescriptorSets(objects); // renderer 3d // needed for object
-
-		vkFreeCommandBuffers(logicalDeviceHandle, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-		createCommandBuffers(objects);
+		createDescriptorPool(); // renderer 3d // needed for object
+		createDescriptorSets(); // renderer 3d // needed for object
+		createCommandBuffers();
 		std::cout << "ASASAS" << std::endl;
 	}
 
@@ -113,30 +110,12 @@ namespace Engine
 
 		imguiLayer->startFrame();
 
-		cameraController->onUpdate(0);
-
-		//vkFreeCommandBuffers(logicalDeviceHandle, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-		
-		///createCommandBuffers(); // needed for object
+		//cameraController->onUpdate();
 	}
 
 	void Graphics::endFrame()
 	{
-		imguiLayer->endFrame(swapChainData.imageIndex);
-		recordCmd(swapChainData.imageIndex);
-		/* dynamic cmd test */
-
-		//if (newData < 1)// && ready1)
-		//{
-		//	std::cout << "ASAS" << std::endl;
-		//	newData++;
-		//vkFreeCommandBuffers(logicalDeviceHandle, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-		//createCommandBuffers();
-		// record new cmd
-		//}
-
-		/* ---------------- */
-		
+		imguiLayer->endFrame(swapChainData.imageIndex);	
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -151,7 +130,7 @@ namespace Engine
 		{ commandBuffers[swapChainData.imageIndex], imguiLayer->getCurrentlyUsedCmdBuffer(swapChainData.imageIndex) };
 
 		submitInfo.commandBufferCount = static_cast<uint32_t>(submitCommandBuffers.size());
-		submitInfo.pCommandBuffers = submitCommandBuffers.data();// &commandBuffers[imageIndex];
+		submitInfo.pCommandBuffers = submitCommandBuffers.data();
 
 		VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
 		submitInfo.signalSemaphoreCount = 1;
@@ -193,7 +172,7 @@ namespace Engine
 
 	void Graphics::updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera)
 	{
-		updateUniformBuffer(cameraController->getCamera());
+		updateUniformBuffer(camera);
 	}
 	
 	void Graphics::onShutDown() // needs to be done properly
@@ -700,8 +679,8 @@ namespace Engine
 		{
 			VkCommandBufferBeginInfo beginInfo{};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags = VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT; // Optional
-			beginInfo.pInheritanceInfo = nullptr; // Optional
+			///beginInfo.flags = VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT; // Optional
+			//beginInfo.pInheritanceInfo = nullptr; // Optional
 
 			if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS)
 			{
@@ -889,8 +868,8 @@ namespace Engine
 		bool earth = false;
 		for (const auto& cube : cubes)
 		{
-			cube->ubo.view = camera->getViewMatrix();
-			cube->ubo.proj = camera->getProjectionMatrix();
+			cube->ubo.view = camera->getProjectionMatrix();
+			cube->ubo.proj = camera->getViewMatrix();
 			
 			if (!earth)
 			{
@@ -924,14 +903,14 @@ namespace Engine
 		bool earth = true;
 		for (const auto& cube : objects)
 		{
-			cube->ubo.view = cameraController->getCamera()->getProjectionMatrix();
-			cube->ubo.proj = cameraController->getCamera()->getViewMatrix();
+			//cube->ubo.view = camera->getProjectionMatrix();
+			//cube->ubo.proj = camera->getViewMatrix();
 
 		
 			
-				cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
-				cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-				cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
+			cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
+			cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+			cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
 			
 
 

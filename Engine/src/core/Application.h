@@ -16,6 +16,7 @@ namespace Engine
 		Application();
 		~Application();
 
+		void init();
 		void run();
 		void onEvent(Event& event);
 

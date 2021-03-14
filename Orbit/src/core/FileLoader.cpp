@@ -43,7 +43,7 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<Engine::Obj
 
             while (std::getline(file, line))
             {
-                std::cout << line.c_str() << std::endl;
+                //std::cout << line.c_str() << std::endl;
                 switch (number)
                 {
                 case 0:

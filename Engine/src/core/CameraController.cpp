@@ -17,7 +17,7 @@ namespace Engine
 		windowHandle = window;
 	}
 
-	void CameraController::onUpdate(float deltaTime)
+	void CameraController::onUpdate()
 	{
 		if (windowHandle->isMouseButtonPressed(0))
 		{

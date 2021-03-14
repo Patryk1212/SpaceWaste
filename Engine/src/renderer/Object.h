@@ -14,7 +14,7 @@ namespace Engine
 		Object() = default;
 		~Object() = default;
 
-		inline void setPosition(const glm::vec3& pos) { position = pos; std::cout << "POS" << pos.x; }
+		inline void setPosition(const glm::vec3& pos) { /*position = pos;*/ std::cout << "POS" << pos.x; }
 		virtual std::string showName() const { return "Base Object"; }
 		virtual std::string showFirstTLELine() const { return "Base Object"; }
 		virtual std::string showSecondTLELine() const { return "Base Object"; }
@@ -27,7 +27,7 @@ namespace Engine
 		VkDeviceMemory getUniformBufferMemory(int imageNumber) const;
 
 	public: // private
-		glm::vec3 scale = { 10.0f, 10.0f, 10.0f };
+		glm::vec3 scale = { 5.0f, 5.0f, 5.0f };
 		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 		float rotation = 0.0f;
 

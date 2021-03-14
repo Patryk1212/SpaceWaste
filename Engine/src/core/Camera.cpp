@@ -16,7 +16,6 @@ namespace Engine
 
 		float DistanceToOrigin = viewData.cameraPos.z;
 		
-
 		float x = DistanceToOrigin * sin(phi) * cos(theta);
 		float y = DistanceToOrigin * cos(phi);
 		float z = DistanceToOrigin * sin(phi) * sin(theta);

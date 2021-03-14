@@ -10,7 +10,7 @@ void MainLayer::onAttach()
 
     std::cout << "Data Ready" << std::endl << std::endl << std::endl;
     
-    
+    //Engine::Renderer3D::recordCommandBuffers(spaceObjects);
     // send object to graphis 
     // record cmd buffers
     
@@ -28,7 +28,7 @@ void MainLayer::onUpdate(float deltaTime)
         //Engine::Renderer3D::recordCommandBuffers(spaceObjects);
         xd = false;
     }
-   // Engine::Renderer3D::updateFrame(spaceObjects);
+    //Engine::Renderer3D::updateFrame(spaceObjects);
     //Engine::Renderer3D::updateFrame(deltaTime, cameraController->getCamera());
 }
 
