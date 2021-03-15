@@ -20,54 +20,52 @@ namespace Engine
 		Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
 		~Graphics() = default;
 		
-		std::unique_ptr<CameraController> cameraController;
 		void createObjectsAndRecord(const std::vector<std::unique_ptr<Object>>& objects);
 
 		void startFrame();
-		void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
 		void endFrame();
 
 		int newData = 0;
 		bool ready1 = false;
 		VkRenderPassBeginInfo renderPassInfo{};
-		void recordCmd(int imageIndex)
-		{
-			VkCommandBufferBeginInfo beginInfo{};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags = VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT;// VK_COMMAND_BUFFER_USAGE_FLAG_BITS_MAX_ENUM;// VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-	
-			vkResetCommandBuffer(commandBuffers[imageIndex], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
-			if (vkBeginCommandBuffer(commandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to begin recording command buffer!");
-			}
-			
-			renderPassInfo.framebuffer = swapChainData.swapChainFramebuffers[imageIndex];
-			vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-			vkCmdBindPipeline(commandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.graphicsPipeline);
-
-			// Record new stuff
-			VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
-
-			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffers[imageIndex], 0, 1, vertexBuffers, offsets);
-			vkCmdBindIndexBuffer(commandBuffers[imageIndex], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
-
-			for (const auto& cube : cubes)
-			{
-				vkCmdBindDescriptorSets(commandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
-				vkCmdDrawIndexed(commandBuffers[imageIndex], indexBuffer->getCount(), 1, 0, 0, 0);
-			}
-
-
-			// Submit command buffer
-			vkCmdEndRenderPass(commandBuffers[imageIndex]);
-
-			if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to record command buffer!");
-			}
-		}
+		//void recordCmd(int imageIndex)
+		//{
+		//	VkCommandBufferBeginInfo beginInfo{};
+		//	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		//	beginInfo.flags = VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT;// VK_COMMAND_BUFFER_USAGE_FLAG_BITS_MAX_ENUM;// VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+		//
+		//	vkResetCommandBuffer(commandBuffers[imageIndex], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+		//	if (vkBeginCommandBuffer(commandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
+		//	{
+		//		throw std::runtime_error("failed to begin recording command buffer!");
+		//	}
+		//	
+		//	renderPassInfo.framebuffer = swapChainData.swapChainFramebuffers[imageIndex];
+		//	vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		//	vkCmdBindPipeline(commandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.graphicsPipeline);
+		//
+		//	// Record new stuff
+		//	VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
+		//
+		//	VkDeviceSize offsets[] = { 0 };
+		//	vkCmdBindVertexBuffers(commandBuffers[imageIndex], 0, 1, vertexBuffers, offsets);
+		//	vkCmdBindIndexBuffer(commandBuffers[imageIndex], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
+		//
+		//	for (const auto& cube : cubes)
+		//	{
+		//		vkCmdBindDescriptorSets(commandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
+		//		vkCmdDrawIndexed(commandBuffers[imageIndex], indexBuffer->getCount(), 1, 0, 0, 0);
+		//	}
+		//
+		//
+		//	// Submit command buffer
+		//	vkCmdEndRenderPass(commandBuffers[imageIndex]);
+		//
+		//	if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
+		//	{
+		//		throw std::runtime_error("failed to record command buffer!");
+		//	}
+		//}
 
 		void onShutDown();
 
@@ -105,23 +103,22 @@ namespace Engine
 		void createCommandPool();
 
 	private: // command buffer
-		void createCommandBuffers();
+		
 		void createCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects);
 
 	private: // uniforms buffers
 		void createDescriptorSetLayout();
 
-		void createUniformBuffers();//
+		
 		void createUniformBuffers(const std::vector<std::unique_ptr<Object>>& objects);//
 
-		void updateUniformBuffer(const std::unique_ptr<Camera>& camera);//
+		
 	public:
-		void updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects);
+		void updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera);
 
 	private: // descriptor sets
-		void createDescriptorPool();
+		
 		void createDescriptorPool(const std::vector<std::unique_ptr<Object>>& objects);//
-		void createDescriptorSets();
 		void createDescriptorSets(const std::vector<std::unique_ptr<Object>>& objects);//
 
 	private: // swap chain
@@ -156,12 +153,5 @@ namespace Engine
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer1;
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
-
-
-
-		/* - - - - - - - - - - - - - - - - - - - - - - - */
-
-		// cube test
-		std::vector<std::unique_ptr<Object>> cubes;
 	};
 }

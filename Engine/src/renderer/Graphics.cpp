@@ -9,40 +9,6 @@ namespace Engine
 	Graphics::Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
 		: physicalDeviceHandle(physicalDevice), logicalDeviceHandle(logicalDevice), windowHandle(window), graphicsQueue(graphicsQueue), presentQueue(presentQueue)
 	{
-		cameraController = std::make_unique<CameraController>();
-		cameraController->init(window);
-
-		bool earth = false;
-		glm::vec2 ring0{ 14.0f, 22.0f };
-		float rho, theta;
-		std::default_random_engine rndGenerator((unsigned)time(nullptr));
-		std::uniform_real_distribution<float> uniformDist(0.0, 1.0);
-
-		for (int i = 0; i < 100; i++)
-		{
-			auto temp = std::make_unique<Object>();
-
-			glm::vec3 pos;
-			rho = sqrt((pow(ring0[1], 2.0f) - pow(ring0[0], 2.0f)) * uniformDist(rndGenerator) + pow(ring0[0], 2.0f));
-			theta = 2.0 * 3.14 * uniformDist(rndGenerator);
-			pos = glm::vec3(rho * cos(theta), uniformDist(rndGenerator) * 0.5f - 0.25f, rho * sin(theta));
-
-			temp->scale = { 0.1f, 0.1f, 0.1f };
-
-			if (!earth)
-			{
-				pos = { 0.0f, 0.0f, 0.0f };
-				temp->scale = { 2.5f, 2.5f, 2.5f };
-				earth = true;
-			}
-
-			temp->position = pos;
-
-			cubes.emplace_back(std::move(temp));
-		}
-
-		/////////////////////////////////////////////////////////////////
-
 		createSwapChain();
 		createImageViews();
 
@@ -62,13 +28,6 @@ namespace Engine
 		vertexBuffer1 = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices1); //temp // renderer 3d
 		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices); // renderer 3d
 
-
-		createUniformBuffers(); // renderer 3d // needed for object
-
-		createDescriptorPool(); // renderer 3d // needed for object
-		createDescriptorSets(); // renderer 3d // needed for object
-		createCommandBuffers(); // needed for object
-
 		createSyncObjects();
 
 		imguiLayer = std::make_unique<ImguiLayer>(window, logicalDevice, physicalDevice, graphicsQueue, swapChainData);		
@@ -80,11 +39,8 @@ namespace Engine
 		
 		createUniformBuffers(objects); // renderer 3d // needed for object
 		
-		vkDestroyDescriptorPool(logicalDeviceHandle, descriptorPool, nullptr);
 		createDescriptorPool(objects); // renderer 3d // needed for object
 		createDescriptorSets(objects); // renderer 3d // needed for object
-
-		vkFreeCommandBuffers(logicalDeviceHandle, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 		createCommandBuffers(objects);
 		std::cout << "ASASAS" << std::endl;
 	}
@@ -113,30 +69,12 @@ namespace Engine
 
 		imguiLayer->startFrame();
 
-		cameraController->onUpdate(0);
-
-		//vkFreeCommandBuffers(logicalDeviceHandle, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-		
-		///createCommandBuffers(); // needed for object
+		//cameraController->onUpdate();
 	}
 
 	void Graphics::endFrame()
 	{
-		imguiLayer->endFrame(swapChainData.imageIndex);
-		recordCmd(swapChainData.imageIndex);
-		/* dynamic cmd test */
-
-		//if (newData < 1)// && ready1)
-		//{
-		//	std::cout << "ASAS" << std::endl;
-		//	newData++;
-		//vkFreeCommandBuffers(logicalDeviceHandle, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-		//createCommandBuffers();
-		// record new cmd
-		//}
-
-		/* ---------------- */
-		
+		imguiLayer->endFrame(swapChainData.imageIndex);	
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -151,7 +89,7 @@ namespace Engine
 		{ commandBuffers[swapChainData.imageIndex], imguiLayer->getCurrentlyUsedCmdBuffer(swapChainData.imageIndex) };
 
 		submitInfo.commandBufferCount = static_cast<uint32_t>(submitCommandBuffers.size());
-		submitInfo.pCommandBuffers = submitCommandBuffers.data();// &commandBuffers[imageIndex];
+		submitInfo.pCommandBuffers = submitCommandBuffers.data();
 
 		VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
 		submitInfo.signalSemaphoreCount = 1;
@@ -189,11 +127,6 @@ namespace Engine
 		}
 
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
-	}
-
-	void Graphics::updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera)
-	{
-		updateUniformBuffer(cameraController->getCamera());
 	}
 	
 	void Graphics::onShutDown() // needs to be done properly
@@ -270,10 +203,10 @@ namespace Engine
 		createRenderPass();
 		createGraphicsPipeline();
 		createFramebuffers();
-		createUniformBuffers();
-		createDescriptorPool();
-		createDescriptorSets();
-		createCommandBuffers();
+		//createUniformBuffers();
+		//createDescriptorPool();
+		//createDescriptorSets();
+		//createCommandBuffers();
 	}
 
 	void Graphics::cleanupSwapChain()
@@ -681,84 +614,6 @@ namespace Engine
 		}
 	}
 
-	void Graphics::createCommandBuffers()
-	{
-		commandBuffers.resize(swapChainData.swapChainFramebuffers.size());
-
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = commandPool;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount = (uint32_t)commandBuffers.size();
-
-		if (vkAllocateCommandBuffers(logicalDeviceHandle, &allocInfo, commandBuffers.data()) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to allocate command buffers!");
-		}
-
-		for (size_t i = 0; i < commandBuffers.size(); i++)
-		{
-			VkCommandBufferBeginInfo beginInfo{};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags = VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT; // Optional
-			beginInfo.pInheritanceInfo = nullptr; // Optional
-
-			if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to begin recording command buffer!");
-			}
-
-			
-			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = pipeline.renderPass;
-			renderPassInfo.framebuffer = swapChainData.swapChainFramebuffers[i];
-			renderPassInfo.renderArea.offset = { 0, 0 };
-			renderPassInfo.renderArea.extent = swapChainData.swapChainExtent;
-
-			std::array<VkClearValue, 2> clearValues{}; 
-			clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-			clearValues[1].depthStencil = { 1.0f, 0 };
-			
-			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-			renderPassInfo.pClearValues = clearValues.data();
-
-			/* --------------------------------------------------------------------------------- */
-			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.graphicsPipeline);
-
-
-			VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
-			VkBuffer vertexBuffers1[] = { vertexBuffer1->getVertexBuffer() };
-
-			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);			  
-			
-			bool earth = false;
-			for (const auto& cube : cubes)
-			{
-				if (!earth) // temp
-				{
-					earth = true;
-					vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers1, offsets);
-				}
-				else vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-			
-			
-				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
-			
-				vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
-			}
-
-			vkCmdEndRenderPass(commandBuffers[i]);
-
-			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to record command buffer!");
-			}
-		}
-	}
-
 	void Graphics::createCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects)
 	{
 		commandBuffers.resize(swapChainData.swapChainFramebuffers.size());
@@ -868,53 +723,7 @@ namespace Engine
 		}
 	}
 
-	void Graphics::createUniformBuffers()
-	{
-		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
-		{
-			for (const auto& cube : cubes)
-			{
-				cube->createUniformBuffer(bufferAllocator);
-			}
-		}
-	}
-
-	void Graphics::updateUniformBuffer(const std::unique_ptr<Camera>& camera)
-	{
-		static auto startTime = std::chrono::high_resolution_clock::now();
-
-		auto currentTime = std::chrono::high_resolution_clock::now();
-		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-		bool earth = false;
-		for (const auto& cube : cubes)
-		{
-			cube->ubo.view = camera->getViewMatrix();
-			cube->ubo.proj = camera->getProjectionMatrix();
-			
-			if (!earth)
-			{
-				cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
-				cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation / 3), glm::vec3(0.0f, 1.0f, 0.0f));
-				cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
-				earth = true;
-			}
-			else
-			{
-				cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
-				cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-				cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
-			}
-			
-
-			void* data;
-			vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex), 0, sizeof(cube->ubo), 0, &data);
-			memcpy(data, &cube->ubo, sizeof(cube->ubo));
-			vkUnmapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex));
-		}
-	}
-
-	void Graphics::updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects)
+	void Graphics::updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera)
 	{
 		static auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -924,39 +733,17 @@ namespace Engine
 		bool earth = true;
 		for (const auto& cube : objects)
 		{
-			cube->ubo.view = cameraController->getCamera()->getProjectionMatrix();
-			cube->ubo.proj = cameraController->getCamera()->getViewMatrix();
+			cube->ubo.view = camera->getViewMatrix(); 
+			cube->ubo.proj = camera->getProjectionMatrix();
 
-		
+			cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
+			cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+			cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
 			
-				cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
-				cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-				cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
-			
-
-
 			void* data;
 			vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex), 0, sizeof(cube->ubo), 0, &data);
 			memcpy(data, &cube->ubo, sizeof(cube->ubo));
 			vkUnmapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex));
-		}
-	}
-
-	void Graphics::createDescriptorPool()
-	{
-		VkDescriptorPoolSize poolSize{};
-		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize.descriptorCount = static_cast<uint32_t>(swapChainData.swapChainImages.size()) * cubes.size();
-
-		VkDescriptorPoolCreateInfo poolInfo{};
-		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolInfo.poolSizeCount = 1;
-		poolInfo.pPoolSizes = &poolSize;
-		poolInfo.maxSets = static_cast<uint32_t>(swapChainData.swapChainImages.size()) * cubes.size();
-
-		if (vkCreateDescriptorPool(logicalDeviceHandle, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create descriptor pool!");
 		}
 	}
 
@@ -983,40 +770,6 @@ namespace Engine
 		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
 		{
 			for (const auto& cube : objects)
-			{
-				VkDescriptorSetAllocateInfo allocateInfo{};
-				allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-				allocateInfo.descriptorPool = descriptorPool;
-				allocateInfo.descriptorSetCount = 1;
-				allocateInfo.pSetLayouts = &pipeline.descriptorSetLayout;
-				vkAllocateDescriptorSets(logicalDeviceHandle, &allocateInfo, &cube->descriptorSet);
-
-
-				VkDescriptorBufferInfo bufferInfo{};
-				bufferInfo.buffer = cube->getUniformBuffer(i);
-				bufferInfo.offset = 0;
-				bufferInfo.range = sizeof(UniformBufferObject);
-
-
-				VkWriteDescriptorSet writeDescriptorSets{};
-
-				writeDescriptorSets.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-				writeDescriptorSets.dstSet = cube->descriptorSet;
-				writeDescriptorSets.dstBinding = 0;
-				writeDescriptorSets.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-				writeDescriptorSets.pBufferInfo = &bufferInfo;
-				writeDescriptorSets.descriptorCount = 1;
-
-				vkUpdateDescriptorSets(logicalDeviceHandle, 1, &writeDescriptorSets, 0, nullptr);
-			}
-		}
-	}
-
-	void Graphics::createDescriptorSets() // to cube class // test
-	{
-		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
-		{
-			for (auto& cube : cubes)
 			{
 				VkDescriptorSetAllocateInfo allocateInfo{};
 				allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;

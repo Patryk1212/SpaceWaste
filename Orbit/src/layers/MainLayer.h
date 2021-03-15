@@ -16,6 +16,7 @@ public:
 	virtual void onAttach() override;
 	virtual void onUpdate(float deltaTime) override;
 	virtual void onRender() override;
+	virtual void passCamera(std::unique_ptr<Engine::CameraController>& cc) override;
 	virtual bool onEvent(Engine::Event& event) override;
 
 private:
@@ -24,6 +25,5 @@ private:
 	std::unique_ptr<Engine::CameraController> cameraController;
 
 private:
-	bool xd = true;
 	std::vector<std::unique_ptr<Engine::Object>> spaceObjects;
 };

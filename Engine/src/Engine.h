@@ -1,6 +1,6 @@
 #pragma once
 
-// All classes to be used in applications
+// *** All classes needed in application itsef *** //
 
 #include "core/Application.h"
 #include "core/Layer.h"
