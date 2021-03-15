@@ -1,63 +1,14 @@
 #include "pch.h"
-#include "VulkanSwapChain.h"
+#include "Graphics.h"
 
 #include "vulkan_buffers/VulkanShader.h"
-#include "VulkanContext.h"
+#include "vulkan_core/VulkanContext.h"
 
 namespace Engine
 {
-	VulkanSwapChain::VulkanSwapChain(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
+	Graphics::Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
 		: physicalDeviceHandle(physicalDevice), logicalDeviceHandle(logicalDevice), windowHandle(window), graphicsQueue(graphicsQueue), presentQueue(presentQueue)
 	{
-		bool earth = false;
-		glm::vec2 ring0{ 14.0f, 22.0f };
-		float rho, theta;
-		std::default_random_engine rndGenerator((unsigned)time(nullptr));
-		std::uniform_real_distribution<float> uniformDist(0.0, 1.0);
-
-		for (int i = 0; i < 500; i++)
-		{
-			auto temp = std::make_unique<Cube>();
-
-			glm::vec3 pos;
-			rho = sqrt((pow(ring0[1], 2.0f) - pow(ring0[0], 2.0f)) * uniformDist(rndGenerator) + pow(ring0[0], 2.0f));
-			theta = 2.0 * 3.14 * uniformDist(rndGenerator);
-			pos = glm::vec3(rho * cos(theta), uniformDist(rndGenerator) * 0.5f - 0.25f, rho * sin(theta));
-
-			temp->scale = { 0.1f, 0.1f, 0.1f };
-
-			if (!earth)
-			{
-				pos = { 0.0f, 0.0f, 0.0f };
-				temp->scale = { 2.5f, 2.5f, 2.5f };
-				earth = true;
-			}
-
-			temp->position = pos;
-
-			cubes.emplace_back(std::move(temp));
-		}
-
-		glm::vec2 ring1{ 70.0f, 90.0f };
-		float rho1, theta1;
-
-		for (int i = 0; i < 800; i++)
-		{
-			auto temp = std::make_unique<Cube>();
-
-			glm::vec3 pos;
-			rho1 = sqrt((pow(ring1[1], 2.0f) - pow(ring1[0], 2.0f)) * uniformDist(rndGenerator) + pow(ring1[0], 2.0f));
-			theta1 = 2.0 * 3.14 * uniformDist(rndGenerator);
-			pos = glm::vec3(rho1 * cos(theta1), uniformDist(rndGenerator) * 0.5f - 0.25f, rho1 * sin(theta1));
-			
-			temp->scale = { 0.1f, 0.1f, 0.1f };
-			temp->position = pos;
-
-			cubes.emplace_back(std::move(temp));
-		}
-
-		/////////////////////////////////////////////////////////////////
-
 		createSwapChain();
 		createImageViews();
 
@@ -70,29 +21,31 @@ namespace Engine
 		createDescriptorSetLayout();
 		createGraphicsPipeline();
 		
-
-
-		
-
 		createFramebuffers();
 
+		// renderer 3d
 		vertexBuffer = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices); // renderer 3d
 		vertexBuffer1 = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices1); //temp // renderer 3d
 		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices); // renderer 3d
-
-
-		createUniformBuffers(); // renderer 3d
-
-		createDescriptorPool(); // renderer 3d
-		createDescriptorSets(); // renderer 3d
-		createCommandBuffers();
 
 		createSyncObjects();
 
 		imguiLayer = std::make_unique<ImguiLayer>(window, logicalDevice, physicalDevice, graphicsQueue, swapChainData);		
 	}
 
-	void VulkanSwapChain::startFrame()
+	void Graphics::createObjectsAndRecord(const std::vector<std::unique_ptr<Object>>& objects)
+	{
+		// reset or delete them if used more than once
+		
+		createUniformBuffers(objects); // renderer 3d // needed for object
+		
+		createDescriptorPool(objects); // renderer 3d // needed for object
+		createDescriptorSets(objects); // renderer 3d // needed for object
+		createCommandBuffers(objects);
+		std::cout << "ASASAS" << std::endl;
+	}
+
+	void Graphics::startFrame()
 	{
 		vkWaitForFences(logicalDeviceHandle, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -115,11 +68,13 @@ namespace Engine
 		imagesInFlight[swapChainData.imageIndex] = inFlightFences[currentFrame];
 
 		imguiLayer->startFrame();
+
+		//cameraController->onUpdate();
 	}
 
-	void VulkanSwapChain::endFrame()
+	void Graphics::endFrame()
 	{
-		imguiLayer->endFrame(swapChainData.imageIndex);
+		imguiLayer->endFrame(swapChainData.imageIndex);	
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -134,7 +89,7 @@ namespace Engine
 		{ commandBuffers[swapChainData.imageIndex], imguiLayer->getCurrentlyUsedCmdBuffer(swapChainData.imageIndex) };
 
 		submitInfo.commandBufferCount = static_cast<uint32_t>(submitCommandBuffers.size());
-		submitInfo.pCommandBuffers = submitCommandBuffers.data();// &commandBuffers[imageIndex];
+		submitInfo.pCommandBuffers = submitCommandBuffers.data();
 
 		VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
 		submitInfo.signalSemaphoreCount = 1;
@@ -173,17 +128,12 @@ namespace Engine
 
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 	}
-
-	void VulkanSwapChain::updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera)
-	{
-		updateUniformBuffer(camera);
-	}
 	
-	void VulkanSwapChain::onShutDown() // needs to be done properly
+	void Graphics::onShutDown() // needs to be done properly
 	{
 		cleanupSwapChain();
 
-		vkDestroyDescriptorSetLayout(logicalDeviceHandle, descriptorSetLayout, nullptr); //////////////////////
+		vkDestroyDescriptorSetLayout(logicalDeviceHandle, pipeline.descriptorSetLayout, nullptr); //////////////////////
 
 		vkDestroyBuffer(logicalDeviceHandle, indexBuffer->getIndexBuffer(), nullptr);
 		vkFreeMemory(logicalDeviceHandle, indexBuffer->getIndexBufferMemory(), nullptr);
@@ -203,7 +153,7 @@ namespace Engine
 		imguiLayer->onShutDown();
 	}
 
-	void VulkanSwapChain::createSyncObjects()
+	void Graphics::createSyncObjects()
 	{
 		imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 		renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -229,7 +179,7 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::recreateSwapChain()
+	void Graphics::recreateSwapChain()
 	{
 		int width = 0, height = 0;
 		glfwGetFramebufferSize(windowHandle->getWindow(), &width, &height);
@@ -253,13 +203,13 @@ namespace Engine
 		createRenderPass();
 		createGraphicsPipeline();
 		createFramebuffers();
-		createUniformBuffers();
-		createDescriptorPool();
-		createDescriptorSets();
-		createCommandBuffers();
+		//createUniformBuffers();
+		//createDescriptorPool();
+		//createDescriptorSets();
+		//createCommandBuffers();
 	}
 
-	void VulkanSwapChain::cleanupSwapChain()
+	void Graphics::cleanupSwapChain()
 	{
 		for (size_t i = 0; i < swapChainData.swapChainFramebuffers.size(); i++)
 		{
@@ -268,9 +218,9 @@ namespace Engine
 
 		vkFreeCommandBuffers(logicalDeviceHandle, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
-		vkDestroyPipeline(logicalDeviceHandle, graphicsPipeline, nullptr);
-		vkDestroyPipelineLayout(logicalDeviceHandle, pipelineLayout, nullptr);
-		vkDestroyRenderPass(logicalDeviceHandle, renderPass, nullptr);
+		vkDestroyPipeline(logicalDeviceHandle, pipeline.graphicsPipeline, nullptr);
+		vkDestroyPipelineLayout(logicalDeviceHandle, pipeline.pipelineLayout, nullptr);
+		vkDestroyRenderPass(logicalDeviceHandle, pipeline.renderPass, nullptr);
 
 		for (size_t i = 0; i < swapChainData.swapChainImageViews.size(); i++)
 		{
@@ -288,7 +238,7 @@ namespace Engine
 		vkDestroyDescriptorPool(logicalDeviceHandle, descriptorPool, nullptr);
 	}
 
-	VkSurfaceFormatKHR VulkanSwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
+	VkSurfaceFormatKHR Graphics::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 	{
 		for (const auto& availableFormat : availableFormats)
 		{
@@ -301,7 +251,7 @@ namespace Engine
 		return availableFormats[0];
 	}
 
-	VkPresentModeKHR VulkanSwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
+	VkPresentModeKHR Graphics::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
 	{
 		for (const auto& availablePresentMode : availablePresentModes)
 		{
@@ -314,7 +264,7 @@ namespace Engine
 		return VK_PRESENT_MODE_FIFO_KHR;
 	}
 
-	VkExtent2D VulkanSwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
+	VkExtent2D Graphics::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
 	{
 		if (capabilities.currentExtent.width != UINT32_MAX)
 		{
@@ -338,7 +288,7 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::createSwapChain()
+	void Graphics::createSwapChain()
 	{
 		SwapChainSupportDetails swapChainSupport = VulkanSurface::querySwapChainSupport(physicalDeviceHandle);
 
@@ -397,7 +347,7 @@ namespace Engine
 		swapChainData.swapChainExtent = extent;
 	}
 
-	void VulkanSwapChain::createImageViews()
+	void Graphics::createImageViews()
 	{
 		swapChainData.swapChainImageViews.resize(swapChainData.swapChainImages.size());
 
@@ -425,7 +375,7 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::createGraphicsPipeline()
+	void Graphics::createGraphicsPipeline()
 	{
 		/* --- SHADERS --- */
 		std::unique_ptr<VulkanShader> vertexShader;
@@ -520,11 +470,11 @@ namespace Engine
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 1;
-		pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;// .data(); // change from &
+		pipelineLayoutInfo.pSetLayouts = &pipeline.descriptorSetLayout;// .data(); // change from &
 		//pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
 		//pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
-		if (vkCreatePipelineLayout(logicalDeviceHandle, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
+		if (vkCreatePipelineLayout(logicalDeviceHandle, &pipelineLayoutInfo, nullptr, &pipeline.pipelineLayout) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create pipeline layout!");
 		}
@@ -541,13 +491,13 @@ namespace Engine
 		pipelineInfo.pDepthStencilState = &depthStencil;; // Optional
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.pDynamicState = nullptr; // Optional
-		pipelineInfo.layout = pipelineLayout;
-		pipelineInfo.renderPass = renderPass;
+		pipelineInfo.layout = pipeline.pipelineLayout;
+		pipelineInfo.renderPass = pipeline.renderPass;
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 		pipelineInfo.basePipelineIndex = -1; // Optional
 
-		if (vkCreateGraphicsPipelines(logicalDeviceHandle, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
+		if (vkCreateGraphicsPipelines(logicalDeviceHandle, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.graphicsPipeline) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create graphics pipeline!");
 		}
@@ -556,7 +506,7 @@ namespace Engine
 		fragmentShader->destroy(logicalDeviceHandle);
 	}
 
-	void VulkanSwapChain::createRenderPass()
+	void Graphics::createRenderPass()
 	{
 		VkAttachmentDescription colorAttachment{};
 		colorAttachment.format = swapChainData.swapChainImageFormat;
@@ -615,13 +565,13 @@ namespace Engine
 		renderPassInfo.dependencyCount = 1;
 		renderPassInfo.pDependencies = &dependency;
 
-		if (vkCreateRenderPass(logicalDeviceHandle, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
+		if (vkCreateRenderPass(logicalDeviceHandle, &renderPassInfo, nullptr, &pipeline.renderPass) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create render pass!");
 		}
 	}
 
-	void VulkanSwapChain::createFramebuffers()
+	void Graphics::createFramebuffers()
 	{
 		swapChainData.swapChainFramebuffers.resize(swapChainData.swapChainImageViews.size());
 
@@ -635,7 +585,7 @@ namespace Engine
 
 			VkFramebufferCreateInfo framebufferInfo{};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			framebufferInfo.renderPass = renderPass;
+			framebufferInfo.renderPass = pipeline.renderPass;
 			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 			framebufferInfo.pAttachments = attachments.data();
 			framebufferInfo.width = swapChainData.swapChainExtent.width;
@@ -649,14 +599,14 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::createCommandPool()
+	void Graphics::createCommandPool()
 	{
 		QueueFamilyIndices queueFamilyIndices = VulkanSurface::findQueueFamilies(physicalDeviceHandle);
 
 		VkCommandPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
-		poolInfo.flags = 0; // Optional
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; /// shit here
 
 		if (vkCreateCommandPool(logicalDeviceHandle, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
 		{
@@ -664,7 +614,7 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::createCommandBuffers()
+	void Graphics::createCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects)
 	{
 		commandBuffers.resize(swapChainData.swapChainFramebuffers.size());
 
@@ -683,7 +633,7 @@ namespace Engine
 		{
 			VkCommandBufferBeginInfo beginInfo{};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags = 0; // Optional
+			//beginInfo.flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;//VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT; // Optional
 			beginInfo.pInheritanceInfo = nullptr; // Optional
 
 			if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS)
@@ -691,23 +641,23 @@ namespace Engine
 				throw std::runtime_error("failed to begin recording command buffer!");
 			}
 
-			VkRenderPassBeginInfo renderPassInfo{};
+
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = renderPass;
+			renderPassInfo.renderPass = pipeline.renderPass;
 			renderPassInfo.framebuffer = swapChainData.swapChainFramebuffers[i];
 			renderPassInfo.renderArea.offset = { 0, 0 };
 			renderPassInfo.renderArea.extent = swapChainData.swapChainExtent;
 
-			std::array<VkClearValue, 2> clearValues{}; 
+			std::array<VkClearValue, 2> clearValues{};
 			clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
 			clearValues[1].depthStencil = { 1.0f, 0 };
-			
+
 			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 			renderPassInfo.pClearValues = clearValues.data();
 
 			/* --------------------------------------------------------------------------------- */
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.graphicsPipeline);
 
 
 			VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
@@ -715,10 +665,10 @@ namespace Engine
 
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);			  
+			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
-			bool earth = false;
-			for (const auto& cube : cubes)
+			bool earth = true;
+			for (const auto& cube : objects)
 			{
 				if (!earth) // temp
 				{
@@ -728,19 +678,10 @@ namespace Engine
 				else vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
 
-				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
-			
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
+
 				vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
 			}
-			
-			//vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets, 0, nullptr);
-			//
-			//vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
-
-			
-			//vkCmdDraw(commandBuffers[i], 6, 1, 0, 0);
-
-			//vkCmdExecuteCommands();
 
 			vkCmdEndRenderPass(commandBuffers[i]);
 
@@ -751,7 +692,7 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::createDescriptorSetLayout()
+	void Graphics::createDescriptorSetLayout()
 	{
 		VkDescriptorSetLayoutBinding uboLayoutBinding{};
 		uboLayoutBinding.binding = 0;
@@ -765,51 +706,40 @@ namespace Engine
 		layoutInfo1.bindingCount = 1;
 		layoutInfo1.pBindings = &uboLayoutBinding;
 		
-		if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo1, nullptr, &descriptorSetLayout) != VK_SUCCESS)
+		if (vkCreateDescriptorSetLayout(logicalDeviceHandle, &layoutInfo1, nullptr, &pipeline.descriptorSetLayout) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
 	}
 
-	void VulkanSwapChain::createUniformBuffers()
+	void Graphics::createUniformBuffers(const std::vector<std::unique_ptr<Object>>& objects)
 	{
 		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
 		{
-			for (const auto& cube : cubes)
+			for (const auto& cube : objects)
 			{
 				cube->createUniformBuffer(bufferAllocator);
 			}
 		}
 	}
 
-	void VulkanSwapChain::updateUniformBuffer(const std::unique_ptr<Camera>& camera)
+	void Graphics::updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera)
 	{
 		static auto startTime = std::chrono::high_resolution_clock::now();
 
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-		bool earth = false;
-		for (auto& cube : cubes)
+		bool earth = true;
+		for (const auto& cube : objects)
 		{
-			cube->ubo.view = camera->getViewMatrix();
+			cube->ubo.view = camera->getViewMatrix(); 
 			cube->ubo.proj = camera->getProjectionMatrix();
-			
-			if (!earth)
-			{
-				cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
-				cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation / 3), glm::vec3(0.0f, 1.0f, 0.0f));
-				cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
-				earth = true;
-			}
-			else
-			{
-				cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
-				cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-				cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
-			}
-			
 
+			cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
+			cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+			cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
+			
 			void* data;
 			vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex), 0, sizeof(cube->ubo), 0, &data);
 			memcpy(data, &cube->ubo, sizeof(cube->ubo));
@@ -817,17 +747,17 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::createDescriptorPool()
+	void Graphics::createDescriptorPool(const std::vector<std::unique_ptr<Object>>& objects)
 	{
 		VkDescriptorPoolSize poolSize{};
 		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize.descriptorCount = static_cast<uint32_t>(swapChainData.swapChainImages.size()) * cubes.size();
+		poolSize.descriptorCount = static_cast<uint32_t>(swapChainData.swapChainImages.size()) * objects.size();
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		poolInfo.poolSizeCount = 1;
 		poolInfo.pPoolSizes = &poolSize;
-		poolInfo.maxSets = static_cast<uint32_t>(swapChainData.swapChainImages.size()) * cubes.size();
+		poolInfo.maxSets = static_cast<uint32_t>(swapChainData.swapChainImages.size()) * objects.size();
 
 		if (vkCreateDescriptorPool(logicalDeviceHandle, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
 		{
@@ -835,17 +765,17 @@ namespace Engine
 		}
 	}
 
-	void VulkanSwapChain::createDescriptorSets()
+	void Graphics::createDescriptorSets(const std::vector<std::unique_ptr<Object>>& objects) // to cube class
 	{
 		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
 		{
-			for (auto& cube : cubes)
+			for (const auto& cube : objects)
 			{
 				VkDescriptorSetAllocateInfo allocateInfo{};
 				allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 				allocateInfo.descriptorPool = descriptorPool;
 				allocateInfo.descriptorSetCount = 1;
-				allocateInfo.pSetLayouts = &descriptorSetLayout;
+				allocateInfo.pSetLayouts = &pipeline.descriptorSetLayout;
 				vkAllocateDescriptorSets(logicalDeviceHandle, &allocateInfo, &cube->descriptorSet);
 
 

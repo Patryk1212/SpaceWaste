@@ -196,14 +196,14 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\core\Window.cpp" />
-    <ClCompile Include="src\renderer\Cube.cpp" />
+    <ClCompile Include="src\renderer\Object.cpp" />
     <ClCompile Include="src\renderer\Renderer3D.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanBufferAllocator.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanIndexBuffer.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanUniformBuffer.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanVertexBuffer.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanShader.cpp" />
-    <ClCompile Include="src\vulkan_core\SwapChain.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanData.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanContext.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanCore.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanDebug.cpp" />
@@ -211,7 +211,7 @@
     <ClCompile Include="src\vulkan_core\VulkanLogicalDevice.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanPhysicalDevice.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanSurface.cpp" />
-    <ClCompile Include="src\vulkan_core\VulkanSwapChain.cpp" />
+    <ClCompile Include="src\renderer\Graphics.cpp" />
     <ClCompile Include="src\vulkan_core\VulkanUtility.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_glfw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -274,14 +274,14 @@
     <ClInclude Include="src\events+input\WindowEvent.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\core\Window.h" />
-    <ClInclude Include="src\renderer\Cube.h" />
+    <ClInclude Include="src\renderer\Object.h" />
     <ClInclude Include="src\renderer\Renderer3D.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanBufferAllocator.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanIndexBuffer.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanUniformBuffer.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanVertexBuffer.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanShader.h" />
-    <ClInclude Include="src\vulkan_core\SwapChain.h" />
+    <ClInclude Include="src\vulkan_core\VulkanData.h" />
     <ClInclude Include="src\vulkan_core\VulkanContext.h" />
     <ClInclude Include="src\vulkan_core\VulkanCore.h" />
     <ClInclude Include="src\vulkan_core\VulkanDebug.h" />
@@ -290,7 +290,7 @@
     <ClInclude Include="src\vulkan_core\VulkanLogicalDevice.h" />
     <ClInclude Include="src\vulkan_core\VulkanPhysicalDevice.h" />
     <ClInclude Include="src\vulkan_core\VulkanSurface.h" />
-    <ClInclude Include="src\vulkan_core\VulkanSwapChain.h" />
+    <ClInclude Include="src\renderer\Graphics.h" />
     <ClInclude Include="src\vulkan_core\VulkanUtility.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_vulkan.h" />

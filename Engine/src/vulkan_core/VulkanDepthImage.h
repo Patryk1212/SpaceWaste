@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vulkan/vulkan.h"
-#include "vulkan_core/SwapChain.h"
+#include "vulkan_core/VulkanData.h"
 #include "vulkan_buffers/VulkanBufferAllocator.h"
 
 namespace Engine

@@ -6,6 +6,8 @@
 #include "LayerStack.h"
 #include "events+input/Input.h"
 
+#include "renderer/Renderer3D.h"
+
 namespace Engine
 {
 	class Application
@@ -19,8 +21,9 @@ namespace Engine
 
 		void addNewLayer(std::unique_ptr<Layer>& layer);
 
-		inline static Application& get() { return *appInstance; }
+		inline static std::shared_ptr<Window>& get() { return appInstance->window; }
 		inline Window& getWindow() { return *window; }
+		inline std::shared_ptr<Window>& getWindows() { return window; }
 
 	private:
 		bool shutdown(WindowCloseEvent event);
@@ -29,14 +32,13 @@ namespace Engine
 		static Application* appInstance;
 		bool running = true;
 
-	private:
+	public:
 		std::shared_ptr<Window> window;
 		std::unique_ptr<VulkanContext> vulkanContext;
 
 	private:
 		LayerStack layerStack;
 		Time timer;
-		std::unique_ptr<CameraController> cameraController;
 	};
 
 	Application* createApplication();

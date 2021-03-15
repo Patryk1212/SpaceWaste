@@ -1,34 +1,38 @@
 #include "pch.h"
 #include "Renderer3D.h"
+#include "vulkan_core/VulkanSurface.h"
+#include "vulkan_core/VulkanData.h"
 
 namespace Engine
 {
-	struct Renderer3DData
+	void Renderer3D::init(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
 	{
-		/*
-		- cubes
-		- cmd buffers
-		- 
-		*/
-	};
-
-	void Renderer3D::init()
-	{
+		graphics = new Graphics(window, physicalDevice, logicalDevice, graphicsQueue, presentQueue);
 	}
 
 	void Renderer3D::shutDown()
 	{
+		graphics->onShutDown();
+		delete graphics;
 	}
 
-	void Renderer3D::beginScene()
+	void Renderer3D::beginFrame()
 	{
+		graphics->startFrame();
 	}
 
-	void Renderer3D::draw(const CameraController& camera)
+	void Renderer3D::recordCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects)
 	{
+		graphics->createObjectsAndRecord(objects);
 	}
 
-	void Renderer3D::endScene()
+	void Renderer3D::updateFrame(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera)
 	{
+		graphics->updateUniformBuffer(objects, camera);
+	}
+
+	void Renderer3D::endFrame()
+	{
+		graphics->endFrame();
 	}
 }

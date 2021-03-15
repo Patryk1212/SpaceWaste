@@ -95,7 +95,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\glm;$(SolutionDir)Engine\vendor\glfw\include;$(SolutionDir)Engine\vendor\vulkan\external;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\imgui\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\glm;$(SolutionDir)Engine\vendor\glfw\include;$(SolutionDir)Engine\vendor\vulkan\external;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\imgui\backends;vendor\OrbitTool\core;vendor\OrbitTool\orbit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\glm;$(SolutionDir)Engine\vendor\glfw\include;$(SolutionDir)Engine\vendor\vulkan\external;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\imgui\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\glm;$(SolutionDir)Engine\vendor\glfw\include;$(SolutionDir)Engine\vendor\vulkan\external;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\imgui\backends;vendor\OrbitTool\core;vendor\OrbitTool\orbit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -127,7 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\glm;$(SolutionDir)Engine\vendor\glfw\include;$(SolutionDir)Engine\vendor\vulkan\external;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\imgui\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\glm;$(SolutionDir)Engine\vendor\glfw\include;$(SolutionDir)Engine\vendor\vulkan\external;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\imgui\backends;vendor\OrbitTool\core;vendor\OrbitTool\orbit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -146,7 +146,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\glm;$(SolutionDir)Engine\vendor\glfw\include;$(SolutionDir)Engine\vendor\vulkan\external;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\imgui\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;$(SolutionDir)Engine\src;$(SolutionDir)Engine\vendor\glm;$(SolutionDir)Engine\vendor\glfw\include;$(SolutionDir)Engine\vendor\vulkan\external;$(SolutionDir)Engine\vendor\imgui;$(SolutionDir)Engine\vendor\imgui\backends;vendor\OrbitTool\core;vendor\OrbitTool\orbit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -158,15 +158,49 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\MainLayer.h" />
-    <ClInclude Include="src\SpaceDebrisVisualization.h" />
-    <ClInclude Include="src\spacetrack\SpaceTrackData.h" />
-    <ClInclude Include="src\UILayer.h" />
+    <ClInclude Include="src\core\FileLoader.h" />
+    <ClInclude Include="src\core\SpaceObject.h" />
+    <ClInclude Include="src\layers\MainLayer.h" />
+    <ClInclude Include="src\core\SpaceDebrisVisualization.h" />
+    <ClInclude Include="src\layers\UILayer.h" />
+    <ClInclude Include="vendor\OrbitTool\core\cEci.h" />
+    <ClInclude Include="vendor\OrbitTool\core\cJulian.h" />
+    <ClInclude Include="vendor\OrbitTool\core\coord.h" />
+    <ClInclude Include="vendor\OrbitTool\core\coreLib.h" />
+    <ClInclude Include="vendor\OrbitTool\core\cSite.h" />
+    <ClInclude Include="vendor\OrbitTool\core\cTLE.h" />
+    <ClInclude Include="vendor\OrbitTool\core\cVector.h" />
+    <ClInclude Include="vendor\OrbitTool\core\exceptions.h" />
+    <ClInclude Include="vendor\OrbitTool\core\globals.h" />
+    <ClInclude Include="vendor\OrbitTool\core\stdafx.h" />
+    <ClInclude Include="vendor\OrbitTool\orbit\cNoradBase.h" />
+    <ClInclude Include="vendor\OrbitTool\orbit\cNoradSDP4.h" />
+    <ClInclude Include="vendor\OrbitTool\orbit\cNoradSGP4.h" />
+    <ClInclude Include="vendor\OrbitTool\orbit\cOrbit.h" />
+    <ClInclude Include="vendor\OrbitTool\orbit\cSatellite.h" />
+    <ClInclude Include="vendor\OrbitTool\orbit\orbitLib.h" />
+    <ClInclude Include="vendor\OrbitTool\orbit\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\MainLayer.cpp" />
-    <ClCompile Include="src\SpaceDebrisVisualization.cpp" />
-    <ClCompile Include="src\UILayer.cpp" />
+    <ClCompile Include="src\core\FileLoader.cpp" />
+    <ClCompile Include="src\core\SpaceObject.cpp" />
+    <ClCompile Include="src\layers\MainLayer.cpp" />
+    <ClCompile Include="src\core\SpaceDebrisVisualization.cpp" />
+    <ClCompile Include="src\layers\UILayer.cpp" />
+    <ClCompile Include="vendor\OrbitTool\core\cEci.cpp" />
+    <ClCompile Include="vendor\OrbitTool\core\cJulian.cpp" />
+    <ClCompile Include="vendor\OrbitTool\core\coord.cpp" />
+    <ClCompile Include="vendor\OrbitTool\core\cSite.cpp" />
+    <ClCompile Include="vendor\OrbitTool\core\cTLE.cpp" />
+    <ClCompile Include="vendor\OrbitTool\core\cVector.cpp" />
+    <ClCompile Include="vendor\OrbitTool\core\globals.cpp" />
+    <ClCompile Include="vendor\OrbitTool\core\stdafx.cpp" />
+    <ClCompile Include="vendor\OrbitTool\orbit\cNoradBase.cpp" />
+    <ClCompile Include="vendor\OrbitTool\orbit\cNoradSDP4.cpp" />
+    <ClCompile Include="vendor\OrbitTool\orbit\cNoradSGP4.cpp" />
+    <ClCompile Include="vendor\OrbitTool\orbit\cOrbit.cpp" />
+    <ClCompile Include="vendor\OrbitTool\orbit\cSatellite.cpp" />
+    <ClCompile Include="vendor\OrbitTool\orbit\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">

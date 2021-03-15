@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "Cube.h"
+#include "Object.h"
 
 namespace Engine
 {
-	void Cube::createUniformBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc)
+	void Object::createUniformBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc)
 	{
 		std::unique_ptr<VulkanUniformBuffer> tempUniformBuffer;
 		tempUniformBuffer = std::make_unique<VulkanUniformBuffer>();
@@ -14,12 +14,12 @@ namespace Engine
 		uniformBuffer.emplace_back(std::move(tempUniformBuffer));
 	}
 
-	VkBuffer Cube::getUniformBuffer(int imageNumber) const
+	VkBuffer Object::getUniformBuffer(int imageNumber) const
 	{
 		return uniformBuffer[imageNumber]->getUniformBuffer();
 	}
 
-	VkDeviceMemory Cube::getUniformBufferMemory(int imageNumber) const
+	VkDeviceMemory Object::getUniformBufferMemory(int imageNumber) const
 	{
 		return uniformBuffer[imageNumber]->getUniformBufferMemory();
 	}

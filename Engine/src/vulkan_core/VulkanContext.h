@@ -7,19 +7,17 @@
 #include "VulkanPhysicalDevice.h"
 #include "VulkanLogicalDevice.h"
 
+#include "renderer/Renderer3D.h"
+
 namespace Engine
 {
 	class VulkanContext
 	{
 	public:
 		VulkanContext();
-		~VulkanContext();
+		~VulkanContext() = default;
 
 		void initSurfaceAndDevices(const std::shared_ptr<Window>& window);
-
-		void startFrame();
-		void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
-		void endFrame();
 
 		void onShutDown();
 

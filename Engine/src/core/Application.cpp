@@ -7,17 +7,15 @@ namespace Engine
 
 	Application::Application()
 	{
+		std::cout << "Constructor" << std::endl;
+
 		Engine::WindowSpec ws("Space Debris", 800, 600);
 		window = std::make_shared<Window>(ws);
 		window->init();
 		window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
-		cameraController = std::make_unique<CameraController>();
-		cameraController->init(window);
-		
 		vulkanContext = std::make_unique<VulkanContext>();
 		vulkanContext->initSurfaceAndDevices(window);
-
 	}
 
 	Application::~Application()
@@ -54,26 +52,24 @@ namespace Engine
 
 	void Application::run()
 	{
+		std::cout << "Run" << std::endl;
+
 		while (running)
 		{
 			timer.onUpdate((float)glfwGetTime());
-
 			window->onUpdate();
-			cameraController->onUpdate(timer.getDeltaTime());
 
-			//input.isKeyPressed(EN_KEY_A);
-
-			vulkanContext->startFrame();
+			Renderer3D::beginFrame();
 			
 			for (const auto& layer : layerStack.getAllLayers())
 			{
 				layer->onUpdate(timer.getDeltaTime());
 			}
 
-			vulkanContext->updateFrame(timer.getDeltaTime(), cameraController->getCamera());// , layerStack.getLayerWithTag("Main Layer")); // camera
-			vulkanContext->endFrame();
+			Renderer3D::endFrame();
 		}
 
+		Renderer3D::shutDown();
 		vulkanContext->onShutDown();
 		//vkDeviceWaitIdle(vulkanContext->getLogicalDevice());
 	}
@@ -82,8 +78,6 @@ namespace Engine
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
-
-		cameraController->onEvent(event);
 		
 		for (const auto& layer : layerStack.getAllLayers())
 		{
@@ -101,6 +95,17 @@ namespace Engine
 
 	void Application::addNewLayer(std::unique_ptr<Layer>& layer)
 	{
+		std::cout << "Added new layer" << std::endl;
+
+		if (layer->getLayerName() == "MainLayer")
+		{
+			std::unique_ptr<CameraController> cameraController; 
+			cameraController = std::make_unique<CameraController>();
+			cameraController->init(window);
+			layer->passCamera(cameraController);
+		}
+		
+		layer->onAttach();
 		layerStack.addLayer(layer);
 	}
 

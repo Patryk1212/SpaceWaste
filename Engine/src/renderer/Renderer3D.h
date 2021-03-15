@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Graphics.h"
+#include "Object.h"
 #include "core/CameraController.h"
 
 namespace Engine
@@ -7,24 +9,19 @@ namespace Engine
 	class Renderer3D
 	{
 	public:
-		static void init();
+		static void init(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
 		static void shutDown();
 
+	public:
+		static void beginFrame();
 
-		// start recording command buffers
-		// pass objects
-		// end recording
+		static void recordCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects);
 
-		static void beginScene();
-		
-		static void draw(const CameraController& camera);
-		
-		static void endScene();
+		static void updateFrame(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera);
 
+		static void endFrame();
 
 	private:
-		//std::vector<Object>
-
-		// command buffers
+		inline static Graphics* graphics;
 	};
 }

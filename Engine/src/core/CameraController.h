@@ -12,7 +12,7 @@ namespace Engine
 		~CameraController() = default;
 
 		void init(const std::shared_ptr<Window>& window);
-		void onUpdate(float deltaTime);
+		void onUpdate();
 		void onEvent(Event& event);
 
 		std::unique_ptr<Camera>& getCamera() { return camera; }

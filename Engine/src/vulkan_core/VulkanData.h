@@ -14,4 +14,12 @@ namespace Engine
 		std::vector<VkImageView> swapChainImageViews;
 		std::vector<VkFramebuffer> swapChainFramebuffers;
 	};
+
+	struct PipeLineData
+	{
+		VkPipeline graphicsPipeline;
+		VkDescriptorSetLayout descriptorSetLayout; // maybe renderer
+		VkPipelineLayout pipelineLayout;
+		VkRenderPass renderPass; // maybe renderer
+	};
 }

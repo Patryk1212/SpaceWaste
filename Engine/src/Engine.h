@@ -1,6 +1,6 @@
 #pragma once
 
-// All classes to be used in applications
+// *** All classes needed in application itsef *** //
 
 #include "core/Application.h"
 #include "core/Layer.h"
@@ -10,3 +10,6 @@
 #include "events+input/Event.h"
 #include "events+input/KeyEvent.h"
 #include "events+input/MouseEvent.h"
+
+/* --- Renderer --- */
+#include "renderer/Renderer3D.h"
