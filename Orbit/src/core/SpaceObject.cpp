@@ -3,7 +3,7 @@
 
 SpaceObject::SpaceObject(const glm::vec3& pos)
 {
-	setScale({ 100.f, 100.f, 100.f });
+	setScale({ 250.f, 250.f, 250.f });
 }
 
 SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)

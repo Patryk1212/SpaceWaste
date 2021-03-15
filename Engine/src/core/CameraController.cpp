@@ -5,7 +5,7 @@ namespace Engine
 {
 	CameraController::CameraController()
 	{
-		viewData.cameraPos = glm::vec3(0.0f, 0.0f, 70.0f);
+		viewData.cameraPos = glm::vec3(0.0f, 0.0f, 3000.0f);
 		viewData.cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 		viewData.cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 

@@ -17,7 +17,6 @@ namespace Engine
 
 		static void recordCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects);
 
-		static void updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera);
 		static void updateFrame(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera);
 
 		static void endFrame();

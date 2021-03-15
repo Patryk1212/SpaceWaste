@@ -26,11 +26,6 @@ namespace Engine
 		graphics->createObjectsAndRecord(objects);
 	}
 
-	void Renderer3D::updateFrame(float deltaTime, const std::unique_ptr<Camera>& camera)
-	{
-		graphics->updateFrame(deltaTime, camera);
-	}
-
 	void Renderer3D::updateFrame(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera)
 	{
 		graphics->updateUniformBuffer(objects, camera);
