@@ -20,7 +20,6 @@ namespace Engine
 		Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
 		~Graphics() = default;
 		
-		std::unique_ptr<CameraController> cameraController;
 		void createObjectsAndRecord(const std::vector<std::unique_ptr<Object>>& objects);
 
 		void startFrame();
@@ -116,7 +115,7 @@ namespace Engine
 
 		void updateUniformBuffer(const std::unique_ptr<Camera>& camera);//
 	public:
-		void updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects);
+		void updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera);
 
 	private: // descriptor sets
 		void createDescriptorPool();

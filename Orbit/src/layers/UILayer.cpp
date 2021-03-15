@@ -16,6 +16,10 @@ void UILayer::onRender()
 {
 }
 
+void UILayer::passCamera(std::unique_ptr<Engine::CameraController>& cc)
+{
+}
+
 bool UILayer::onEvent(Engine::Event& event)
 {
 	return false;

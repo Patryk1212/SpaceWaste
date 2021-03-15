@@ -2,6 +2,7 @@
 
 #include "events+input/KeyEvent.h"
 #include "events+input/MouseEvent.h"
+#include "core/CameraController.h"
 
 namespace Engine
 {
@@ -14,6 +15,7 @@ namespace Engine
 		virtual void onAttach() {}
 		virtual void onUpdate(float deltaTime) {}
 		virtual void onRender() {}
+		virtual void passCamera(std::unique_ptr<CameraController>& cc) {}
 		virtual bool onEvent(Event& event) { return false; }
 
 		std::string getLayerName() const;

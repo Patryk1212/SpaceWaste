@@ -7,17 +7,15 @@ namespace Engine
 
 	Application::Application()
 	{
-		/*Engine::WindowSpec ws("Space Debris", 800, 600);
+		std::cout << "Constructor" << std::endl;
+
+		Engine::WindowSpec ws("Space Debris", 800, 600);
 		window = std::make_shared<Window>(ws);
 		window->init();
 		window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
 
-		cameraController = std::make_unique<CameraController>();
-		cameraController->init(window);
-		
 		vulkanContext = std::make_unique<VulkanContext>();
 		vulkanContext->initSurfaceAndDevices(window);
-		std::cout << "Finish App constructor" << std::endl;*/
 	}
 
 	Application::~Application()
@@ -52,37 +50,14 @@ namespace Engine
 		//vkDestroyInstance(instance, nullptr); // already in class
 	}
 
-	void Application::init()
-	{
-		std::cout << "START INIT" << std::endl << std::endl << std::endl;
-
-		Engine::WindowSpec ws("Space Debris", 800, 600);
-		window = std::make_shared<Window>(ws);
-		window->init();
-		window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));
-
-		cameraController = std::make_unique<CameraController>();
-		cameraController->init(window);
-
-		vulkanContext = std::make_unique<VulkanContext>();
-		vulkanContext->initSurfaceAndDevices(window);
-
-		for (const auto& layer : layerStack.getAllLayers())
-		{
-			layer->onAttach();
-		}
-	}
-
 	void Application::run()
 	{
-		std::cout << "START RUN" << std::endl << std::endl << std::endl;
+		std::cout << "Run" << std::endl;
 
 		while (running)
 		{
 			timer.onUpdate((float)glfwGetTime());
-
 			window->onUpdate();
-			cameraController->onUpdate();
 
 			Renderer3D::beginFrame();
 			
@@ -91,7 +66,6 @@ namespace Engine
 				layer->onUpdate(timer.getDeltaTime());
 			}
 
-			//Renderer3D::updateFrame(timer.getDeltaTime(), cameraController->getCamera());
 			Renderer3D::endFrame();
 		}
 
@@ -104,8 +78,6 @@ namespace Engine
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
-
-		cameraController->onEvent(event);
 		
 		for (const auto& layer : layerStack.getAllLayers())
 		{
@@ -123,7 +95,17 @@ namespace Engine
 
 	void Application::addNewLayer(std::unique_ptr<Layer>& layer)
 	{
-		//layer->onAttach();
+		std::cout << "Added new layer" << std::endl;
+
+		if (layer->getLayerName() == "MainLayer")
+		{
+			std::unique_ptr<CameraController> cameraController; 
+			cameraController = std::make_unique<CameraController>();
+			cameraController->init(window);
+			layer->passCamera(cameraController);
+		}
+		
+		layer->onAttach();
 		layerStack.addLayer(layer);
 	}
 

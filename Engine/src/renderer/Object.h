@@ -14,11 +14,12 @@ namespace Engine
 		Object() = default;
 		~Object() = default;
 
-		inline void setPosition(const glm::vec3& pos) { position = pos; position /= 10; std::cout << "POS" << pos.x; }
+		inline void setPosition(const glm::vec3& pos) { position = pos; position /= 10;}
+		inline void setScale(const glm::vec3& scale_) { scale = scale_; }
+
 		virtual std::string showName() const { return "Base Object"; }
 		virtual std::string showFirstTLELine() const { return "Base Object"; }
 		virtual std::string showSecondTLELine() const { return "Base Object"; }
-		virtual void calcualateSpacePosition() {};
 
 	public:
 		void createUniformBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc);

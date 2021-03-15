@@ -9,9 +9,6 @@ namespace Engine
 	Graphics::Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
 		: physicalDeviceHandle(physicalDevice), logicalDeviceHandle(logicalDevice), windowHandle(window), graphicsQueue(graphicsQueue), presentQueue(presentQueue)
 	{
-		cameraController = std::make_unique<CameraController>();
-		cameraController->init(window);
-
 		bool earth = false;
 		glm::vec2 ring0{ 14.0f, 22.0f };
 		float rho, theta;
@@ -110,7 +107,7 @@ namespace Engine
 
 		imguiLayer->startFrame();
 
-		cameraController->onUpdate();
+		//cameraController->onUpdate();
 	}
 
 	void Graphics::endFrame()
@@ -893,7 +890,7 @@ namespace Engine
 		}
 	}
 
-	void Graphics::updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects)
+	void Graphics::updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera)
 	{
 		static auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -903,8 +900,8 @@ namespace Engine
 		bool earth = true;
 		for (const auto& cube : objects)
 		{
-			cube->ubo.view = cameraController->getCamera()->getViewMatrix(); 
-			cube->ubo.proj = cameraController->getCamera()->getProjectionMatrix();
+			cube->ubo.view = camera->getViewMatrix(); 
+			cube->ubo.proj = camera->getProjectionMatrix();
 
 		
 			

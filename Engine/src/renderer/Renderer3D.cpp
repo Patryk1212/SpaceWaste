@@ -31,9 +31,9 @@ namespace Engine
 		graphics->updateFrame(deltaTime, camera);
 	}
 
-	void Renderer3D::updateFrame(const std::vector<std::unique_ptr<Object>>& objects)
+	void Renderer3D::updateFrame(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera)
 	{
-		graphics->updateUniformBuffer(objects);
+		graphics->updateUniformBuffer(objects, camera);
 	}
 
 	void Renderer3D::endFrame()
