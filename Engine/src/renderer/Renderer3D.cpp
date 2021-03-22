@@ -26,9 +26,9 @@ namespace Engine
 		graphics->createObjectsAndRecord(objects);
 	}
 
-	void Renderer3D::updateFrame(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera)
+	void Renderer3D::updateFrame(const std::vector<std::unique_ptr<Object>>& objects)
 	{
-		graphics->updateUniformBuffer(objects, camera);
+		graphics->updateUniformBuffer(objects);
 	}
 
 	void Renderer3D::endFrame()

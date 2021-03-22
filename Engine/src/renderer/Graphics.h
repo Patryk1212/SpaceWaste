@@ -9,6 +9,7 @@
 
 #include "vulkan_buffers/VulkanVertexBuffer.h"
 #include "vulkan_buffers/VulkanIndexBuffer.h"
+#include "vulkan_core/VulkanDeviceMemory.h"
 
 #include "renderer/Object.h"
 
@@ -19,50 +20,7 @@ namespace Engine
 	public:
 		Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
 		~Graphics() = default;
-		
-
-		/* buffer mem */
-
-		// for each swap chain image
-		VkDeviceMemory bufferMemory1 = nullptr;
-		VkDeviceMemory bufferMemory2 = nullptr;
-		VkDeviceMemory bufferMemory3 = nullptr;
-
-		std::vector<VkDeviceMemory> BM;
-
-		VkMemoryRequirements memRequirements;
-		
-		void allocMem(const std::vector<std::unique_ptr<Object>>& objects)
-		{
-			vkGetBufferMemoryRequirements(logicalDeviceHandle, objects[0]->getUniformBuffer(0), &memRequirements); // buffer from object
-
-			VkMemoryAllocateInfo allocInfo{};
-			allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-			allocInfo.allocationSize = memRequirements.size * objects.size();
-			std::cout << memRequirements.alignment << std::endl;
-			allocInfo.memoryTypeIndex = bufferAllocator->findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-			
-			if (vkAllocateMemory(logicalDeviceHandle, &allocInfo, nullptr, &bufferMemory1) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to allocate buffer memory!");
-			}
-			BM.emplace_back(bufferMemory1);
-
-			if (vkAllocateMemory(logicalDeviceHandle, &allocInfo, nullptr, &bufferMemory2) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to allocate buffer memory!");
-			}
-			BM.emplace_back(bufferMemory2);
-
-			if (vkAllocateMemory(logicalDeviceHandle, &allocInfo, nullptr, &bufferMemory3) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to allocate buffer memory!");
-			}
-			BM.emplace_back(bufferMemory3);
-			//vkBindBufferMemory(logicalDeviceHandle, buffer, bufferMemory, 0); // buffer from object
-		};
-		/* ---------- */
-
+	
 		void createObjectsAndRecord(const std::vector<std::unique_ptr<Object>>& objects);
 
 		void startFrame();
@@ -154,10 +112,10 @@ namespace Engine
 
 		
 		void createUniformBuffers(const std::vector<std::unique_ptr<Object>>& objects);//
-
+		std::unique_ptr<VulkanDeviceMemory> uniformBufferMemory;
 		
 	public:
-		void updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects, const std::unique_ptr<Camera>& camera);
+		void updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects);
 
 	private: // descriptor sets
 		

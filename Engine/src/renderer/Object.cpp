@@ -23,9 +23,4 @@ namespace Engine
 	{
 		return uniformBuffer[imageNumber]->getUniformBuffer();
 	}
-
-	VkDeviceMemory Object::getUniformBufferMemory(int imageNumber) const
-	{
-		return uniformBuffer[imageNumber]->getUniformBufferMemory();
-	}
 }

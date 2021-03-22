@@ -28,10 +28,16 @@ void MainLayer::onAttach()
 
 void MainLayer::onUpdate(float deltaTime)
 {
+
+    //static auto startTime = std::chrono::high_resolution_clock::now();
+    //
+    //auto currentTime = std::chrono::high_resolution_clock::now();
+    //float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
     cameraController->onUpdate();
+    updateObjectsPosition();
     
-    Engine::Renderer3D::updateFrame(spaceObjects, cameraController->getCamera());
-    //Engine::Renderer3D::updateFrame(deltaTime, cameraController->getCamera());
+    Engine::Renderer3D::updateFrame(spaceObjects);
 }
 
 void MainLayer::onRender()
@@ -49,4 +55,17 @@ bool MainLayer::onEvent(Engine::Event& event)
     cameraController->onEvent(event);
 
 	return true;
+}
+
+void MainLayer::updateObjectsPosition()
+{
+    for (const auto& cube : spaceObjects)
+    {
+        cube->ubo.view = cameraController->getCamera()->getViewMatrix();
+        cube->ubo.proj = cameraController->getCamera()->getProjectionMatrix();
+
+        cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
+        //cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+        cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
+    }
 }

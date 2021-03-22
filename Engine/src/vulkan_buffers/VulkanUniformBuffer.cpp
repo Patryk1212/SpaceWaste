@@ -6,9 +6,6 @@ namespace Engine
 {
 	void VulkanUniformBuffer::createUniformBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
 	{
-		//bufferAlloc->createBuffer(size, usage, properties, uniformBuffer, uniformBufferMemory);
-
-		//creates buffer per object
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.size = size;
@@ -23,17 +20,11 @@ namespace Engine
 
 	void VulkanUniformBuffer::bindUBToBufferMemory(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, VkDeviceMemory uniformBM, uint64_t offset)
 	{
-		//bind buffer to memory allocated in bigger chunk before hand
 		vkBindBufferMemory(bufferAlloc->getLogicalDeviceHandle(), uniformBuffer, uniformBM, offset);
 	}
 
 	VkBuffer VulkanUniformBuffer::getUniformBuffer() const
 	{
 		return uniformBuffer;
-	}
-
-	VkDeviceMemory VulkanUniformBuffer::getUniformBufferMemory() const
-	{
-		return uniformBufferMemory;
 	}
 }

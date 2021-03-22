@@ -20,6 +20,9 @@ public:
 	virtual bool onEvent(Engine::Event& event) override;
 
 private:
+	void updateObjectsPosition();
+
+private:
 	FileLoader fileLoader;
 	// camera here
 	std::unique_ptr<Engine::CameraController> cameraController;

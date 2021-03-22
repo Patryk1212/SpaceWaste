@@ -14,10 +14,8 @@ namespace Engine
 		void bindUBToBufferMemory(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, VkDeviceMemory uniformBM, uint64_t offset);
 
 		VkBuffer getUniformBuffer() const;
-		VkDeviceMemory getUniformBufferMemory() const;
 
 	private:
 		VkBuffer uniformBuffer = nullptr;
-		VkDeviceMemory uniformBufferMemory = nullptr;
 	};
 }

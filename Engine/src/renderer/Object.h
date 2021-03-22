@@ -26,7 +26,6 @@ namespace Engine
 		void bindUBO(int swapchainImage, const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, VkDeviceMemory uniformBM, uint64_t offset);
 
 		VkBuffer getUniformBuffer(int imageNumber) const;
-		VkDeviceMemory getUniformBufferMemory(int imageNumber) const;
 
 	public: // private
 		glm::vec3 scale = { 5.0f, 5.0f, 5.0f };

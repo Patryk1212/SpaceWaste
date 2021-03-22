@@ -199,6 +199,7 @@
     <ClCompile Include="src\renderer\Object.cpp" />
     <ClCompile Include="src\renderer\Renderer3D.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanBufferAllocator.cpp" />
+    <ClCompile Include="src\vulkan_core\VulkanDeviceMemory.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanIndexBuffer.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanUniformBuffer.cpp" />
     <ClCompile Include="src\vulkan_buffers\VulkanVertexBuffer.cpp" />
@@ -277,6 +278,7 @@
     <ClInclude Include="src\renderer\Object.h" />
     <ClInclude Include="src\renderer\Renderer3D.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanBufferAllocator.h" />
+    <ClInclude Include="src\vulkan_core\VulkanDeviceMemory.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanIndexBuffer.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanUniformBuffer.h" />
     <ClInclude Include="src\vulkan_buffers\VulkanVertexBuffer.h" />
