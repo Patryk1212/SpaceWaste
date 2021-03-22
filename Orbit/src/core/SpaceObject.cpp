@@ -14,13 +14,14 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 	tleSGP4 = std::make_unique<cTle>(name, one, two);
 	satSGP4 = std::make_unique<cSatellite>(*tleSGP4.get());
 
-	cEciTime eci = satSGP4->PositionEci(1234);
+	cEciTime eci = satSGP4->PositionEci(360);
 	vector<cEci> vecPos;
 
 	vecPos.push_back(eci);
 
 	position = { vecPos[0].Position().m_x, vecPos[0].Position().m_z, vecPos[0].Position().m_y};
-	position /= 10;
+	position /= 7;
+	scale *= 2;
 }
 
 std::string SpaceObject::showName() const

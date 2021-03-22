@@ -66,6 +66,7 @@ void MainLayer::updateObjectsPosition()
 
         cube->getUniformbufferObject().model = glm::translate(glm::mat4(1.0f), cube->getPos());
         //cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+
         cube->getUniformbufferObject().model = glm::scale(cube->getUniformbufferObject().model, cube->getScale());
         cube->getUniformbufferObject().color = cube->getColor(); // not every frame
     }
