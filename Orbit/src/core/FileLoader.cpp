@@ -8,17 +8,18 @@ void FileLoader::loadFileNames()
 
     if (file.good())
     {
-        std::cout << "Loading file names:" << std::endl;
+        std::cout << std::endl << "Loading files:" << std::endl;
 
         std::string line;
         while (std::getline(file, line))
         {
             if (line == "") break;
+            std::cout << " - ";
             std::cout << line.c_str() << std::endl;
             fileNames.emplace_back(line);
         }
         
-        std::cout << "Total number of files: " << fileNames.size() << std::endl;
+        std::cout << "Total number of files: " << fileNames.size() << std::endl << std::endl;
     }
 
     file.close();
@@ -43,7 +44,6 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<Engine::Obj
 
             while (std::getline(file, line))
             {
-                //std::cout << line.c_str() << std::endl;
                 switch (number)
                 {
                 case 0:
@@ -75,5 +75,5 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<Engine::Obj
         }
 
         file.close();
-    }
+    }    
 }

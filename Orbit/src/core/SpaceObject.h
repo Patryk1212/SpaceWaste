@@ -8,13 +8,30 @@
 class SpaceObject : public Engine::Object
 {
 public:
-	SpaceObject(const glm::vec3& pos);
+	SpaceObject() = default;
+	SpaceObject(const glm::vec3& pos_, const glm::vec3& scale_, const glm::vec3& color_);
 	SpaceObject(std::string& name, std::string& one, std::string& two);
 	~SpaceObject() = default;
 
 	virtual std::string showName() const override;
 	virtual std::string showFirstTLELine() const override;
 	virtual std::string showSecondTLELine() const override;
+
+	virtual inline glm::vec3 getPos() const override { return position; }
+	virtual inline glm::vec3 getScale() const override { return scale; }
+	virtual inline glm::vec3 getColor() const override { return color; }
+	virtual inline float getRotation()  const override { return rotation; }
+
+	virtual inline void setPos(const glm::vec3& pos_) override { position = pos_; }
+	virtual inline void setScale(const glm::vec3& scale_) override { scale = scale_; }
+	virtual inline void setColor(const glm::vec3& color_) override { color = color_; }
+	virtual inline void setRotation(float rot) override { rotation = rot; }
+
+private:
+	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 scale = { 5.0f, 5.0f, 5.0f };
+	glm::vec3 color = { 1.0f, 1.0f, 1.0f };
+	float rotation = 0.0f;
 
 private:
 	std::unique_ptr<cTle> tleSGP4;

@@ -24,7 +24,6 @@ private:
 
 private:
 	FileLoader fileLoader;
-	// camera here
 	std::unique_ptr<Engine::CameraController> cameraController;
 
 private:

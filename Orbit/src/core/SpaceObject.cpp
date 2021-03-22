@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "SpaceObject.h"
 
-SpaceObject::SpaceObject(const glm::vec3& pos)
+SpaceObject::SpaceObject(const glm::vec3& pos_, const glm::vec3& scale_, const glm::vec3& color_)
 {
-	setScale({ 250.f, 250.f, 250.f });
+	position = pos_;
+	scale = scale_;
+	color = color_;
+	rotation = 0.0f;
 }
 
 SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
@@ -16,8 +19,8 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 
 	vecPos.push_back(eci);
 
-
-	setPosition({ vecPos[0].Position().m_x, vecPos[0].Position().m_y, vecPos[0].Position().m_z });
+	position = { vecPos[0].Position().m_x, vecPos[0].Position().m_z, vecPos[0].Position().m_y};
+	position /= 10;
 }
 
 std::string SpaceObject::showName() const

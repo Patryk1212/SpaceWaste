@@ -23,4 +23,14 @@ namespace Engine
 	{
 		return uniformBuffer[imageNumber]->getUniformBuffer();
 	}
+
+	UniformBufferObject& Object::getUniformbufferObject()
+	{
+		return ubo;
+	}
+	
+	VkDescriptorSet& Object::getDescriptorSet()
+	{
+		return descriptorSet;
+	}
 }

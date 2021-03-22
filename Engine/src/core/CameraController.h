@@ -19,7 +19,7 @@ namespace Engine
 
 	private:
 		ViewMatrixData viewData;
-		float zoomSpeed = 3.f;
+		float zoomSpeed = 200.f;
 
 		float phi{ 3.14f / 2 };
 		float theta{ 0 };

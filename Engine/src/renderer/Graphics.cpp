@@ -23,9 +23,7 @@ namespace Engine
 		
 		createFramebuffers();
 
-		// renderer 3d
 		vertexBuffer = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices); // renderer 3d
-		vertexBuffer1 = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices1); //temp // renderer 3d
 		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices); // renderer 3d
 
 		createSyncObjects();
@@ -659,25 +657,15 @@ namespace Engine
 
 
 			VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
-			VkBuffer vertexBuffers1[] = { vertexBuffer1->getVertexBuffer() };
 
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
-			bool earth = true;
 			for (const auto& cube : objects)
 			{
-				if (!earth) // temp
-				{
-					earth = true;
-					vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers1, offsets);
-				}
-				else vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-
-
-				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
-
+				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipelineLayout, 0, 1, &cube->getDescriptorSet(), 0, nullptr);
 				vkCmdDrawIndexed(commandBuffers[i], indexBuffer->getCount(), 1, 0, 0, 0);
 			}
 
@@ -726,14 +714,9 @@ namespace Engine
 		uint64_t offset = 0;
 		for (const auto& cube : objects)
 		{			
-			//void* data;
-			//vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex), 0, sizeof(cube->ubo), 0, &data);
-			//memcpy(data, &cube->ubo, sizeof(cube->ubo));
-			//vkUnmapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex));
-
 			void* data;
-			vkMapMemory(logicalDeviceHandle, uniformBufferMemory->getMemory(swapChainData.imageIndex), offset, sizeof(cube->ubo), 0, &data);
-			memcpy(data, &cube->ubo, sizeof(cube->ubo));
+			vkMapMemory(logicalDeviceHandle, uniformBufferMemory->getMemory(swapChainData.imageIndex), offset, sizeof(UniformBufferObject), 0, &data);
+			memcpy(data, &cube->getUniformbufferObject(), sizeof(UniformBufferObject));
 			vkUnmapMemory(logicalDeviceHandle, uniformBufferMemory->getMemory(swapChainData.imageIndex));
 
 			offset += uniformBufferMemory->getMemoryOffset();
@@ -769,7 +752,7 @@ namespace Engine
 				allocateInfo.descriptorPool = descriptorPool;
 				allocateInfo.descriptorSetCount = 1;
 				allocateInfo.pSetLayouts = &pipeline.descriptorSetLayout;
-				vkAllocateDescriptorSets(logicalDeviceHandle, &allocateInfo, &cube->descriptorSet);
+				vkAllocateDescriptorSets(logicalDeviceHandle, &allocateInfo, &cube->getDescriptorSet());
 
 
 				VkDescriptorBufferInfo bufferInfo{};
@@ -781,7 +764,7 @@ namespace Engine
 				VkWriteDescriptorSet writeDescriptorSets{};
 
 				writeDescriptorSets.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-				writeDescriptorSets.dstSet = cube->descriptorSet;
+				writeDescriptorSets.dstSet = cube->getDescriptorSet();
 				writeDescriptorSets.dstBinding = 0;
 				writeDescriptorSets.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 				writeDescriptorSets.pBufferInfo = &bufferInfo;

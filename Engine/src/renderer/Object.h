@@ -14,72 +14,53 @@ namespace Engine
 		Object() = default;
 		~Object() = default;
 
-		inline void setPosition(const glm::vec3& pos) { position = pos; position /= 10;}
-		inline void setScale(const glm::vec3& scale_) { scale = scale_; }
-
 		virtual std::string showName() const { return "Base Object"; }
 		virtual std::string showFirstTLELine() const { return "Base Object"; }
 		virtual std::string showSecondTLELine() const { return "Base Object"; }
+
+		virtual inline glm::vec3 getPos() const { return glm::vec3(1.0f); }
+		virtual inline glm::vec3 getScale() const { return glm::vec3(1.0f); }
+		virtual inline glm::vec3 getColor() const { return glm::vec3(1.0f); }
+		virtual inline float getRotation()  const { return 0.0f; }
+
+		virtual inline void setPos(const glm::vec3& pos_) {}
+		virtual inline void setScale(const glm::vec3& scale_) {}
+		virtual inline void setColor(const glm::vec3& color_) {}
+		virtual inline void setRotation(float rot) {}
 
 	public:
 		void createUniformBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc);
 		void bindUBO(int swapchainImage, const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, VkDeviceMemory uniformBM, uint64_t offset);
 
 		VkBuffer getUniformBuffer(int imageNumber) const;
-
-	public: // private
-		glm::vec3 scale = { 5.0f, 5.0f, 5.0f };
-		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
-		float rotation = 0.0f;
-
-	public: // private
-		UniformBufferObject ubo;
-		VkDescriptorSet descriptorSet;
+		UniformBufferObject& getUniformbufferObject();
+		VkDescriptorSet& getDescriptorSet();
 
 	private:
+		UniformBufferObject ubo;
+		VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
 		std::vector<std::unique_ptr<VulkanUniformBuffer>> uniformBuffer;
 	};
 
 	const std::vector<Vertex> vertices =
 	{
-			{{-1.0f, -1.0f, -1.0f}, {0.6f, 0.75f, 0.9f}},
-			{{ 1.0f, -1.0f, -1.0f}, {0.13f, 0.3f, 0.4f}},
-			{{-1.0f,  1.0f, -1.0f}, {0.6f, 0.75f, 0.9f}},
-			{{ 1.0f,  1.0f, -1.0f}, {0.13f, 0.3f, 0.4f}},
+			{{-1.0f, -1.0f, -1.0f}},
+			{{ 1.0f, -1.0f, -1.0f}},
+			{{-1.0f,  1.0f, -1.0f}},
+			{{ 1.0f,  1.0f, -1.0f}},
 
-			{{-1.0f, -1.0f,  1.0f}, {1.13f, 0.3f, 0.4f}},
-			{{ 1.0f, -1.0f,  1.0f}, {1.6f, 0.75f, 0.9f}},
-			{{-1.0f,  1.0f,  1.0f}, {1.13f, 0.3f, 0.4f}},
-			{{ 1.0f,  1.0f,  1.0f}, {1.6f, 0.75f, 0.9f}},
+			{{-1.0f, -1.0f,  1.0f}},
+			{{ 1.0f, -1.0f,  1.0f}},
+			{{-1.0f,  1.0f,  1.0f}},
+			{{ 1.0f,  1.0f,  1.0f}},
 
-			{{-1.0f, -1.0f, -1.0f}, {1.f, 1.f, 0.4f}},
-			{{ 1.0f, -1.0f, -1.0f}, {1.f, 1.f, 0.9f}},
-			{{-1.0f, -1.0f, -1.0f}, {1.f, 1.f, 0.4f}},
-			{{-1.0f, -1.0f,  1.0f}, {1.f, 1.f, 0.9f}},
+			{{-1.0f, -1.0f, -1.0f}},
+			{{ 1.0f, -1.0f, -1.0f}},
+			{{-1.0f, -1.0f, -1.0f}},
+			{{-1.0f, -1.0f,  1.0f}},
 
-			{{ 1.0f, -1.0f, -1.0f}, {0.13f, 0.3f, 0.4f}},
-			{{ 1.0f, -1.0f,  1.0f}, {0.6f, 0.75f, 0.9f}}
-	};
-
-	const std::vector<Vertex> vertices1 =
-	{
-			{{-1.0f, -1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
-			{{ 1.0f, -1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
-			{{-1.0f,  1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
-			{{ 1.0f,  1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
-
-			{{-1.0f, -1.0f,  1.0f}, {0.3f, 0.5f, 0.1f}},
-			{{ 1.0f, -1.0f,  1.0f}, {0.16f, 0.36f, 0.58f}},
-			{{-1.0f,  1.0f,  1.0f}, {0.3f, 0.5f, 0.1f}},
-			{{ 1.0f,  1.0f,  1.0f}, {0.16f, 0.36f, 0.58f}},
-
-			{{-1.0f, -1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
-			{{ 1.0f, -1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
-			{{-1.0f, -1.0f, -1.0f}, {0.3f, 0.5f, 0.1f}},
-			{{-1.0f, -1.0f,  1.0f}, {0.16f, 0.36f, 0.58f}},
-
-			{{ 1.0f, -1.0f, -1.0f}, {0.16f, 0.36f, 0.58f}},
-			{{ 1.0f, -1.0f,  1.0f}, {0.3f, 0.5f, 0.1f}}
+			{{ 1.0f, -1.0f, -1.0f}},
+			{{ 1.0f, -1.0f,  1.0f}}
 	};
 
 	const std::vector<uint16_t> indices =

@@ -7,8 +7,6 @@ namespace Engine
 
 	Application::Application()
 	{
-		std::cout << "Constructor" << std::endl;
-
 		Engine::WindowSpec ws("Space Debris", 800, 600);
 		window = std::make_shared<Window>(ws);
 		window->init();
@@ -52,8 +50,6 @@ namespace Engine
 
 	void Application::run()
 	{
-		std::cout << "Run" << std::endl;
-
 		while (running)
 		{
 			timer.onUpdate((float)glfwGetTime());
@@ -95,8 +91,6 @@ namespace Engine
 
 	void Application::addNewLayer(std::unique_ptr<Layer>& layer)
 	{
-		std::cout << "Added new layer" << std::endl;
-
 		if (layer->getLayerName() == "MainLayer")
 		{
 			std::unique_ptr<CameraController> cameraController; 

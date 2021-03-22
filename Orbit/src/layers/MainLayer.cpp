@@ -7,20 +7,20 @@ void MainLayer::onAttach()
 
     /* add earth */
     glm::vec3 earthPos{ 0.0f, 0.0f, 0.0f };
-    std::unique_ptr<Engine::Object> earth = std::make_unique<SpaceObject>(earthPos);
+    glm::vec3 earthSize{ 250.0f, 250.0f, 250.0f };
+    glm::vec3 earthColor{ 0.23f, 0.7f, 0.44f };
+    std::unique_ptr<Engine::Object> earth = std::make_unique<SpaceObject>(earthPos, earthSize, earthColor);
     spaceObjects.emplace_back(std::move(earth));
+    /* --------- */
 
     fileLoader.loadFileNames();
-
-    //for (int i = 0; i < 15; i++)
     fileLoader.loadTLEandCreateObjects(spaceObjects);
 
-    std::cout << "Data Ready" << std::endl << std::endl << std::endl;
-    
-    Engine::Renderer3D::recordCommandBuffers(spaceObjects);
-    // send object to graphis 
-    // record cmd buffers
-    
+    std::cout << "Data Ready" << std::endl;
+    std::cout << "Objects loaded: ";
+    std::cout << spaceObjects.size() << std::endl << std::endl;
+
+    Engine::Renderer3D::recordCommandBuffers(spaceObjects);   
 
     //cameraController = std::make_unique<Engine::CameraController>();
     //cameraController->init(Engine::Application::get().getWindows());
@@ -61,11 +61,12 @@ void MainLayer::updateObjectsPosition()
 {
     for (const auto& cube : spaceObjects)
     {
-        cube->ubo.view = cameraController->getCamera()->getViewMatrix();
-        cube->ubo.proj = cameraController->getCamera()->getProjectionMatrix();
+        cube->getUniformbufferObject().view = cameraController->getCamera()->getViewMatrix();
+        cube->getUniformbufferObject().proj = cameraController->getCamera()->getProjectionMatrix();
 
-        cube->ubo.model = glm::translate(glm::mat4(1.0f), cube->position);
+        cube->getUniformbufferObject().model = glm::translate(glm::mat4(1.0f), cube->getPos());
         //cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-        cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
+        cube->getUniformbufferObject().model = glm::scale(cube->getUniformbufferObject().model, cube->getScale());
+        cube->getUniformbufferObject().color = cube->getColor(); // not every frame
     }
 }
