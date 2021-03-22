@@ -11,6 +11,7 @@ namespace Engine
 		~VulkanUniformBuffer() = default;
 
 		void createUniformBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
+		void bindUBToBufferMemory(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, VkDeviceMemory uniformBM, uint64_t offset);
 
 		VkBuffer getUniformBuffer() const;
 		VkDeviceMemory getUniformBufferMemory() const;

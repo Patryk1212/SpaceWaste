@@ -11,6 +11,8 @@ void MainLayer::onAttach()
     spaceObjects.emplace_back(std::move(earth));
 
     fileLoader.loadFileNames();
+
+    //for (int i = 0; i < 15; i++)
     fileLoader.loadTLEandCreateObjects(spaceObjects);
 
     std::cout << "Data Ready" << std::endl << std::endl << std::endl;

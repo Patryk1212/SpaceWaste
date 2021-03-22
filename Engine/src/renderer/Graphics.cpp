@@ -30,6 +30,8 @@ namespace Engine
 
 		createSyncObjects();
 
+		
+
 		imguiLayer = std::make_unique<ImguiLayer>(window, logicalDevice, physicalDevice, graphicsQueue, swapChainData);		
 	}
 
@@ -37,8 +39,26 @@ namespace Engine
 	{
 		// reset or delete them if used more than once
 		
+		//create ubo
 		createUniformBuffers(objects); // renderer 3d // needed for object
+	
+		// create buffer mem here
+		allocMem(objects);
+
 		
+		// bind unifrom buufer to memory
+		uint64_t offset = 0;
+		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
+		{
+			for (const auto& cube : objects)
+			{
+				cube->bindUBO(i, bufferAllocator, BM[i], offset);
+				offset += memRequirements.alignment;// +256;
+			}
+
+			offset = 0; // xd forgot to reset
+		}
+
 		createDescriptorPool(objects); // renderer 3d // needed for object
 		createDescriptorSets(objects); // renderer 3d // needed for object
 		createCommandBuffers(objects);
@@ -730,6 +750,7 @@ namespace Engine
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
+		uint64_t offset = 0;
 		bool earth = true;
 		for (const auto& cube : objects)
 		{
@@ -740,10 +761,17 @@ namespace Engine
 			cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 			cube->ubo.model = glm::scale(cube->ubo.model, cube->scale);
 			
+			//void* data;
+			//vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex), 0, sizeof(cube->ubo), 0, &data);
+			//memcpy(data, &cube->ubo, sizeof(cube->ubo));
+			//vkUnmapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex));
+
 			void* data;
-			vkMapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex), 0, sizeof(cube->ubo), 0, &data);
+			vkMapMemory(logicalDeviceHandle, BM[swapChainData.imageIndex], offset, sizeof(cube->ubo), 0, &data);
 			memcpy(data, &cube->ubo, sizeof(cube->ubo));
-			vkUnmapMemory(logicalDeviceHandle, cube->getUniformBufferMemory(swapChainData.imageIndex));
+			vkUnmapMemory(logicalDeviceHandle, BM[swapChainData.imageIndex]);
+
+			offset += memRequirements.alignment;
 		}
 	}
 

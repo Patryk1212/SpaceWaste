@@ -14,6 +14,11 @@ namespace Engine
 		uniformBuffer.emplace_back(std::move(tempUniformBuffer));
 	}
 
+	void Object::bindUBO(int swapchainImage, const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, VkDeviceMemory uniformBM, uint64_t offset)
+	{
+		uniformBuffer[swapchainImage]->bindUBToBufferMemory(bufferAlloc, uniformBM, offset);
+	}
+
 	VkBuffer Object::getUniformBuffer(int imageNumber) const
 	{
 		return uniformBuffer[imageNumber]->getUniformBuffer();
