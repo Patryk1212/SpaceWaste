@@ -159,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\core\FileLoader.h" />
+    <ClInclude Include="src\core\ObjectConstVar.h" />
     <ClInclude Include="src\core\SpaceObject.h" />
     <ClInclude Include="src\layers\MainLayer.h" />
     <ClInclude Include="src\core\SpaceDebrisVisualization.h" />
