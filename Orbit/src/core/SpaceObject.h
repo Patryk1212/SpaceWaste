@@ -24,14 +24,19 @@ public:
 
 	virtual inline void setPos(const glm::vec3& pos_) override { position = pos_; }
 	virtual inline void setScale(const glm::vec3& scale_) override { scale = scale_; }
+	virtual void resize(float scalar) override;
 	virtual inline void setColor(const glm::vec3& color_) override { color = color_; }
 	virtual inline void setRotation(float rot) override { rotation = rot; }
 
 private:
 	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
-	glm::vec3 scale = { 5.0f, 5.0f, 5.0f };
+	glm::vec3 scale = { 3.0f, 3.0f, 3.0f };
 	glm::vec3 color = { 1.0f, 1.0f, 1.0f };
 	float rotation = 0.0f;
+
+private:
+	const float MIN_SIZE = 1.4f;
+	const float MAX_SIZE = 9.f;
 
 private:
 	std::unique_ptr<cTle> tleSGP4;

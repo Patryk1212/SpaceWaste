@@ -35,6 +35,9 @@ void MainLayer::onUpdate(float deltaTime)
     //float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
     cameraController->onUpdate();
+
+   
+
     updateObjectsPosition();
     
     Engine::Renderer3D::updateFrame(spaceObjects);
@@ -52,8 +55,7 @@ void MainLayer::passCamera(std::unique_ptr<Engine::CameraController>& cc)
 
 bool MainLayer::onEvent(Engine::Event& event)
 {
-    cameraController->onEvent(event);
-
+    objectsResizeZoom(event);
 	return true;
 }
 
@@ -69,5 +71,30 @@ void MainLayer::updateObjectsPosition()
 
         cube->getUniformbufferObject().model = glm::scale(cube->getUniformbufferObject().model, cube->getScale());
         cube->getUniformbufferObject().color = cube->getColor(); // not every frame
+    }
+}
+
+void MainLayer::objectsResizeZoom(Engine::Event& event)
+{
+    float oldZoom = cameraController->getCurrentZoom();
+    if (cameraController->onEvent(event))
+    {
+        float newZoom = cameraController->getCurrentZoom();
+        newZoom -= oldZoom;
+
+        if (newZoom < 0) // zoom in
+        {
+            for (int i = 1; i < spaceObjects.size(); i++)
+            {
+                spaceObjects[i]->resize(ZOOM_IN);
+            }
+        }
+        else if (newZoom > 0) // zoom out
+        {
+            for (int i = 1; i < spaceObjects.size(); i++)
+            {
+                spaceObjects[i]->resize(ZOOM_OUT);
+            }
+        }
     }
 }

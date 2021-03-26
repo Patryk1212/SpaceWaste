@@ -163,6 +163,7 @@
     <ClInclude Include="src\layers\MainLayer.h" />
     <ClInclude Include="src\core\SpaceDebrisVisualization.h" />
     <ClInclude Include="src\layers\UILayer.h" />
+    <ClInclude Include="src\spacetrack\SpaceTrackData.h" />
     <ClInclude Include="vendor\OrbitTool\core\cEci.h" />
     <ClInclude Include="vendor\OrbitTool\core\cJulian.h" />
     <ClInclude Include="vendor\OrbitTool\core\coord.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="src\layers\MainLayer.cpp" />
     <ClCompile Include="src\core\SpaceDebrisVisualization.cpp" />
     <ClCompile Include="src\layers\UILayer.cpp" />
+    <ClCompile Include="src\spacetrack\SpaceTrackData.cpp" />
     <ClCompile Include="vendor\OrbitTool\core\cEci.cpp" />
     <ClCompile Include="vendor\OrbitTool\core\cJulian.cpp" />
     <ClCompile Include="vendor\OrbitTool\core\coord.cpp" />

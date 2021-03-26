@@ -14,14 +14,18 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 	tleSGP4 = std::make_unique<cTle>(name, one, two);
 	satSGP4 = std::make_unique<cSatellite>(*tleSGP4.get());
 
-	cEciTime eci = satSGP4->PositionEci(360);
+	cEciTime eci = satSGP4->PositionEci(720);
 	vector<cEci> vecPos;
 
 	vecPos.push_back(eci);
 
 	position = { vecPos[0].Position().m_x, vecPos[0].Position().m_z, vecPos[0].Position().m_y};
-	position /= 7;
-	scale *= 2;
+	position /= 10;
+	color = { 1.0f, 0.7f, 0.9f };
+
+
+
+	//scale /= 2;
 }
 
 std::string SpaceObject::showName() const
@@ -37,4 +41,26 @@ std::string SpaceObject::showFirstTLELine() const
 std::string SpaceObject::showSecondTLELine() const
 {
 	return satSGP4->Orbit().TleLine1().c_str();
+}
+
+void SpaceObject::resize(float scalar)
+{
+	if (scale.x > MIN_SIZE && scale.x < MAX_SIZE)
+	{
+		scale *= scalar;
+
+		if (scale.x >= MAX_SIZE)
+		{
+			scale.x = MAX_SIZE - 0.1f;
+			scale.y = MAX_SIZE - 0.1f;
+			scale.z = MAX_SIZE - 0.1f;
+		}
+
+		if (scale.x <= MIN_SIZE)
+		{
+			scale.x = MIN_SIZE + 0.1f;
+			scale.y = MIN_SIZE + 0.1f;
+			scale.z = MIN_SIZE + 0.1f;
+		}
+	}
 }

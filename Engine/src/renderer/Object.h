@@ -25,6 +25,7 @@ namespace Engine
 
 		virtual inline void setPos(const glm::vec3& pos_) {}
 		virtual inline void setScale(const glm::vec3& scale_) {}
+		virtual inline void resize(float scalar) {}
 		virtual inline void setColor(const glm::vec3& color_) {}
 		virtual inline void setRotation(float rot) {}
 

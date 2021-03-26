@@ -7,7 +7,7 @@ namespace Engine
 
 	Application::Application()
 	{
-		Engine::WindowSpec ws("Space Debris", 800, 600);
+		Engine::WindowSpec ws("Space Debris", 1280, 720);
 		window = std::make_shared<Window>(ws);
 		window->init();
 		window->setEventCallback(std::bind(&Application::onEvent, this, std::placeholders::_1));

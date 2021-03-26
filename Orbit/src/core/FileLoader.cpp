@@ -29,6 +29,8 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<Engine::Obj
 {
     std::fstream file;
 
+    int x = 0;
+
     for (const auto& name : fileNames)
     {
         file.open("files/" + name + ".txt", std::ios::in);
@@ -66,11 +68,19 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<Engine::Obj
 
                 if (number == 2)
                 {
+                    //std::cout << "Number " << x << std::endl;
                     std::unique_ptr<Engine::Object> object = std::make_unique<SpaceObject>(name, one, two);
                     objects.emplace_back(std::move(object));
                     number = 0;
+                    x++;
                 }
                 else number++;
+
+                if (x > 17381)
+                {
+                    x = 0;
+                    break;
+                }
             }
         }
 

@@ -23,6 +23,12 @@ private:
 	void updateObjectsPosition();
 
 private:
+	void objectsResizeZoom(Engine::Event& event);
+	const float ZOOM_IN = 0.95f;
+	const float ZOOM_OUT = 1.05f;
+
+
+private:
 	FileLoader fileLoader;
 	std::unique_ptr<Engine::CameraController> cameraController;
 

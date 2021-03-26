@@ -26,8 +26,8 @@ namespace Engine
 			lastX = windowHandle->getMouseX();
 			lastY = windowHandle->getMouseY();
 
-			xoffset *= sensitivity;
-			yoffset *= sensitivity;
+			xoffset *= SENSITIVITY;
+			yoffset *= SENSITIVITY;
 
 			phi += yoffset;
 			if (phi < 0.5f) phi = 0.5f;
@@ -44,13 +44,27 @@ namespace Engine
 		camera->onUpdateViewMatrix(viewData, phi, theta);
 	}
 
-	void CameraController::onEvent(Event& event)
+	bool CameraController::onEvent(Event& event)
 	{
 		MouseScrollEvent& e = (MouseScrollEvent&)event;
 
-		if (e.getEventType() == EventType::MOUSE_SCROLLED)
+		if (e.getEventType() == EventType::MOUSE_SCROLLED && viewData.cameraPos.z < MAX_ZOOM && viewData.cameraPos.z > MIN_ZOOM)
 		{
 			viewData.cameraPos += zoomSpeed * viewData.cameraFront * e.getYOffest();
+
+			if (viewData.cameraPos.z >= MAX_ZOOM) viewData.cameraPos.z = MAX_ZOOM - 0.1f;
+			if (viewData.cameraPos.z <= MIN_ZOOM) viewData.cameraPos.z = MIN_ZOOM + 0.1f;
+
+			zoomSpeed = viewData.cameraPos.z / 25.f;
+
+			return true;
 		}
+
+		return false;
+	}
+
+	float CameraController::getCurrentZoom() const
+	{
+		return viewData.cameraPos.z;
 	}
 }

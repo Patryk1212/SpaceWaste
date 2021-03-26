@@ -1,0 +1,18 @@
+﻿  Application.cpp
+  CameraController.cpp
+  Layer.cpp
+  LayerStack.cpp
+  ImguiLayer.cpp
+C:\CCTP\SpaceWaste\Engine\src\dear_imgui\ImguiLayer.cpp(176,51): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\CCTP\SpaceWaste\Engine\src\dear_imgui\ImguiLayer.cpp(177,50): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+  Graphics.cpp
+C:\CCTP\SpaceWaste\Engine\src\renderer\Graphics.cpp(730,106): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\CCTP\SpaceWaste\Engine\src\renderer\Graphics.cpp(736,98): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\CCTP\SpaceWaste\Engine\src\renderer\Graphics.cpp(759,49): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Renderer3D.cpp
+  VulkanContext.cpp
+  VulkanDebug.cpp
+  VulkanLogicalDevice.cpp
+  VulkanPhysicalDevice.cpp
+  VulkanSurface.cpp
+  Engine.vcxproj -> C:\CCTP\SpaceWaste\bin\Release-x64\Engine\Engine.lib
