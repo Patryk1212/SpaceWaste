@@ -9,6 +9,14 @@ binDebug-x64Orbit
 
 bin-intDebug-x64Engine
 
+bin-intRelease-x64Orbit
+
+binRelease-x64Engine
+
+binRelease-x64Orbit
+
+bin-intRelease-x64Engine
+
 .filters
 
 *.obj

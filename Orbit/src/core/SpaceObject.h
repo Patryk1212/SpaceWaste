@@ -35,8 +35,17 @@ private:
 	float rotation = 0.0f;
 
 private:
-	const float MIN_SIZE = 1.4f;
-	const float MAX_SIZE = 9.f;
+	float MIN_SIZE = 0.f;
+	float MAX_SIZE = 0.f;
+
+	const float MIN_SIZE_LOW = 1.4f;
+	const float MAX_SIZE_LOW = 6.f;
+
+	const float MIN_SIZE_MIDDLE = 6.f;
+	const float MAX_SIZE_MIDDLE = 11.f;
+
+	const float MIN_SIZE_HIGH = 10.f;
+	const float MAX_SIZE_HIGH = 13.f;
 
 private:
 	std::unique_ptr<cTle> tleSGP4;
