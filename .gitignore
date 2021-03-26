@@ -21,4 +21,12 @@ bin/Debug-x64/Engine/
 
 bin/Debug-x64/Orbit/
 
+bin-int/Release-x64/Engine/
+
+bin-int/Release-x64/Orbit/
+
+bin/Release-x64/Engine/
+
+bin/Release-x64/Orbit/
+
 *.filters
