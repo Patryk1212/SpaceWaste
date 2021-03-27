@@ -26,7 +26,7 @@ private:
 	void objectsResizeZoom(Engine::Event& event);
 	const float ZOOM_IN = 0.95f;
 	const float ZOOM_OUT = 1.05f;
-
+	glm::vec3 final2;
 
 private:
 	FileLoader fileLoader;

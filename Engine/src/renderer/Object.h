@@ -29,6 +29,8 @@ namespace Engine
 		virtual inline void setColor(const glm::vec3& color_) {}
 		virtual inline void setRotation(float rot) {}
 
+		virtual bool checkInside(const glm::vec3& point) { return false; }
+
 	public:
 		void createUniformBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc);
 		void bindUBO(int swapchainImage, const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, VkDeviceMemory uniformBM, uint64_t offset);

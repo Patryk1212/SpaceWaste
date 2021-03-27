@@ -29,6 +29,17 @@ public:
 	virtual inline void setColor(const glm::vec3& color_) override { color = color_; }
 	virtual inline void setRotation(float rot) override { rotation = rot; }
 
+	virtual bool checkInside(const glm::vec3& point) override
+	{
+		glm::vec3 min{ position.x - scale.x / 2, position.y - scale.y / 2, position.z + scale.z / 2 };
+		glm::vec3 max{ position.x + scale.x / 2, position.y + scale.y / 2, position.z - scale.z / 2 };
+
+		return (point.x >= min.x && point.x <= max.x) &&
+			(point.y >= min.y && point.y <= max.y);//&&
+			   //(point.z >= min.z && point.z <= max.z);
+
+	};
+
 private:
 	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 scale = { 3.0f, 3.0f, 3.0f };

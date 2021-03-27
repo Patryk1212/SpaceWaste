@@ -16,6 +16,7 @@ namespace Engine
 		bool onEvent(Event& event);
 
 		std::unique_ptr<Camera>& getCamera() { return camera; }
+		std::shared_ptr<Window>& getWindowHandle() { return windowHandle; }
 		float getCurrentZoom() const;
 
 	private:

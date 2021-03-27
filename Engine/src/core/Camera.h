@@ -14,7 +14,7 @@ struct ViewMatrixData
 struct ProjectionMatrixData
 {
 	float fov = 45.0f;
-	float aspectRatio = 800.0f / 600.0f; // take this from app
+	float aspectRatio = 1280.0f / 720.0f; // take this from app
 	float near = 0.1f;
 	float far = 100000.0f;
 };
