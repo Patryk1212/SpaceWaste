@@ -21,6 +21,11 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 
 	position = { vecPos[0].Position().m_x, vecPos[0].Position().m_z, vecPos[0].Position().m_y};
 	position /= 10;
+
+	//std::cout << position.x << std::endl;
+	//std::cout << position.y << std::endl;
+	//std::cout << position.z << std::endl;
+
 	color = { 1.0f, 0.7f, 0.9f };
 	calculateSize();
 }

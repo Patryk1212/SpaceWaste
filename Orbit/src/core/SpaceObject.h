@@ -31,13 +31,12 @@ public:
 
 	virtual bool checkInside(const glm::vec3& point) override
 	{
-		glm::vec3 min{ position.x - scale.x / 2, position.y - scale.y / 2, position.z + scale.z / 2 };
-		glm::vec3 max{ position.x + scale.x / 2, position.y + scale.y / 2, position.z - scale.z / 2 };
+		glm::vec3 min{ position.x - scale.x , position.y - scale.y , position.z - scale.z };
+		glm::vec3 max{ position.x + scale.x , position.y + scale.y , position.z + scale.z };
 
-		return (point.x >= min.x && point.x <= max.x) &&
-			(point.y >= min.y && point.y <= max.y);//&&
+		return (point.x >= min.y && point.x <= max.y) &&
+			(point.y >= min.z && point.y <= max.z);//&&
 			   //(point.z >= min.z && point.z <= max.z);
-
 	};
 
 private:

@@ -165,6 +165,13 @@
     <ClInclude Include="src\core\SpaceDebrisVisualization.h" />
     <ClInclude Include="src\layers\UILayer.h" />
     <ClInclude Include="src\spacetrack\SpaceTrackData.h" />
+    <ClInclude Include="src\ui\SingleUIWindow.h" />
+    <ClInclude Include="src\ui\UIButton.h" />
+    <ClInclude Include="src\ui\UIButtonList.h" />
+    <ClInclude Include="src\ui\UIEnums.h" />
+    <ClInclude Include="src\ui\UISlider.h" />
+    <ClInclude Include="src\ui\UIStandard.h" />
+    <ClInclude Include="src\ui\UIWindowSpec.h" />
     <ClInclude Include="vendor\OrbitTool\core\cEci.h" />
     <ClInclude Include="vendor\OrbitTool\core\cJulian.h" />
     <ClInclude Include="vendor\OrbitTool\core\coord.h" />
@@ -190,6 +197,12 @@
     <ClCompile Include="src\core\SpaceDebrisVisualization.cpp" />
     <ClCompile Include="src\layers\UILayer.cpp" />
     <ClCompile Include="src\spacetrack\SpaceTrackData.cpp" />
+    <ClCompile Include="src\ui\SingleUIWindow.cpp" />
+    <ClCompile Include="src\ui\UIButton.cpp" />
+    <ClCompile Include="src\ui\UIButtonList.cpp" />
+    <ClCompile Include="src\ui\UISlider.cpp" />
+    <ClCompile Include="src\ui\UIStandard.cpp" />
+    <ClCompile Include="src\ui\UIWindowSpec.cpp" />
     <ClCompile Include="vendor\OrbitTool\core\cEci.cpp" />
     <ClCompile Include="vendor\OrbitTool\core\cJulian.cpp" />
     <ClCompile Include="vendor\OrbitTool\core\coord.cpp" />

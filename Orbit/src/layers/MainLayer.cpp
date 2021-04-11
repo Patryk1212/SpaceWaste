@@ -24,6 +24,14 @@ void MainLayer::onAttach()
 
     //cameraController = std::make_unique<Engine::CameraController>();
     //cameraController->init(Engine::Application::get().getWindows());
+    
+    //CString  szResult[2];
+    //data = std::make_unique<CSpaceTrackDownload>(L"https://www.space-track.org/ajaxauth/login", L"ostrpatryk@gmail.com", L"T6RkviN94d!N_ra");
+    //
+    //
+    //szResult[0] = data->Query(L"/basicspacedata/query/class/tle_latest/orderby/TLE_LINE0%20asc/limit/50/format/3le/metadata/false/favorites/Human_Spaceflight");
+    //szResult[1] = data->Query(L"/basicspacedata/query/class/tle_latest/orderby/TLE_LINE0%20asc/limit/50/format/3le/metadata/false/favorites/Amateur");
+
 }
 
 void MainLayer::onUpdate(float deltaTime)
@@ -36,46 +44,36 @@ void MainLayer::onUpdate(float deltaTime)
 
     cameraController->onUpdate();
 
-    float x_pos = cameraController->getWindowHandle()->getMouseX();
-    float y_pos = cameraController->getWindowHandle()->getMouseY();
-
-    glm::mat4 proj = cameraController->getCamera()->getProjectionMatrix();
-    glm::mat4 view = cameraController->getCamera()->getViewMatrix();
-
-    glm::mat4 result = proj * view;
-
-    glm::mat4 result_in = glm::inverse(result);
-
-    glm::vec4 mouse;
-    mouse.x = (2.0f * x_pos) / 1280.f - 1.0f;
-    mouse.y = 1.f - (2.0f * y_pos) / 720.f;
-    mouse.z = 2.f * 10000.f - 0.1f;
-    mouse.w = 1.f;
-
-    glm::vec4 final = mouse;// *result_in;
-    final2 = { final.x, final.y, final.z };
-    //final.w = 1.0 / final.w;
+    //float x_pos = cameraController->getWindowHandle()->getMouseX();
+    //float y_pos = cameraController->getWindowHandle()->getMouseY();
     //
-    //final.x *= final.w;
-    //final.y *= final.w;
-    //final.z *= final.w;
-
-    system("cls");
-    std::cout << "X " << mouse.x * cameraController->getCurrentZoom() << std::endl;
-    std::cout << "Y " << mouse.y * cameraController->getCurrentZoom() << std::endl;
-    //std::cout << "Z " << mouse.z * cameraController->getCurrentZoom() << std::endl;
-
-   //glm::vec4 near = glm::vec4((x_pos - 640) / 640, -1 * (y_pos - 360) / 360, -1, 1.0);
-   //glm::vec4 far = glm::vec4((x_pos - 640) / 640, -1 * (y_pos - 360) / 360, 1, 1.0);
-   //glm::vec4 nearResult = result_in * near;
-   //glm::vec4 farResult = result_in * far;
-   //nearResult /= nearResult.w;
-   //farResult /= farResult.w;
-   //glm::vec3 dir = glm::vec3(farResult - nearResult);
-   //glm::normalize(dir);
-
-    //std::cout << "W " << final.w << std::endl;
-
+    //glm::mat4 proj = cameraController->getCamera()->getProjectionMatrix();
+    //glm::mat4 view = cameraController->getCamera()->getViewMatrix();
+    //
+    //glm::mat4 result = proj * view;
+    //
+    //glm::mat4 result_in = glm::inverse(result);
+    //
+    //glm::vec4 mouse;
+    //mouse.x = (2.0f * x_pos) / 1280.f - 1.0f;
+    //mouse.y = 1.f - (2.0f * y_pos) / 720.f;
+    //mouse.z = 1.f;// 2.f * 10000.f - 0.1f;
+    //mouse.w = 1.f;
+    //
+    //glm::vec4 final = mouse * result_in;
+    //
+    ////final.x /= final.w;
+    ////final.y /= final.w;
+    ////final.z /= final.w;
+    //
+    ////glm::normalize(final);
+    //system("cls");
+    //
+    //final2 = { mouse.x * cameraController->getCurrentZoom(), final.y * cameraController->getCurrentZoom(), final.z * cameraController->getCurrentZoom() };
+    //
+    //std::cout << "X " << final2.x  << std::endl;
+    //std::cout << "Y " << final2.y  << std::endl;
+    //std::cout << "Z " << final2.z  << std::endl;
    
 
     updateObjectsPosition();
@@ -99,19 +97,19 @@ bool MainLayer::onEvent(Engine::Event& event)
 
     Engine::MouseButtonPressedEvent& e = (Engine::MouseButtonPressedEvent&)event;
     
-    if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
-    {
-        for (const auto& sp : spaceObjects)
-        {
-            if (sp->checkInside(final2))
-            {
-                sp->setScale({ 30.f, 30.f, 30.f });
-                std::cout << "Inside" << std::endl;
-                break;
-            }
-
-        }
-    }
+    //if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
+    //{
+    //    for (const auto& sp : spaceObjects)
+    //    {
+    //        if (sp->checkInside(final2))
+    //        {
+    //            sp->setScale({ 30.f, 30.f, 30.f });
+    //            std::cout << "Inside" << std::endl;
+    //            break;
+    //        }
+    //
+    //    }
+    //}
 
 	return true;
 }

@@ -19,7 +19,7 @@ namespace Engine
 
 	void CameraController::onUpdate()
 	{
-		if (windowHandle->isMouseButtonPressed(0))
+		if (windowHandle->isMouseButtonPressed(1))
 		{
 			float xoffset = windowHandle->getMouseX() - lastX;
 			float yoffset = lastY - windowHandle->getMouseY();

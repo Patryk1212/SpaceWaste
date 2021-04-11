@@ -74,10 +74,10 @@ namespace Engine
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.dispatch<WindowCloseEvent>(std::bind(&Application::shutdown, this, std::placeholders::_1));
-		
+
 		for (const auto& layer : layerStack.getAllLayers())
 		{
-			if (layer->onEvent(event)) break;
+			layer->onEvent(event);
 		}
 
 		// debug only
