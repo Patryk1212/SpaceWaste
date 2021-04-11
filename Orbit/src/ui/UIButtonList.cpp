@@ -21,21 +21,33 @@ void UIButtonList::onUpdate()
 	ImGui::Begin(newTitle, &specification.open, window_flags);
 
 	ImGui::PushID(0);
-	std::cout << "new" << content[0].clicked << std::endl;
-	ImGui::Checkbox("", &content[0].clicked);
-	std::cout << content[0].clicked << std::endl;
+	//std::cout << "new" << content[0].clicked << std::endl;
+	if (ImGui::Checkbox("", &content[0].clicked)) content[0].change = true;
+	//std::cout << content[0].clicked << std::endl;
 	ImGui::PopID();
 	
 	ImGui::PushID(1);
-	std::cout << "new" << content[1].clicked << std::endl;
-	ImGui::Checkbox("", &content[1].clicked);
-	std::cout << content[1].clicked << std::endl;
+	//std::cout << "new" << content[1].clicked << std::endl;
+	if (ImGui::Checkbox("", &content[1].clicked)) content[1].change = true;
+	//std::cout << content[1].clicked << std::endl;
 	ImGui::PopID();
 	
 	ImGui::PushID(2);
-	std::cout << "new" << content[2].clicked << std::endl;
-	ImGui::Checkbox("", &content[2].clicked);
-	std::cout << content[2].clicked << std::endl;
+	//std::cout << "new" << content[2].clicked << std::endl;
+		if (ImGui::Checkbox("", &content[2].clicked)) content[2].change = true;
+	//std::cout << content[2].clicked << std::endl;
+	ImGui::PopID();
+
+	ImGui::PushID(3);
+	//std::cout << "new" << content[2].clicked << std::endl;
+			if (ImGui::Checkbox("", &content[3].clicked)) content[3].change = true;
+	//std::cout << content[2].clicked << std::endl;
+	ImGui::PopID();
+
+	ImGui::PushID(4);
+	//std::cout << "new" << content[2].clicked << std::endl;
+				if (ImGui::Checkbox("", &content[4].clicked)) content[4].change = true;
+	//std::cout << content[2].clicked << std::endl;
 	ImGui::PopID();
 
 	//int i = 0;

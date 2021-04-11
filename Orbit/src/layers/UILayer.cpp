@@ -21,35 +21,62 @@ void UILayer::onUpdate(float deltaTime)
 	{
 		window->onUpdate();
 	}
+
+	for (const auto& window : uiWindows)
+	{
+		if (window->getType() == UIType::BUTTON_LIST)
+		{
+			for (auto& button : window->getButtons())
+			{
+				for (const auto& windows : uiWindows)
+				{
+					// dont check for none
+					if (windows->getInstanceType() != UIWindowInstance::NONE && button.change && windows->getInstanceType() == button.type)
+					{
+						button.change = false;
+						windows->show(button.clicked);
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 bool UILayer::onEvent(Engine::Event& event)
 {
-	Engine::MouseButtonPressedEvent& e = (Engine::MouseButtonPressedEvent&)event;
-
-	if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
-	{
-		for (const auto& window : uiWindows)
-		{
-			if (window->getType() == UIType::BUTTON_LIST)
-			{
-				for (const auto& button : window->getButtons())
-				{
-					for (const auto& windows : uiWindows)
-					{
-						if (windows->getInstanceType() == button.type)
-						{
-							windows->show(button.clicked);
-							break;
-							//if (button.clicked) return true;
-						}
-					}
-				}
-
-				return false;
-			}
-		}
-	}
+	//Engine::MouseButtonPressedEvent& e = (Engine::MouseButtonPressedEvent&)event;
+	//
+	//if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
+	//{
+	//	for (const auto& window : uiWindows)
+	//	{
+	//		if (window->getType() == UIType::BUTTON_LIST)
+	//		{
+	//			for (auto& button : window->getButtons())
+	//			{
+	//				for (const auto& windows : uiWindows)
+	//				{
+	//					// dont check for none
+	//					if (windows->getInstanceType() != UIWindowInstance::NONE && button.change && windows->getInstanceType() == button.type)
+	//					{
+	//						std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl;
+	//						std::cout << (int)windows->getInstanceType() << std::endl;
+	//						std::cout << (int)button.type << std::endl;
+	//						std::cout << button.clicked << std::endl;
+	//						
+	//						button.change = false;
+	//						windows->show(button.clicked);
+	//						break;
+	//						//if (button.clicked) return true;
+	//					}
+	//				}
+	//			}
+	//
+	//			return false;
+	//		}
+	//	}
+	//}
 
 	return false;
 }
