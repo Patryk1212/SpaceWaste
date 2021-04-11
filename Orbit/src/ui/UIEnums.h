@@ -11,6 +11,7 @@ enum class UIType
 enum class UIWindowInstance
 {
 	NONE = 0,
+	EXIT,
 	GENERAL_INFO,
 	OBJECTS_LIST,
 	CONTROLS,

@@ -7,6 +7,7 @@
 #include "core/CameraController.h"
 
 /* --- Event and Input --- */
+#include "events+input/Input.h"
 #include "events+input/Event.h"
 #include "events+input/KeyEvent.h"
 #include "events+input/MouseEvent.h"

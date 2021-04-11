@@ -77,7 +77,11 @@ namespace Engine
 
 		for (const auto& layer : layerStack.getAllLayers())
 		{
-			layer->onEvent(event);
+			if (!layer->onEvent(event))
+			{
+				//exit
+				running = false;
+			}
 		}
 
 		// debug only

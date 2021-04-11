@@ -20,67 +20,26 @@ void UIButtonList::onUpdate()
 	const char* newTitle = specification.title.c_str();
 	ImGui::Begin(newTitle, &specification.open, window_flags);
 
-	ImGui::PushID(0);
-	//std::cout << "new" << content[0].clicked << std::endl;
-	if (ImGui::Checkbox("", &content[0].clicked)) content[0].change = true;
-	//std::cout << content[0].clicked << std::endl;
-	ImGui::PopID();
-	
-	ImGui::PushID(1);
-	//std::cout << "new" << content[1].clicked << std::endl;
-	if (ImGui::Checkbox("", &content[1].clicked)) content[1].change = true;
-	//std::cout << content[1].clicked << std::endl;
-	ImGui::PopID();
-	
-	ImGui::PushID(2);
-	//std::cout << "new" << content[2].clicked << std::endl;
-		if (ImGui::Checkbox("", &content[2].clicked)) content[2].change = true;
-	//std::cout << content[2].clicked << std::endl;
-	ImGui::PopID();
+	int i = 0;
+	for (auto& button : content)
+	{
+		ImGui::PushID(i);
+		ImGui::PushStyleColor(ImGuiCol_Button, button.colorStandard);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, button.colorHighlight);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, button.colorActive);
 
-	ImGui::PushID(3);
-	//std::cout << "new" << content[2].clicked << std::endl;
-			if (ImGui::Checkbox("", &content[3].clicked)) content[3].change = true;
-	//std::cout << content[2].clicked << std::endl;
-	ImGui::PopID();
+		if (ImGui::Button(button.text.c_str()))
+		{
+			button.clicked ? button.clicked = false : button.clicked = true;
+			button.change = true;
+		}
 
-	ImGui::PushID(4);
-	//std::cout << "new" << content[2].clicked << std::endl;
-				if (ImGui::Checkbox("", &content[4].clicked)) content[4].change = true;
-	//std::cout << content[2].clicked << std::endl;
-	ImGui::PopID();
-
-	//int i = 0;
-	//for (auto& button : content)
-	//{
-	//	ImGui::PushID(i);
-	//	ImGui::PushStyleColor(ImGuiCol_Button, button.colorStandard);
-	//	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, button.colorHighlight);
-	//
-	//	//if (specification.open)
-	//	//{
-	//	ImGui::PushStyleColor(ImGuiCol_ButtonActive, button.colorActive);
-	//	//}
-	//
-	//	if (ImGui::Checkbox("", &button.clicked)) button.clicked ? button.clicked = false : button.clicked = true;
-	//	ImGui::SameLine();
-	//
-	//	ImGui::Button(button.text.c_str());
-	//	//{
-	//	//	button.clicked ? button.clicked = false : button.clicked = true;
-	//	//	//std::cout << button.clicked << std::endl;
-	//	//}
-	//	ImGui::PopID();
-	//	i++;
-	//	//ImGui::PopStyleColor(3);		
-	//}
+		ImGui::PopStyleColor(3);		
+		ImGui::PopID();
+		i++;
+	}
 
 	ImGui::End();
-}
-
-void UIButtonList::show(bool show)
-{
-	specification.open = show;
 }
 
 float UIButtonList::getValue() const

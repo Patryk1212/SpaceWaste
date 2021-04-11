@@ -10,7 +10,6 @@ public:
 
 	virtual void onUpdate() override;
 
-	virtual void show(bool show) override;
 	virtual float getValue() const override;
 	virtual UIType getType() const override;
 

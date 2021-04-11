@@ -20,18 +20,14 @@ void UILayer::onUpdate(float deltaTime)
 	for (const auto& window : uiWindows)
 	{
 		window->onUpdate();
-	}
 
-	for (const auto& window : uiWindows)
-	{
 		if (window->getType() == UIType::BUTTON_LIST)
 		{
 			for (auto& button : window->getButtons())
 			{
 				for (const auto& windows : uiWindows)
 				{
-					// dont check for none
-					if (windows->getInstanceType() != UIWindowInstance::NONE && button.change && windows->getInstanceType() == button.type)
+					if (windows->getInstanceType() != UIWindowInstance::EXIT && button.change && windows->getInstanceType() == button.type)
 					{
 						button.change = false;
 						windows->show(button.clicked);
@@ -45,40 +41,27 @@ void UILayer::onUpdate(float deltaTime)
 
 bool UILayer::onEvent(Engine::Event& event)
 {
-	//Engine::MouseButtonPressedEvent& e = (Engine::MouseButtonPressedEvent&)event;
-	//
-	//if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
-	//{
-	//	for (const auto& window : uiWindows)
-	//	{
-	//		if (window->getType() == UIType::BUTTON_LIST)
-	//		{
-	//			for (auto& button : window->getButtons())
-	//			{
-	//				for (const auto& windows : uiWindows)
-	//				{
-	//					// dont check for none
-	//					if (windows->getInstanceType() != UIWindowInstance::NONE && button.change && windows->getInstanceType() == button.type)
-	//					{
-	//						std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl;
-	//						std::cout << (int)windows->getInstanceType() << std::endl;
-	//						std::cout << (int)button.type << std::endl;
-	//						std::cout << button.clicked << std::endl;
-	//						
-	//						button.change = false;
-	//						windows->show(button.clicked);
-	//						break;
-	//						//if (button.clicked) return true;
-	//					}
-	//				}
-	//			}
-	//
-	//			return false;
-	//		}
-	//	}
-	//}
+	Engine::MouseButtonPressedEvent& e = (Engine::MouseButtonPressedEvent&)event;
+	
+	for (const auto& window : uiWindows)
+	{
+		if (window->getType() == UIType::BUTTON_LIST)
+		{
+			for (auto& button : window->getButtons())
+			{
+				for (const auto& windows : uiWindows)
+				{
+					if (windows->getInstanceType() == UIWindowInstance::EXIT && button.change && windows->getInstanceType() == button.type)
+					{
+						// exit button pressed
+						return false;
+					}
+				}
+			}
+		}
+	}
 
-	return false;
+	return true;
 }
 
 void UILayer::initSlider()
@@ -132,10 +115,10 @@ void UILayer::initMenu()
 {
 	ImVec2 pos{ 1160.f, 30.f };
 	ImVec2 size{ 100.f, 180.f };
-	UIWindowSpec spec(UIWindowInstance::NONE, "menu", pos, size, 0.f, false, true, true, true);
+	UIWindowSpec spec(UIWindowInstance::EXIT, "menu", pos, size, 0.f, false, true, true, true);
 
 	std::vector<UIButton> buttons;
-	buttons.emplace_back(UIButton(UIWindowInstance::NONE, "EXIT", { 1.f, .1f, .0f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .0f, .9f, 1.f }));
+	buttons.emplace_back(UIButton(UIWindowInstance::EXIT, "EXIT", { 1.f, .1f, .0f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .0f, .9f, 1.f }));
 	buttons.emplace_back(UIButton(UIWindowInstance::GENERAL_INFO, "INFO", { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }));
 	buttons.emplace_back(UIButton(UIWindowInstance::OBJECTS_LIST, "LIST", { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }));
 	buttons.emplace_back(UIButton(UIWindowInstance::TIME_LINE, "TIME LINE", { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }));

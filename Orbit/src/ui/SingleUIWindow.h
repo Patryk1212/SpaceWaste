@@ -11,9 +11,10 @@ public:
 
     virtual void onUpdate() {}
 
-    virtual void show(bool show) {}
     virtual float getValue() const { return 0.f; }
     virtual UIType getType() const { return UIType::NONE; }
+    
+    virtual void show(bool show) {}
     virtual UIWindowInstance getInstanceType() const { return specification.type; }
 
 public:
