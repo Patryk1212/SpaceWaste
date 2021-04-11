@@ -93,13 +93,21 @@ void UILayer::initImGuiSettings()
 	color = { 0.03f, 0.03f, 0.03f, 255 };
 	style->Colors[2] = color;
 
+	/* slider */
+	color = { 0.f, 0.f, 0.f, 255 };
+	style->Colors[7] = color;
+
+	color = { 0.f, 0.03f, 0.18f, 255 };
+	style->Colors[8] = color;
+
+	color = { 0.21f, 0.1f, 0.f, 255 };
+	style->Colors[9] = color;
+
 	/* title bg */
 	color = { 0.03f, 0.03f, 0.03f, 255 };
 	style->Colors[10] = color;
-
-	/* title bg active */
-	color = { 0.03f, 0.03f, 0.03f, 255 };
 	style->Colors[11] = color;
+	style->Colors[12] = color;
 
 	/* slider grab */
 	color = { 0.0f, 0.48f, 0.74f, 255 };
