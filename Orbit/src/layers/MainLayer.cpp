@@ -116,10 +116,10 @@ bool MainLayer::onEvent(Engine::Event& event)
 
 void MainLayer::updateObjectsPosition(float deltaTime)
 {
-    int earth = 0;
+    bool earth = true;
     for (const auto& cube : spaceObjects)
     {
-        if (earth != 0)
+        if (!earth)
         {
             cube->onUpdate(deltaTime);
         }
@@ -133,7 +133,7 @@ void MainLayer::updateObjectsPosition(float deltaTime)
         cube->getUniformbufferObject().model = glm::scale(cube->getUniformbufferObject().model, cube->getScale());
         cube->getUniformbufferObject().color = cube->getColor(); // not every frame
 
-        earth++;
+        earth = false;
     }
 }
 

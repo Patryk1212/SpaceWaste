@@ -19,6 +19,7 @@ public:
 
 private:
 	std::vector<std::unique_ptr<SingleUIWindow>> uiWindows;
+	void initImGuiSettings();
 
 private:
 	void initSlider();

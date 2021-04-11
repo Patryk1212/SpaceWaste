@@ -14,13 +14,19 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 	tleSGP4 = std::make_unique<cTle>(name, one, two);
 	satSGP4 = std::make_unique<cSatellite>(*tleSGP4.get());
 
+	/* position */
 	cEciTime eci = satSGP4->PositionEci(720);
-	vector<cEci> vecPos;
+	cEci vecPos = eci;
 
-	vecPos.push_back(eci);
-
-	position = { vecPos[0].Position().m_x, vecPos[0].Position().m_z, vecPos[0].Position().m_y};
+	position = { vecPos.Position().m_x, vecPos.Position().m_z, vecPos.Position().m_y};
 	position /= 10;
+
+	/* velocity */
+	velocity.x = vecPos.Velocity().m_x;
+	velocity.y = vecPos.Velocity().m_z;
+	velocity.z = vecPos.Velocity().m_y;
+
+
 
 	//std::cout << position.x << std::endl;
 	//std::cout << position.y << std::endl;
@@ -32,12 +38,17 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 
 void SpaceObject::onUpdate(float deltaTime)
 {
-	speed += 1 * deltaTime;
-	cEciTime eci = satSGP4->PositionEci(speed);
-	cEci vecPos = eci;
+	//speed += 1 * deltaTime;
+	//cEciTime eci = satSGP4->PositionEci(speed);
+	//cEci vecPos = eci;
 
-	position = { vecPos.Position().m_x, vecPos.Position().m_z, vecPos.Position().m_y };
-	position /= 10;
+	position.x += velocity.x * deltaTime / 10.f;
+	position.y += velocity.y * deltaTime / 10.f;
+	position.z += velocity.z * deltaTime / 10.f;
+
+	//std::cout << position.x << position.y << position.z << std::endl;
+	//position = { vecPos.Position().m_x, vecPos.Position().m_z, vecPos.Position().m_y };
+	//position /= 10;
 }
 
 std::string SpaceObject::showName() const

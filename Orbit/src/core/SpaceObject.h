@@ -46,6 +46,7 @@ private:
 	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 scale = { 3.0f, 3.0f, 3.0f };
 	glm::vec3 color = { 1.0f, 1.0f, 1.0f };
+	glm::vec3 velocity = { 0.f, 0.f, 0.f };
 	float rotation = 0.0f;
 
 private:

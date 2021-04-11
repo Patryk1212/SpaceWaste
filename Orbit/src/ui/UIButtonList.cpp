@@ -14,7 +14,7 @@ UIButtonList::UIButtonList(const UIWindowSpec& uiSpec, const std::vector<UIButto
 void UIButtonList::onUpdate()
 {
 	ImGui::SetNextWindowBgAlpha(specification.transparency);
-	//ImGui::SetNextWindowPos(specification.position);
+	ImGui::SetNextWindowPos(specification.position);
 	ImGui::SetNextWindowSize(specification.size);
 
 	const char* newTitle = specification.title.c_str();

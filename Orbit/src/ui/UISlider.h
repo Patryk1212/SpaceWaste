@@ -6,6 +6,7 @@ class UISlider : public SingleUIWindow
 {
 public:
 	UISlider(const UIWindowSpec& uiSpec, const std::string& text_, float min_, float max_);
+	UISlider(const UIWindowSpec& uiSpec, const std::string& text_, float min_, float max_, std::unique_ptr<UIButton>& button_);
 	~UISlider() = default;
 
 	virtual void onUpdate() override;
@@ -17,6 +18,7 @@ private:
 	UIType type = UIType::SLIDER;
 
 private:
+	std::unique_ptr<UIButton> button;
 	std::string text;
 	float value = 0;
 	float min = 0;

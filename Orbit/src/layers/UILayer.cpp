@@ -5,6 +5,8 @@ void UILayer::onAttach()
 {
 	std::cout << "UI Layer Attached" << std::endl;
 
+	initImGuiSettings();
+
 	initSlider();
 	initControls();
 	initGeneralInfo();
@@ -17,6 +19,8 @@ void UILayer::onUpdate(float deltaTime)
 	bool show_demo_window = true;
 	ImGui::ShowDemoWindow(&show_demo_window);
 	
+	initImGuiSettings();
+
 	for (const auto& window : uiWindows)
 	{
 		window->onUpdate();
@@ -64,13 +68,60 @@ bool UILayer::onEvent(Engine::Event& event)
 	return true;
 }
 
+void UILayer::initImGuiSettings()
+{
+	ImGuiStyle* style = &ImGui::GetStyle();
+
+	style->FrameRounding = 8.f;
+	style->GrabRounding = 8.f;
+		 
+	style->ItemSpacing.x = 6.f;
+	style->ItemSpacing.y = 7.f;
+		 
+	style->WindowBorderSize = 0.f;
+	style->WindowRounding = 8.f;
+	style->WindowTitleAlign.x = 0.5f;
+	style->WindowTitleAlign.y = 0.5f;
+		 
+	style->WindowMenuButtonPosition = 1;
+
+	/* text */
+	ImVec4 color{ 0.82f, 0.82f, 0.82f, 255 };
+	style->Colors[0] = color;
+
+	/* window bg */
+	color = { 0.03f, 0.03f, 0.03f, 255 };
+	style->Colors[2] = color;
+
+	/* title bg */
+	color = { 0.03f, 0.03f, 0.03f, 255 };
+	style->Colors[10] = color;
+
+	/* title bg active */
+	color = { 0.03f, 0.03f, 0.03f, 255 };
+	style->Colors[11] = color;
+
+	/* slider grab */
+	color = { 0.0f, 0.48f, 0.74f, 255 };
+	style->Colors[19] = color;
+
+	/* slider active */
+	color = { 0.65f, 0.75f, 0.02f, 255 };
+	style->Colors[20] = color;
+}
+
 void UILayer::initSlider()
 {
-	ImVec2 pos{ 10.f, 10.f };
-	ImVec2 size{ 400.f, 50.f };
+	ImVec2 pos{ 362.5f, 680.f };
+	ImVec2 size{ 555.f, 35.f };
 	UIWindowSpec spec(UIWindowInstance::TIME_LINE, "Time line", pos, size, 0.5f, false, true, true, true);
 
-	std::unique_ptr<SingleUIWindow> slider = std::make_unique<UISlider>(spec, "Time line", 0.f, 24.f);
+	ImVec4 color_base{ 1.f, .1f, .0f, 1.f };
+	ImVec4 color_highlight{ 0.3f, .9f, .2f, 1.f };
+	ImVec4 color_active{ .0f, .5f, 1.f, 1.f };
+	std::unique_ptr<UIButton> button = std::make_unique<UIButton>("STOP", "PLAY", color_base, color_highlight, color_active);
+
+	std::unique_ptr<SingleUIWindow> slider = std::make_unique<UISlider>(spec, "Visualization Speed", 0.f, 24.f, button);
 
 	uiWindows.emplace_back(std::move(slider));
 }
@@ -115,7 +166,7 @@ void UILayer::initMenu()
 {
 	ImVec2 pos{ 1160.f, 30.f };
 	ImVec2 size{ 100.f, 180.f };
-	UIWindowSpec spec(UIWindowInstance::EXIT, "menu", pos, size, 0.f, false, true, true, true);
+	UIWindowSpec spec(UIWindowInstance::EXIT, "PANEL", pos, size, 0.f, true, true, false, false);
 
 	std::vector<UIButton> buttons;
 	buttons.emplace_back(UIButton(UIWindowInstance::EXIT, "EXIT", { 1.f, .1f, .0f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .0f, .9f, 1.f }));
