@@ -76,7 +76,7 @@ void MainLayer::onUpdate(float deltaTime)
     //std::cout << "Z " << final2.z  << std::endl;
    
 
-    updateObjectsPosition();
+    updateObjectsPosition(deltaTime);
     
     Engine::Renderer3D::updateFrame(spaceObjects);
 }
@@ -114,10 +114,16 @@ bool MainLayer::onEvent(Engine::Event& event)
 	return true;
 }
 
-void MainLayer::updateObjectsPosition()
+void MainLayer::updateObjectsPosition(float deltaTime)
 {
+    int earth = 0;
     for (const auto& cube : spaceObjects)
     {
+        if (earth != 0)
+        {
+            cube->onUpdate(deltaTime);
+        }
+
         cube->getUniformbufferObject().view = cameraController->getCamera()->getViewMatrix();
         cube->getUniformbufferObject().proj = cameraController->getCamera()->getProjectionMatrix();
 
@@ -126,6 +132,8 @@ void MainLayer::updateObjectsPosition()
 
         cube->getUniformbufferObject().model = glm::scale(cube->getUniformbufferObject().model, cube->getScale());
         cube->getUniformbufferObject().color = cube->getColor(); // not every frame
+
+        earth++;
     }
 }
 

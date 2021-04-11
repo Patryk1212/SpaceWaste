@@ -21,7 +21,7 @@ public:
 	virtual bool onEvent(Engine::Event& event) override;
 
 private:
-	void updateObjectsPosition();
+	void updateObjectsPosition(float deltaTime);
 
 private:
 	void objectsResizeZoom(Engine::Event& event);

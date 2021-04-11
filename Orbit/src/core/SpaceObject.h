@@ -14,6 +14,8 @@ public:
 	SpaceObject(std::string& name, std::string& one, std::string& two);
 	~SpaceObject() = default;
 
+	virtual void onUpdate(float deltaTime) override;
+
 	virtual std::string showName() const override;
 	virtual std::string showFirstTLELine() const override;
 	virtual std::string showSecondTLELine() const override;
@@ -40,6 +42,7 @@ public:
 	};
 
 private:
+	double speed = 360;
 	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 scale = { 3.0f, 3.0f, 3.0f };
 	glm::vec3 color = { 1.0f, 1.0f, 1.0f };

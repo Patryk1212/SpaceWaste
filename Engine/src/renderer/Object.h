@@ -14,6 +14,7 @@ namespace Engine
 		Object() = default;
 		~Object() = default;
 
+		virtual void onUpdate(float deltaTime) {}
 		virtual std::string showName() const { return "Base Object"; }
 		virtual std::string showFirstTLELine() const { return "Base Object"; }
 		virtual std::string showSecondTLELine() const { return "Base Object"; }

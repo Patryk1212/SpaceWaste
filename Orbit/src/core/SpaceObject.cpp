@@ -30,6 +30,16 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 	calculateSize();
 }
 
+void SpaceObject::onUpdate(float deltaTime)
+{
+	speed += 1 * deltaTime;
+	cEciTime eci = satSGP4->PositionEci(speed);
+	cEci vecPos = eci;
+
+	position = { vecPos.Position().m_x, vecPos.Position().m_z, vecPos.Position().m_y };
+	position /= 10;
+}
+
 std::string SpaceObject::showName() const
 {
 	return satSGP4->Name().c_str();
