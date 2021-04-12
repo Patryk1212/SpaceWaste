@@ -32,7 +32,7 @@ private:
 private:
 	void initSlider();
 	void initControls();
-	void initGeneralInfo();
+	void initGeneralInfo(int number);
 	void initObjectList();
 	void initMenu();
 };

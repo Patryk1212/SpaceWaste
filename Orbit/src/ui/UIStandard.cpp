@@ -11,7 +11,7 @@ void UIStandard::onUpdate()
 	if (specification.open)
 	{
 		ImGui::SetNextWindowBgAlpha(specification.transparency);
-		//ImGui::SetNextWindowPos(specification.position);
+		ImGui::SetNextWindowPos(specification.position);
 		ImGui::SetNextWindowSize(specification.size);
 
 		const char* newTitle = specification.title.c_str();
@@ -31,7 +31,7 @@ void UIStandard::show(bool show)
 	specification.open = show;
 }
 
-float UIStandard::getValue() const
+int UIStandard::getValue() const
 {
 	return 0.f;
 }

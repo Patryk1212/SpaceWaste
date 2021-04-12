@@ -32,6 +32,10 @@ private:
 	const float ZOOM_OUT = 1.05f;
 
 private:
+	bool running = true;
+	int visSpeed = 10;
+
+private:
 	std::shared_ptr<Layer> uiLayerHandle;
 
 private:

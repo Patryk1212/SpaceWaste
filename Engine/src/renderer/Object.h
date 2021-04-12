@@ -14,7 +14,7 @@ namespace Engine
 		Object() = default;
 		~Object() = default;
 
-		virtual void onUpdate(float deltaTime) {}
+		virtual void onUpdate(float deltaTime, int visSpeed_) {}
 		virtual std::string showName() const { return "Base Object"; }
 		virtual std::string showFirstTLELine() const { return "Base Object"; }
 		virtual std::string showSecondTLELine() const { return "Base Object"; }
@@ -22,13 +22,11 @@ namespace Engine
 		virtual inline glm::vec3 getPos() const { return glm::vec3(1.0f); }
 		virtual inline glm::vec3 getScale() const { return glm::vec3(1.0f); }
 		virtual inline glm::vec3 getColor() const { return glm::vec3(1.0f); }
-		virtual inline float getRotation()  const { return 0.0f; }
 
 		virtual inline void setPos(const glm::vec3& pos_) {}
 		virtual inline void setScale(const glm::vec3& scale_) {}
 		virtual inline void resize(float scalar) {}
 		virtual inline void setColor(const glm::vec3& color_) {}
-		virtual inline void setRotation(float rot) {}
 
 		virtual bool checkInside(const glm::vec3& point) { return false; }
 

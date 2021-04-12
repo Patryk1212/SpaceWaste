@@ -6,7 +6,6 @@ SpaceObject::SpaceObject(const glm::vec3& pos_, const glm::vec3& scale_, const g
 	position = pos_;
 	scale = scale_;
 	color = color_;
-	rotation = 0.0f;
 }
 
 SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
@@ -15,7 +14,7 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 	satSGP4 = std::make_unique<cSatellite>(*tleSGP4.get());
 
 	/* position */
-	cEciTime eci = satSGP4->PositionEci(720);
+	cEciTime eci = satSGP4->PositionEci(650);
 	cEci vecPos = eci;
 
 	position = { vecPos.Position().m_x, vecPos.Position().m_z, vecPos.Position().m_y};
@@ -26,8 +25,6 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 	velocity.y = vecPos.Velocity().m_z;
 	velocity.z = vecPos.Velocity().m_y;
 
-
-
 	//std::cout << position.x << std::endl;
 	//std::cout << position.y << std::endl;
 	//std::cout << position.z << std::endl;
@@ -36,15 +33,15 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 	calculateSize();
 }
 
-void SpaceObject::onUpdate(float deltaTime)
+void SpaceObject::onUpdate(float deltaTime, int visSpeed_)
 {
 	//speed += 1 * deltaTime;
 	//cEciTime eci = satSGP4->PositionEci(speed);
 	//cEci vecPos = eci;
 
-	position.x += velocity.x * deltaTime / 10.f;
-	position.y += velocity.y * deltaTime / 10.f;
-	position.z += velocity.z * deltaTime / 10.f;
+	position.x += velocity.x * deltaTime * (((float)visSpeed_)/speed);
+	position.z += velocity.z * deltaTime * (((float)visSpeed_)/speed);
+	position.y += velocity.y * deltaTime * (((float)visSpeed_)/speed);
 
 	//std::cout << position.x << position.y << position.z << std::endl;
 	//position = { vecPos.Position().m_x, vecPos.Position().m_z, vecPos.Position().m_y };

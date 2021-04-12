@@ -42,9 +42,9 @@ void UIButtonList::onUpdate()
 	ImGui::End();
 }
 
-float UIButtonList::getValue() const
+int UIButtonList::getValue() const
 {
-	return 0.f;
+	return 0;
 }
 
 UIType UIButtonList::getType() const

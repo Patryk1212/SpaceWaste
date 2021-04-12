@@ -11,11 +11,13 @@ public:
 
     virtual void onUpdate() {}
 
-    virtual float getValue() const { return 0.f; }
-    virtual UIType getType() const { return UIType::NONE; }
-    
     virtual void show(bool show) {}
     virtual UIWindowInstance getInstanceType() const { return specification.type; }
+    
+    /* class implementation specific */
+    virtual int getValue() const { return 0.f; }
+    virtual UIType getType() const { return UIType::NONE; }
+    virtual bool isButtonClicked() const { return false; }
 
 public:
     virtual std::vector<UIButton> getButtons() const { std::vector<UIButton> empty; return empty; }

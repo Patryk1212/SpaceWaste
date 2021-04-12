@@ -9,11 +9,9 @@ void UILayer::onAttach()
 
 	initSlider();
 	initControls();
-	initGeneralInfo();
+	
 	initObjectList();
 	initMenu();
-
-
 }
 
 void UILayer::onUpdate(float deltaTime)
@@ -45,14 +43,6 @@ void UILayer::onUpdate(float deltaTime)
 
 bool UILayer::onEvent(Engine::Event& event)
 {
-	Engine::MouseButtonPressedEvent& e = (Engine::MouseButtonPressedEvent&)event;
-	
-	if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
-	{
-		//mainLayerHandle->receiveMessage();
-		//data->onUpdateData(123, true, 1212);
-	}
-
 	for (const auto& window : uiWindows)
 	{
 		if (window->getType() == UIType::BUTTON_LIST)
@@ -69,8 +59,15 @@ bool UILayer::onEvent(Engine::Event& event)
 				}
 			}
 		}
+		else if (window->getType() == UIType::SLIDER)
+		{
+			Engine::Message message;
+			message.status.push_back(window->isButtonClicked());
+			message.intNumber.push_back(window->getValue());
+			mainLayerHandle->receiveMessage(message);
+		}
 	}
-
+	
 	return true;
 }
 
@@ -81,7 +78,7 @@ void UILayer::setObserver(std::shared_ptr<Layer>& observer)
 
 void UILayer::receiveMessage(const Engine::Message& message)
 {
-	std::cout << message.number[0] << "UI Layer received message" << std::endl;
+	initGeneralInfo(message.intNumber[0]);
 }
 
 void UILayer::initImGuiSettings()
@@ -126,7 +123,7 @@ void UILayer::initImGuiSettings()
 	style->Colors[12] = color;
 
 	/* slider grab */
-	color = { 0.0f, 0.48f, 0.74f, 255 };
+	color = { .1f, .2f, .8f, 255 };
 	style->Colors[19] = color;
 
 	/* slider active */
@@ -141,41 +138,39 @@ void UILayer::initSlider()
 	UIWindowSpec spec(UIWindowInstance::TIME_LINE, "Time line", pos, size, 0.5f, false, true, true, true);
 
 	ImVec4 color_base{ 1.f, .1f, .0f, 1.f };
-	ImVec4 color_highlight{ 0.3f, .9f, .2f, 1.f };
-	ImVec4 color_active{ .0f, .5f, 1.f, 1.f };
+	ImVec4 color_highlight{ .1f, .2f, .8f, 1.f };
+	ImVec4 color_active{ .1f, .2f, 1.f, 1.f };
 	std::unique_ptr<UIButton> button = std::make_unique<UIButton>("STOP", "PLAY", color_base, color_highlight, color_active);
 
-	std::unique_ptr<SingleUIWindow> slider = std::make_unique<UISlider>(spec, "Visualization Speed", 0.f, 24.f, button);
+	std::unique_ptr<SingleUIWindow> slider = std::make_unique<UISlider>(spec, "Visualization Speed", 1, 5, button);
 
 	uiWindows.emplace_back(std::move(slider));
 }
 
 void UILayer::initControls()
 {
-	ImVec2 pos{ 500.f, 500.f };
-	ImVec2 size{ 170.f, 100.f };
+	ImVec2 pos{ 10.f, 640.f };
+	ImVec2 size{ 216.f, 70.f };
 	UIWindowSpec spec(UIWindowInstance::CONTROLS, "controls", pos, size, 0.5f, false, true, true, true);
 
 	std::vector<std::string> text;
-	text.emplace_back("Move around: ");
-	text.emplace_back("Mouse + RMB");
-	text.emplace_back("Zoom in/out: ");
-	text.emplace_back("Scroll Wheel");
+	text.emplace_back("Move around: Mouse + RMB");
+	text.emplace_back("Zoom in/out: Scroll Wheel");
+	text.emplace_back("UI Intercations: LMB");
 
 	std::unique_ptr<SingleUIWindow> controls = std::make_unique<UIStandard>(spec, text);
 
 	uiWindows.emplace_back(std::move(controls));
 }
 
-void UILayer::initGeneralInfo()
+void UILayer::initGeneralInfo(int number)
 {
-	ImVec2 pos{ 500.f, 800.f };
-	ImVec2 size{ 200.f, 50.f };
+	ImVec2 pos{ 10.f, 10.f };
+	ImVec2 size{ 216.f, 25.f };
 	UIWindowSpec spec(UIWindowInstance::GENERAL_INFO, "info", pos, size, 0.5f, false, true, true, true);
 
 	std::vector<std::string> text;
-	text.emplace_back("Space Object in Total: ");
-	text.emplace_back("");
+	text.emplace_back("Space Object in Total: " + std::to_string(number));
 
 	std::unique_ptr<SingleUIWindow> info = std::make_unique<UIStandard>(spec, text);
 
@@ -188,16 +183,24 @@ void UILayer::initObjectList()
 
 void UILayer::initMenu()
 {
-	ImVec2 pos{ 1160.f, 30.f };
+	ImVec2 pos{ 1160.f, 10.f };
 	ImVec2 size{ 100.f, 180.f };
 	UIWindowSpec spec(UIWindowInstance::EXIT, "PANEL", pos, size, 0.f, true, true, false, false);
 
+	ImVec4 exitButtonColor1(1.f, .1f, .0f, 1.f);
+	ImVec4 exitButtonColor2(1.f, .28f, .14f, 1.f);
+	ImVec4 exitButtonColor3(1.f, .48f, .14f, 1.f);
+
+	ImVec4 buttonColor1(.1f, .2f, .8f, 1.f);
+	ImVec4 buttonColor2(0.f, 0.03f, 0.18f, 1.f);
+	ImVec4 buttonColor3(.33f, .78f, .8f, 1.f);
+
 	std::vector<UIButton> buttons;
-	buttons.emplace_back(UIButton(UIWindowInstance::EXIT, "EXIT", { 1.f, .1f, .0f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .0f, .9f, 1.f }));
-	buttons.emplace_back(UIButton(UIWindowInstance::GENERAL_INFO, "INFO", { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }));
-	buttons.emplace_back(UIButton(UIWindowInstance::OBJECTS_LIST, "LIST", { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }));
-	buttons.emplace_back(UIButton(UIWindowInstance::TIME_LINE, "TIME LINE", { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }));
-	buttons.emplace_back(UIButton(UIWindowInstance::CONTROLS, "CONTROLS", { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }, { 0.f, .5f, .9f, 1.f }));
+	buttons.emplace_back(UIButton(UIWindowInstance::EXIT,         "   EXIT    ", exitButtonColor1, exitButtonColor2, exitButtonColor3));
+	buttons.emplace_back(UIButton(UIWindowInstance::GENERAL_INFO, "INFORMATION", buttonColor1, buttonColor2, buttonColor3));
+	buttons.emplace_back(UIButton(UIWindowInstance::OBJECTS_LIST, "OBJECT LIST", buttonColor1, buttonColor2, buttonColor3));
+	buttons.emplace_back(UIButton(UIWindowInstance::TIME_LINE,    " PLAY BACK ", buttonColor1, buttonColor2, buttonColor3));
+	buttons.emplace_back(UIButton(UIWindowInstance::CONTROLS,     " CONTROLS  ", buttonColor1, buttonColor2, buttonColor3));
 
 	std::unique_ptr<SingleUIWindow> info = std::make_unique<UIButtonList>(spec, buttons);
 

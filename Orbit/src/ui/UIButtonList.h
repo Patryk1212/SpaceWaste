@@ -10,7 +10,7 @@ public:
 
 	virtual void onUpdate() override;
 
-	virtual float getValue() const override;
+	virtual int getValue() const override;
 	virtual UIType getType() const override;
 
 	virtual std::vector<UIButton> getButtons() const override;

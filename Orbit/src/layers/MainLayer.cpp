@@ -31,6 +31,11 @@ void MainLayer::onAttach()
     //
     //szResult[0] = data->Query(L"/basicspacedata/query/class/tle_latest/orderby/TLE_LINE0%20asc/limit/50/format/3le/metadata/false/favorites/Human_Spaceflight");
     //szResult[1] = data->Query(L"/basicspacedata/query/class/tle_latest/orderby/TLE_LINE0%20asc/limit/50/format/3le/metadata/false/favorites/Amateur");
+
+    Engine::Message message;
+    message.intNumber.push_back(spaceObjects.size());
+    uiLayerHandle->receiveMessage(message);
+
 }
 
 void MainLayer::onUpdate(float deltaTime)
@@ -96,12 +101,12 @@ bool MainLayer::onEvent(Engine::Event& event)
 
     Engine::MouseButtonPressedEvent& e = (Engine::MouseButtonPressedEvent&)event;
     
-    if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
-    {
-        Engine::Message message;
-        message.number.push_back(12);
-        uiLayerHandle->receiveMessage(message);
-    }
+    //if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
+    //{
+    //    Engine::Message message;
+    //    message.number.push_back(12);
+    //    uiLayerHandle->receiveMessage(message);
+    //}
 
     //if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
     //{
@@ -127,7 +132,8 @@ void MainLayer::setObserver(std::shared_ptr<Layer>& observer)
 
 void MainLayer::receiveMessage(const Engine::Message& message)
 {
-    std::cout << "Main Layer received message" << std::endl;
+    visSpeed = message.intNumber[0];
+    running = message.status[0];
 }
 
 void MainLayer::updateObjectsPosition(float deltaTime)
@@ -135,9 +141,9 @@ void MainLayer::updateObjectsPosition(float deltaTime)
     bool earth = true;
     for (const auto& cube : spaceObjects)
     {
-        if (!earth)
+        if (!earth && running)
         {
-            cube->onUpdate(deltaTime);
+            cube->onUpdate(deltaTime, visSpeed);
         }
 
         cube->getUniformbufferObject().view = cameraController->getCamera()->getViewMatrix();

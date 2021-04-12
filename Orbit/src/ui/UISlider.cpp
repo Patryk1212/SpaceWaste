@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "UISlider.h"
 
-UISlider::UISlider(const UIWindowSpec& uiSpec, const std::string& text_, float min_, float max_)
+UISlider::UISlider(const UIWindowSpec& uiSpec, const std::string& text_, int min_, int max_)
 	: SingleUIWindow(uiSpec), text(text_), min(min_), max(max_)
 {
 }
 
-UISlider::UISlider(const UIWindowSpec& uiSpec, const std::string& text_, float min_, float max_, std::unique_ptr<UIButton>& button_)
+UISlider::UISlider(const UIWindowSpec& uiSpec, const std::string& text_, int min_, int max_, std::unique_ptr<UIButton>& button_)
 	: SingleUIWindow(uiSpec), text(text_), min(min_), max(max_), button(std::move(button_))
 {
 }
@@ -40,14 +40,14 @@ void UISlider::onUpdate()
 				{
 					button->clicked = true;
 					button->textActive = button->text;
-
 				}
+				
 			}
 
 			ImGui::SameLine();
 		}
 
-		ImGui::SliderFloat(text.c_str(), &value, min, max);
+		ImGui::SliderInt(text.c_str(), &value, min, max);
 
 		ImGui::End();
 	}
@@ -58,7 +58,7 @@ void UISlider::show(bool show)
 	specification.open = show;
 }
 
-float UISlider::getValue() const 
+int UISlider::getValue() const
 {
 	return value;
 }
@@ -66,4 +66,9 @@ float UISlider::getValue() const
 UIType UISlider::getType() const
 {
 	return type;
+}
+
+bool UISlider::isButtonClicked() const
+{
+	return button->clicked;
 }
