@@ -79,21 +79,12 @@ namespace Engine
 		{
 			if (!layer->onEvent(event))
 			{
-				//exit
 				running = false;
 			}
 		}
-
-		// debug only
-		//std::cout << event.getNameString() << std::endl;
-
-		//if (event.getEventType() == Engine::EventType::KEY_PRESSED)
-		//{
-		//	std::cout << "asas" << std::endl;
-		//}
 	}
 
-	void Application::addNewLayer(std::unique_ptr<Layer>& layer)
+	void Application::addNewLayer(std::shared_ptr<Layer>& layer)
 	{
 		if (layer->getLayerName() == "MainLayer")
 		{

@@ -164,6 +164,7 @@
     <ClInclude Include="src\layers\MainLayer.h" />
     <ClInclude Include="src\core\SpaceDebrisVisualization.h" />
     <ClInclude Include="src\layers\UILayer.h" />
+    <ClInclude Include="src\message\Message.h" />
     <ClInclude Include="src\spacetrack\SpaceTrackData.h" />
     <ClInclude Include="src\ui\SingleUIWindow.h" />
     <ClInclude Include="src\ui\UIButton.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="src\layers\MainLayer.cpp" />
     <ClCompile Include="src\core\SpaceDebrisVisualization.cpp" />
     <ClCompile Include="src\layers\UILayer.cpp" />
+    <ClCompile Include="src\message\Message.cpp" />
     <ClCompile Include="src\spacetrack\SpaceTrackData.cpp" />
     <ClCompile Include="src\ui\SingleUIWindow.cpp" />
     <ClCompile Include="src\ui\UIButton.cpp" />

@@ -20,6 +20,9 @@ public:
 	virtual void passCamera(std::unique_ptr<Engine::CameraController>& cc) override;
 	virtual bool onEvent(Engine::Event& event) override;
 
+	virtual void setObserver(std::shared_ptr<Layer>& observer) override;
+	virtual void receiveMessage(const Engine::Message& message) override;
+
 private:
 	void updateObjectsPosition(float deltaTime);
 
@@ -27,10 +30,9 @@ private:
 	void objectsResizeZoom(Engine::Event& event);
 	const float ZOOM_IN = 0.95f;
 	const float ZOOM_OUT = 1.05f;
-	glm::vec3 final2;
 
 private:
-	//std::unique_ptr<CSpaceTrackDownload> data;
+	std::shared_ptr<Layer> uiLayerHandle;
 
 private:
 	FileLoader fileLoader;

@@ -31,7 +31,6 @@ void MainLayer::onAttach()
     //
     //szResult[0] = data->Query(L"/basicspacedata/query/class/tle_latest/orderby/TLE_LINE0%20asc/limit/50/format/3le/metadata/false/favorites/Human_Spaceflight");
     //szResult[1] = data->Query(L"/basicspacedata/query/class/tle_latest/orderby/TLE_LINE0%20asc/limit/50/format/3le/metadata/false/favorites/Amateur");
-
 }
 
 void MainLayer::onUpdate(float deltaTime)
@@ -97,6 +96,13 @@ bool MainLayer::onEvent(Engine::Event& event)
 
     Engine::MouseButtonPressedEvent& e = (Engine::MouseButtonPressedEvent&)event;
     
+    if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
+    {
+        Engine::Message message;
+        message.number.push_back(12);
+        uiLayerHandle->receiveMessage(message);
+    }
+
     //if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
     //{
     //    for (const auto& sp : spaceObjects)
@@ -112,6 +118,16 @@ bool MainLayer::onEvent(Engine::Event& event)
     //}
 
 	return true;
+}
+
+void MainLayer::setObserver(std::shared_ptr<Layer>& observer)
+{
+    uiLayerHandle = observer;
+}
+
+void MainLayer::receiveMessage(const Engine::Message& message)
+{
+    std::cout << "Main Layer received message" << std::endl;
 }
 
 void MainLayer::updateObjectsPosition(float deltaTime)

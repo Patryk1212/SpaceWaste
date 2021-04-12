@@ -12,14 +12,14 @@ void UILayer::onAttach()
 	initGeneralInfo();
 	initObjectList();
 	initMenu();
+
+
 }
 
 void UILayer::onUpdate(float deltaTime)
 {
 	bool show_demo_window = true;
 	ImGui::ShowDemoWindow(&show_demo_window);
-	
-	initImGuiSettings();
 
 	for (const auto& window : uiWindows)
 	{
@@ -47,6 +47,12 @@ bool UILayer::onEvent(Engine::Event& event)
 {
 	Engine::MouseButtonPressedEvent& e = (Engine::MouseButtonPressedEvent&)event;
 	
+	if (e.getEventType() == Engine::EventType::MOUSE_PRESSED)
+	{
+		//mainLayerHandle->receiveMessage();
+		//data->onUpdateData(123, true, 1212);
+	}
+
 	for (const auto& window : uiWindows)
 	{
 		if (window->getType() == UIType::BUTTON_LIST)
@@ -66,6 +72,16 @@ bool UILayer::onEvent(Engine::Event& event)
 	}
 
 	return true;
+}
+
+void UILayer::setObserver(std::shared_ptr<Layer>& observer)
+{
+	mainLayerHandle = observer;
+}
+
+void UILayer::receiveMessage(const Engine::Message& message)
+{
+	std::cout << message.number[0] << "UI Layer received message" << std::endl;
 }
 
 void UILayer::initImGuiSettings()

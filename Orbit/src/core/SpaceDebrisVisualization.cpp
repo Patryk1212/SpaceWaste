@@ -6,11 +6,18 @@
 
 SpaceDebrisVisualization::SpaceDebrisVisualization()
 {
-	std::unique_ptr<Engine::Layer> mainLayer;
+	/* create layers */
+	std::shared_ptr<Engine::Layer> mainLayer;
 	mainLayer = std::make_unique<MainLayer>("MainLayer");
-	addNewLayer(mainLayer);
 
-	std::unique_ptr<Engine::Layer> uiLayer;
+	std::shared_ptr<Engine::Layer> uiLayer;
 	uiLayer = std::make_unique<UILayer>("UserInterface");
+	
+	/* set observers */
+	mainLayer->setObserver(uiLayer);
+	uiLayer->setObserver(mainLayer);
+	
+	/* push layers to app*/
+	addNewLayer(mainLayer);
 	addNewLayer(uiLayer);
 }

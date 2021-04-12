@@ -19,11 +19,7 @@ namespace Engine
 		void run();
 		void onEvent(Event& event);
 
-		void addNewLayer(std::unique_ptr<Layer>& layer);
-
-		inline static std::shared_ptr<Window>& get() { return appInstance->window; }
-		inline Window& getWindow() { return *window; }
-		inline std::shared_ptr<Window>& getWindows() { return window; }
+		void addNewLayer(std::shared_ptr<Layer>& layer);
 
 	private:
 		bool shutdown(WindowCloseEvent event);
