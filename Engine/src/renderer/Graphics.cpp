@@ -31,7 +31,7 @@ namespace Engine
 		imguiLayer = std::make_unique<ImguiLayer>(window, logicalDevice, physicalDevice, graphicsQueue, swapChainData);		
 	}
 
-	void Graphics::createObjectsAndRecord(const std::vector<std::unique_ptr<Object>>& objects)
+	void Graphics::createObjectsAndRecord(const std::vector<std::shared_ptr<Object>>& objects)
 	{
 		createUniformBuffers(objects); // renderer 3d // needed for object
 		uniformBufferMemory = std::make_unique<VulkanDeviceMemory>(bufferAllocator, objects);
@@ -610,7 +610,7 @@ namespace Engine
 		}
 	}
 
-	void Graphics::createCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects)
+	void Graphics::createCommandBuffers(const std::vector<std::shared_ptr<Object>>& objects)
 	{
 		commandBuffers.resize(swapChainData.swapChainFramebuffers.size());
 
@@ -698,7 +698,7 @@ namespace Engine
 		}
 	}
 
-	void Graphics::createUniformBuffers(const std::vector<std::unique_ptr<Object>>& objects)
+	void Graphics::createUniformBuffers(const std::vector<std::shared_ptr<Object>>& objects)
 	{
 		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
 		{
@@ -709,7 +709,7 @@ namespace Engine
 		}
 	}
 
-	void Graphics::updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects)
+	void Graphics::updateUniformBuffer(const std::vector<std::shared_ptr<Object>>& objects)
 	{
 		uint64_t offset = 0;
 		for (const auto& cube : objects)
@@ -723,7 +723,7 @@ namespace Engine
 		}
 	}
 
-	void Graphics::createDescriptorPool(const std::vector<std::unique_ptr<Object>>& objects)
+	void Graphics::createDescriptorPool(const std::vector<std::shared_ptr<Object>>& objects)
 	{
 		VkDescriptorPoolSize poolSize{};
 		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -741,7 +741,7 @@ namespace Engine
 		}
 	}
 
-	void Graphics::createDescriptorSets(const std::vector<std::unique_ptr<Object>>& objects) // to cube class
+	void Graphics::createDescriptorSets(const std::vector<std::shared_ptr<Object>>& objects) // to cube class
 	{
 		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
 		{

@@ -79,6 +79,7 @@ void UILayer::setObserver(std::shared_ptr<Layer>& observer)
 void UILayer::receiveMessage(const Engine::Message& message)
 {
 	initGeneralInfo(message.intNumber[0]);
+	initObjectList();
 }
 
 void UILayer::initImGuiSettings()
@@ -179,6 +180,7 @@ void UILayer::initGeneralInfo(int number)
 
 void UILayer::initObjectList()
 {
+
 }
 
 void UILayer::initMenu()

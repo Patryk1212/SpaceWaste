@@ -10,7 +10,7 @@ public:
 
 public:
 	void loadFileNames();
-	void loadTLEandCreateObjects(std::vector<std::unique_ptr<Engine::Object>>& objects);
+	void loadTLEandCreateObjects(std::vector<std::shared_ptr<Engine::Object>>& objects);
 
 private:
 	std::vector<std::string> fileNames;

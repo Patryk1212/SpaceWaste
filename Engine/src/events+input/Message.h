@@ -9,6 +9,6 @@ namespace Engine
 		std::vector<bool> status;
 		std::vector<int> intNumber;
 		std::vector<int> floatNumber;
-		std::vector<std::unique_ptr<Object>> objects;
+		std::vector<std::shared_ptr<Object>> objects;
 	};
 }

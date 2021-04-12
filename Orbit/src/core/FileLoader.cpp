@@ -25,7 +25,7 @@ void FileLoader::loadFileNames()
     file.close();
 }
 
-void FileLoader::loadTLEandCreateObjects(std::vector<std::unique_ptr<Engine::Object>>& objects)
+void FileLoader::loadTLEandCreateObjects(std::vector<std::shared_ptr<Engine::Object>>& objects)
 {
     std::fstream file;
 

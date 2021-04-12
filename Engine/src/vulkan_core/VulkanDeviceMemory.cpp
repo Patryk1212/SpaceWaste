@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-	VulkanDeviceMemory::VulkanDeviceMemory(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, const std::vector<std::unique_ptr<Object>>& objects)
+	VulkanDeviceMemory::VulkanDeviceMemory(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, const std::vector<std::shared_ptr<Object>>& objects)
 	{
 		VkDeviceMemory tempBufferMemory1 = nullptr;
 		VkDeviceMemory tempBufferMemory2 = nullptr;
@@ -47,7 +47,7 @@ namespace Engine
 		return memRequirements.alignment;
 	}
 
-	void VulkanDeviceMemory::bindObjectsUBToMemory(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, const std::vector<std::unique_ptr<Object>>& objects)
+	void VulkanDeviceMemory::bindObjectsUBToMemory(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, const std::vector<std::shared_ptr<Object>>& objects)
 	{
 		uint64_t offset = 0;
 		for (size_t i = 0; i < 3; i++) // swapChainData.swapChainImages.size() instead of 3

@@ -169,6 +169,7 @@
     <ClInclude Include="src\ui\UIButton.h" />
     <ClInclude Include="src\ui\UIButtonList.h" />
     <ClInclude Include="src\ui\UIEnums.h" />
+    <ClInclude Include="src\ui\UIObjectViewer.h" />
     <ClInclude Include="src\ui\UISlider.h" />
     <ClInclude Include="src\ui\UIStandard.h" />
     <ClInclude Include="src\ui\UIWindowSpec.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="src\ui\SingleUIWindow.cpp" />
     <ClCompile Include="src\ui\UIButton.cpp" />
     <ClCompile Include="src\ui\UIButtonList.cpp" />
+    <ClCompile Include="src\ui\UIObjectViewer.cpp" />
     <ClCompile Include="src\ui\UISlider.cpp" />
     <ClCompile Include="src\ui\UIStandard.cpp" />
     <ClCompile Include="src\ui\UIWindowSpec.cpp" />

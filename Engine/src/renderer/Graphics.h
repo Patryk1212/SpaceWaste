@@ -21,7 +21,7 @@ namespace Engine
 		Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
 		~Graphics() = default;
 	
-		void createObjectsAndRecord(const std::vector<std::unique_ptr<Object>>& objects);
+		void createObjectsAndRecord(const std::vector<std::shared_ptr<Object>>& objects);
 
 		void startFrame();
 		void endFrame();
@@ -105,22 +105,22 @@ namespace Engine
 
 	private: // command buffer
 		
-		void createCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects);
+		void createCommandBuffers(const std::vector<std::shared_ptr<Object>>& objects);
 
 	private: // uniforms buffers
 		void createDescriptorSetLayout();
 
 		
-		void createUniformBuffers(const std::vector<std::unique_ptr<Object>>& objects);//
+		void createUniformBuffers(const std::vector<std::shared_ptr<Object>>& objects);//
 		std::unique_ptr<VulkanDeviceMemory> uniformBufferMemory;
 		
 	public:
-		void updateUniformBuffer(const std::vector<std::unique_ptr<Object>>& objects);
+		void updateUniformBuffer(const std::vector<std::shared_ptr<Object>>& objects);
 
 	private: // descriptor sets
 		
-		void createDescriptorPool(const std::vector<std::unique_ptr<Object>>& objects);//
-		void createDescriptorSets(const std::vector<std::unique_ptr<Object>>& objects);//
+		void createDescriptorPool(const std::vector<std::shared_ptr<Object>>& objects);//
+		void createDescriptorSets(const std::vector<std::shared_ptr<Object>>& objects);//
 
 	private: // swap chain
 		SwapChainData swapChainData;

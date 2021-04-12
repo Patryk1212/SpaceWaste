@@ -15,9 +15,9 @@ namespace Engine
 	public:
 		static void beginFrame();
 
-		static void recordCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects);
+		static void recordCommandBuffers(const std::vector<std::shared_ptr<Object>>& objects);
 
-		static void updateFrame(const std::vector<std::unique_ptr<Object>>& objects);
+		static void updateFrame(const std::vector<std::shared_ptr<Object>>& objects);
 
 		static void endFrame();
 

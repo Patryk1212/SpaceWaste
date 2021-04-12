@@ -21,12 +21,12 @@ namespace Engine
 		graphics->startFrame();
 	}
 
-	void Renderer3D::recordCommandBuffers(const std::vector<std::unique_ptr<Object>>& objects)
+	void Renderer3D::recordCommandBuffers(const std::vector<std::shared_ptr<Object>>& objects)
 	{
 		graphics->createObjectsAndRecord(objects);
 	}
 
-	void Renderer3D::updateFrame(const std::vector<std::unique_ptr<Object>>& objects)
+	void Renderer3D::updateFrame(const std::vector<std::shared_ptr<Object>>& objects)
 	{
 		graphics->updateUniformBuffer(objects);
 	}

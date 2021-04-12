@@ -43,7 +43,7 @@ private:
 	std::unique_ptr<Engine::CameraController> cameraController;
 
 private:
-	std::vector<std::unique_ptr<Engine::Object>> spaceObjects;
+	std::vector<std::shared_ptr<Engine::Object>> spaceObjects;
 	
 
 	

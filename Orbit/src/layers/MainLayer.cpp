@@ -33,9 +33,9 @@ void MainLayer::onAttach()
     //szResult[1] = data->Query(L"/basicspacedata/query/class/tle_latest/orderby/TLE_LINE0%20asc/limit/50/format/3le/metadata/false/favorites/Amateur");
 
     Engine::Message message;
+    message.objects = spaceObjects;
     message.intNumber.push_back(spaceObjects.size());
     uiLayerHandle->receiveMessage(message);
-
 }
 
 void MainLayer::onUpdate(float deltaTime)
