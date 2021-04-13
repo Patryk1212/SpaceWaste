@@ -23,7 +23,8 @@ void UIObjectViewer::onUpdate()
         ImGui::SetNextWindowPos(specification.position);
         ImGui::SetNextWindowSize(specification.size);
 
-        ImGui::Begin(specification.title.c_str());
+        ImGui::Begin(specification.title.c_str(), &specification.open, window_flags);
+        ImGui::Text(specification.title.c_str());
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
         if (ImGui::BeginTable("split", 1))
@@ -46,7 +47,8 @@ void UIObjectViewer::onUpdate()
             ImGui::SetNextWindowPos(pos);
             ImGui::SetNextWindowSize(size);
 
-            ImGui::Begin("Details");
+            ImGui::Begin("Details", &specification.open, window_flags);
+            ImGui::Text("Details");
 
             ImGui::Separator();
 
@@ -143,8 +145,7 @@ void UIObjectViewer::displayObjectsEachType(const char* prefix, int uid)
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
                 ImGui::AlignTextToFramePadding();
-                ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet;
-
+               
                 if (ImGui::Selectable(object->showName().c_str(), true))
                 {
                     currentObject = numberInVector;
