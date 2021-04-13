@@ -9,12 +9,13 @@ struct ViewMatrixData
 	glm::vec3 cameraPos;
 	glm::vec3 cameraFront;
 	glm::vec3 cameraUp;
+	glm::vec3 cameraCenter{ 0.f, 0.f, 0.f };
 };
 
 struct ProjectionMatrixData
 {
 	float fov = 45.0f;
-	float aspectRatio = 1280.0f / 720.0f; // take this from app
+	float aspectRatio = 1280.0f / 720.0f;
 	float near = 0.1f;
 	float far = 100000.0f;
 };

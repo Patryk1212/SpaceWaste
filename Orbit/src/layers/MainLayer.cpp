@@ -5,8 +5,8 @@ void MainLayer::onAttach()
 {
     /* add earth */
     glm::vec3 earthPos{ 0.0f, 0.0f, 0.0f };
-    glm::vec3 earthSize{ 250.0f, 250.0f, 250.0f };
-    glm::vec3 earthColor{ 0.23f, 0.7f, 0.44f };
+    glm::vec3 earthSize{ 600.0f, 600.0f, 600.0f };
+    glm::vec3 earthColor{ 0.05f, 0.82f, 0.1f };
     std::unique_ptr<Engine::Object> earth = std::make_unique<SpaceObject>(earthPos, earthSize, earthColor);
     spaceObjects.emplace_back(std::move(earth));
     /* --------- */
@@ -15,9 +15,6 @@ void MainLayer::onAttach()
     fileLoader.loadTLEandCreateObjects(spaceObjects);
 
     Engine::Renderer3D::recordCommandBuffers(spaceObjects);   
-
-    //cameraController = std::make_unique<Engine::CameraController>();
-    //cameraController->init(Engine::Application::get().getWindows());
     
     //CString  szResult[2];
     //data = std::make_unique<CSpaceTrackDownload>(L"https://www.space-track.org/ajaxauth/login", L"ostrpatryk@gmail.com", L"T6RkviN94d!N_ra");
@@ -27,8 +24,9 @@ void MainLayer::onAttach()
     //szResult[1] = data->Query(L"/basicspacedata/query/class/tle_latest/orderby/TLE_LINE0%20asc/limit/50/format/3le/metadata/false/favorites/Amateur");
 
     Engine::Message message;
+    message.id = 0;
     message.objects = spaceObjects;
-    message.intNumber.push_back(spaceObjects.size());
+    message.intNumber = spaceObjects.size();
     uiLayerHandle->receiveMessage(message);
 }
 
@@ -40,7 +38,7 @@ void MainLayer::onUpdate(float deltaTime)
     //auto currentTime = std::chrono::high_resolution_clock::now();
     //float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-    cameraController->onUpdate();
+    cameraController->onUpdate(spaceObjects[currentObjectOnFocus]->getPos());
 
     //float x_pos = cameraController->getWindowHandle()->getMouseX();
     //float y_pos = cameraController->getWindowHandle()->getMouseY();
@@ -85,7 +83,6 @@ void MainLayer::onRender()
 
 void MainLayer::passCamera(std::unique_ptr<Engine::CameraController>& cc)
 {
-    //cameraController = std::make_unique<Engine::CameraController>();
     cameraController = std::move(cc);
 }
 
@@ -126,30 +123,40 @@ void MainLayer::setObserver(std::shared_ptr<Layer>& observer)
 
 void MainLayer::receiveMessage(const Engine::Message& message)
 {
-    visSpeed = message.intNumber[0];
-    running = message.status[0];
+    if (message.id == 0)
+    {
+        visSpeed = message.intNumber;
+        running = message.status;
+    }
+    else if (message.id == 1)
+    {
+        currentObjectOnFocus = message.intNumber;
+    }
 }
 
 void MainLayer::updateObjectsPosition(float deltaTime)
 {
-    bool earth = true;
-    for (const auto& cube : spaceObjects)
+   // bool earth = true;
+    for (int i = 0; i < spaceObjects.size(); i++)// auto& cube : spaceObjects)
     {
-        if (!earth && running)
+        if (i != 0 && running)
         {
-            cube->onUpdate(deltaTime, visSpeed);
+            spaceObjects[i]->onUpdate(deltaTime, visSpeed);
         }
 
-        cube->getUniformbufferObject().view = cameraController->getCamera()->getViewMatrix();
-        cube->getUniformbufferObject().proj = cameraController->getCamera()->getProjectionMatrix();
+        spaceObjects[i]->getUniformbufferObject().view = cameraController->getCamera()->getViewMatrix();
+        spaceObjects[i]->getUniformbufferObject().proj = cameraController->getCamera()->getProjectionMatrix();
 
-        cube->getUniformbufferObject().model = glm::translate(glm::mat4(1.0f), cube->getPos());
-        //cube->ubo.model *= glm::rotate(glm::mat4(1.0f), time * glm::radians(cube->rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+        spaceObjects[i]->getUniformbufferObject().model = glm::translate(glm::mat4(1.0f), spaceObjects[i]->getPos());
+        spaceObjects[i]->getUniformbufferObject().model = glm::scale(spaceObjects[i]->getUniformbufferObject().model, spaceObjects[i]->getScale());
+        
+        if (i != 0 && currentObjectOnFocus == i)
+        {
+            glm::vec3 highLightColor{ 0.f, 1.f, 0.f };
+            spaceObjects[i]->getUniformbufferObject().color = highLightColor;
+        }
+        else spaceObjects[i]->getUniformbufferObject().color = spaceObjects[i]->getColor();
 
-        cube->getUniformbufferObject().model = glm::scale(cube->getUniformbufferObject().model, cube->getScale());
-        cube->getUniformbufferObject().color = cube->getColor(); // not every frame
-
-        earth = false;
     }
 }
 

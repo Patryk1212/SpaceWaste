@@ -28,7 +28,7 @@ namespace Engine
 		static Application* appInstance;
 		bool running = true;
 
-	public:
+	private:
 		std::shared_ptr<Window> window;
 		std::unique_ptr<VulkanContext> vulkanContext;
 

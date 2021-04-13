@@ -12,7 +12,7 @@ namespace Engine
 		~CameraController() = default;
 
 		void init(const std::shared_ptr<Window>& window);
-		void onUpdate();
+		void onUpdate(const glm::vec3& newPos);
 		bool onEvent(Event& event);
 
 		std::unique_ptr<Camera>& getCamera() { return camera; }

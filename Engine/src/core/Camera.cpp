@@ -24,7 +24,6 @@ namespace Engine
 
 		viewData.cameraPos = orbit;
 		
-		//view = glm::lookAt(viewData.cameraPos, viewData.cameraPos + viewData.cameraFront, viewData.cameraUp);
-		view = glm::lookAt(orbit, glm::vec3(0, 0, 0) /*target*/ , viewData.cameraUp);
+		view = glm::lookAt(orbit, viewData.cameraCenter, viewData.cameraUp);
 	}
 }

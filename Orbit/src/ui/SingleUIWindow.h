@@ -16,6 +16,8 @@ public:
     /* class implementation specific */
     virtual void show(bool show) {}
     virtual int getValue() const { return 0.f; }
+    virtual bool getBool() const { return true; }
+    virtual void setBool(bool value) {}
     virtual UIType getType() const { return UIType::NONE; }
     virtual bool isButtonClicked() const { return false; }
 

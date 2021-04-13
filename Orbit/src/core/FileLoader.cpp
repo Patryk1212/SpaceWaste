@@ -23,6 +23,7 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::shared_ptr<Engine::Obj
 {
     std::fstream file;
 
+    int uniqueID = 1; // 0 is for earth
     int x = 0;
 
     for (const auto& name : fileNames)
@@ -70,9 +71,10 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::shared_ptr<Engine::Obj
 
                     if (number == 2)
                     {
-                        std::unique_ptr<Engine::Object> object = std::make_unique<SpaceObject>(name, one, two, type);
+                        std::unique_ptr<Engine::Object> object = std::make_unique<SpaceObject>(name, one, two, type, uniqueID);
                         objects.emplace_back(std::move(object));
                         number = 0;
+                        uniqueID++;
                         x++;
                     }
                     else number++;

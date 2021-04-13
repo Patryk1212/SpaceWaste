@@ -23,6 +23,11 @@ namespace Engine
 		virtual inline glm::vec3 getScale() const { return glm::vec3(1.0f); }
 		virtual inline glm::vec3 getColor() const { return glm::vec3(1.0f); }
 
+		virtual inline std::string getType() const { return ""; }
+		virtual inline std::string getCatalogNo() const { return ""; }
+		virtual inline std::string getLaunchYear() const { return ""; }
+		virtual inline std::string getNumberOfLaunch() const { return ""; }
+
 		virtual inline void setPos(const glm::vec3& pos_) {}
 		virtual inline void setScale(const glm::vec3& scale_) {}
 		virtual inline void resize(float scalar) {}

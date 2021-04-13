@@ -43,19 +43,6 @@ private:
 	std::unique_ptr<Engine::CameraController> cameraController;
 
 private:
+	int currentObjectOnFocus = 0;
 	std::vector<std::shared_ptr<Engine::Object>> spaceObjects;
-	
-
-	
-	enum class SpaceObjectType
-	{
-		SPECIAL_INTREST_SAT = 0,
-		WEATHER_RESOURCES_SAT,
-		COMMUNICATION_SAT,
-		NAVIGATION_SAT,
-		SCIENTIFIC_SAT,
-		MISCELLANEOUS_SAT
-	};
-	
-	//std::unordered_map<glm::vec3, std::string> colorScheme;
 };

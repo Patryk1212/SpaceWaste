@@ -6,12 +6,25 @@
 #include "renderer/Object.h"
 #include "ObjectConstVar.h"
 
+//enum class SpaceObjectType
+//{
+//	DEBRIS = 0,
+//	ACTIVE_SAT,
+//	COMMUNICATION_SAT,
+//	SPECIAL_INTREST_SAT,
+//	WEATHER_RESOURCES_SAT,
+//	NAVIGATION_SAT,
+//	SCIENTIFIC_SAT,
+//	SPACE_STATIONS,
+//	OTHER
+//};
+
 class SpaceObject : public Engine::Object
 {
 public:
 	SpaceObject() = default;
 	SpaceObject(const glm::vec3& pos_, const glm::vec3& scale_, const glm::vec3& color_);
-	SpaceObject(std::string& name, std::string& one, std::string& two, const std::string& colorType);
+	SpaceObject(std::string& name, std::string& one, std::string& two, const std::string& colorType, int id_);
 	~SpaceObject() = default;
 
 	virtual void onUpdate(float deltaTime, int visSpeed_) override;
@@ -23,6 +36,11 @@ public:
 	virtual inline glm::vec3 getPos() const override { return position; }
 	virtual inline glm::vec3 getScale() const override { return scale; }
 	virtual inline glm::vec3 getColor() const override { return color; }
+
+	virtual inline std::string getType() const override { return type; }
+	virtual inline std::string getCatalogNo() const override { return catalogNumber; }
+	virtual inline std::string getLaunchYear() const override { return launchYear; }
+	virtual inline std::string getNumberOfLaunch() const override { return launchNumberOfTheYear; }
 
 	virtual inline void setPos(const glm::vec3& pos_) override { position = pos_; }
 	virtual inline void setScale(const glm::vec3& scale_) override { scale = scale_; }
@@ -44,7 +62,7 @@ private:
 	const float speed = 10.f;
 	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 scale = { 3.0f, 3.0f, 3.0f };
-	glm::vec3 color = { 1.0f, 1.0f, 1.0f };
+	glm::vec3 color = { 1.0f, 0.5f, 1.0f };
 	glm::vec3 velocity = { 0.f, 0.f, 0.f };
 
 private:
@@ -53,11 +71,20 @@ private:
 	void calculateSize();
 
 private:
-	void setApropiateColor(const std::string& colorType);
+	void setDisplayableData();
+	void setApropiateColorAndType(const std::string& colorType);
+	
+	std::string type;
+	std::string catalogNumber;
+	std::string launchYear;
+	std::string launchNumberOfTheYear;
 	int unique_id = 0;
 
-
 private:
+	std::string name;
+	std::string firstLine;
+	std::string secondLine;
+
 	std::unique_ptr<cTle> tleSGP4;
 	std::unique_ptr<cSatellite> satSGP4;
 };

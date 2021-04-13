@@ -17,7 +17,7 @@ namespace Engine
 		windowHandle = window;
 	}
 
-	void CameraController::onUpdate()
+	void CameraController::onUpdate(const glm::vec3& newPos)
 	{
 		if (windowHandle->isMouseButtonPressed(1))
 		{
@@ -40,6 +40,8 @@ namespace Engine
 			lastX = windowHandle->getMouseX();
 			lastY = windowHandle->getMouseY();
 		}
+
+		viewData.cameraCenter = newPos;
 
 		camera->onUpdateViewMatrix(viewData, phi, theta);
 	}

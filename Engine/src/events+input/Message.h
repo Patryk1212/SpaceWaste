@@ -6,9 +6,10 @@ namespace Engine
 {
 	struct Message
 	{
-		std::vector<bool> status;
-		std::vector<int> intNumber;
-		std::vector<int> floatNumber;
+		int id = 0;
+		bool status;
+		int intNumber;
+		int floatNumber;
 		std::vector<std::shared_ptr<Object>> objects;
 	};
 }

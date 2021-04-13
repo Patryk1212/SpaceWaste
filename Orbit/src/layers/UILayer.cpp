@@ -4,7 +4,6 @@
 void UILayer::onAttach()
 {
 	initImGuiSettings();
-
 	initSlider();
 	initControls();
 	initMenu();
@@ -12,9 +11,6 @@ void UILayer::onAttach()
 
 void UILayer::onUpdate(float deltaTime)
 {
-	bool show_demo_window = true;
-	ImGui::ShowDemoWindow(&show_demo_window);
-
 	for (const auto& window : uiWindows)
 	{
 		window->onUpdate();
@@ -49,7 +45,7 @@ bool UILayer::onEvent(Engine::Event& event)
 				{
 					if (windows->getInstanceType() == UIWindowInstance::EXIT && button.change && windows->getInstanceType() == button.type)
 					{
-						// exit button pressed
+						// exit app
 						return false;
 					}
 				}
@@ -58,8 +54,18 @@ bool UILayer::onEvent(Engine::Event& event)
 		else if (window->getType() == UIType::SLIDER)
 		{
 			Engine::Message message;
-			message.status.push_back(window->isButtonClicked());
-			message.intNumber.push_back(window->getValue());
+			message.id = 0;
+			message.status = window->isButtonClicked();
+			message.intNumber = window->getValue();
+			mainLayerHandle->receiveMessage(message);
+		}
+		else if (window->getType() == UIType::OBJECT_LIST && window->getBool())
+		{
+			window->setBool(false);
+
+			Engine::Message message;
+			message.id = 1;
+			message.intNumber = window->getValue();
 			mainLayerHandle->receiveMessage(message);
 		}
 	}
@@ -74,8 +80,11 @@ void UILayer::setObserver(std::shared_ptr<Layer>& observer)
 
 void UILayer::receiveMessage(const Engine::Message& message)
 {
-	initGeneralInfo(message.intNumber[0]);
-	initObjectList(message.objects);
+	if (message.id == 0)
+	{
+		initGeneralInfo(message.intNumber);
+		initObjectList(message.objects);
+	}
 }
 
 void UILayer::initImGuiSettings()
@@ -126,6 +135,11 @@ void UILayer::initImGuiSettings()
 	/* slider active */
 	color = { 0.65f, 0.75f, 0.02f, 255 };
 	style->Colors[20] = color;
+
+	/* */
+	style->Colors[ImGuiCol_Header] = { 0.03f, 0.03f, 0.03f, 255 };
+	style->Colors[ImGuiCol_HeaderHovered] = { .1f, .2f, .8f, 1.f };
+	style->Colors[ImGuiCol_HeaderActive] = { 0.f, 0.03f, 0.18f, 1.f };
 }
 
 void UILayer::initSlider()
@@ -164,10 +178,10 @@ void UILayer::initGeneralInfo(int number)
 {
 	ImVec2 pos{ 10.f, 10.f };
 	ImVec2 size{ 216.f, 25.f };
-	UIWindowSpec spec(UIWindowInstance::GENERAL_INFO, "info", pos, size, 0.5f, false, true, true, true);
+	UIWindowSpec spec(UIWindowInstance::GENERAL_INFO, "info", pos, size, 0.5f, true, true, true, true);
 
 	std::vector<std::string> text;
-	text.emplace_back("Space Object in Total: " + std::to_string(number));
+	text.emplace_back("Space Objects in Total: " + std::to_string(number));
 
 	std::unique_ptr<SingleUIWindow> info = std::make_unique<UIStandard>(spec, text);
 
@@ -176,14 +190,9 @@ void UILayer::initGeneralInfo(int number)
 
 void UILayer::initObjectList(const std::vector<std::shared_ptr<Engine::Object>>& spaceObjectsHandle)
 {
-	ImVec2 pos{ 362.5f, 680.f };
-	ImVec2 size{ 555.f, 35.f };
-	UIWindowSpec spec(UIWindowInstance::OBJECTS_LIST, "Object List", pos, size, 0.5f, false, true, true, true);
-	
-	//ImVec4 color_base{ 1.f, .1f, .0f, 1.f };
-	//ImVec4 color_highlight{ .1f, .2f, .8f, 1.f };
-	//ImVec4 color_active{ 1.f, .1f, .0f, 1.f };
-	//std::unique_ptr<UIButton> button = std::make_unique<UIButton>("STOP", "PLAY", color_base, color_highlight, color_active);
+	ImVec2 pos{ 10.f, 60.f };
+	ImVec2 size{ 216.f, 210.f };
+	UIWindowSpec spec(UIWindowInstance::OBJECTS_LIST, "Object List", pos, size, 0.9f, true, true, true, true);
 	
 	std::unique_ptr<SingleUIWindow> list = std::make_unique<UIObjectViewer>(spec, spaceObjectsHandle);
 	

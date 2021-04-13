@@ -8,7 +8,8 @@ SpaceObject::SpaceObject(const glm::vec3& pos_, const glm::vec3& scale_, const g
 	color = color_;
 }
 
-SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two, const std::string& colorType)
+SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two, const std::string& colorType, int id_)
+	: name(name), firstLine(one), secondLine(two), unique_id(id_)
 {
 	tleSGP4 = std::make_unique<cTle>(name, one, two);
 	satSGP4 = std::make_unique<cSatellite>(*tleSGP4.get());
@@ -25,7 +26,9 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two, 
 	velocity.y = vecPos.Velocity().m_z;
 	velocity.z = vecPos.Velocity().m_y;
 
-	setApropiateColor(colorType);
+	/* other data */
+	setDisplayableData();
+	setApropiateColorAndType(colorType);
 	calculateSize();
 }
 
@@ -46,17 +49,17 @@ void SpaceObject::onUpdate(float deltaTime, int visSpeed_)
 
 std::string SpaceObject::showName() const
 {
-	return satSGP4->Name().c_str();
+	return name;
 }
 
 std::string SpaceObject::showFirstTLELine() const
 {
-	return satSGP4->Orbit().TleLine1().c_str();
+	return firstLine;
 }
 
 std::string SpaceObject::showSecondTLELine() const
 {
-	return satSGP4->Orbit().TleLine1().c_str();
+	return secondLine;
 }
 
 void SpaceObject::resize(float scalar)
@@ -120,65 +123,90 @@ void SpaceObject::calculateSize()
 	}
 }
 
-void SpaceObject::setApropiateColor(const std::string& colorType)
+void SpaceObject::setDisplayableData()
+{
+	for (int i = 3; i <= 7; i++)
+	{
+		catalogNumber += firstLine[i];
+	}
+
+	for (int i = 10; i <= 11; i++)
+	{
+		launchYear += firstLine[i];
+	}
+
+	for (int i = 12; i <= 14; i++)
+	{
+		launchNumberOfTheYear += firstLine[i];
+	}
+}
+
+void SpaceObject::setApropiateColorAndType(const std::string& colorType)
 {
 	if (colorType.size() == 1)
 	{
 		switch (colorType[0])
 		{
-			case 'D': // Debris
+			case 'D':
 			{
+				type = "Debris";
 				color = { .75f, .75f, .75f }; // white
 				break;
 			}
-			case 'A': // Active Sat
+			case 'A':
 			{
+				type = "Active";
 				color = { .0f, 0.48f, 1.0f }; // light blue
 				break;
 			}
-			case 'C': // Communication Sat
+			case 'C':
 			{
+				type = "Communication";
 				color = { 1.0f, 1.f, .0f }; // yellow
 				break;
 			}
-			case 'W': // Weather and Earth Resources Sat
+			case 'W':
 			{
+				type = "Weather & Earth Resources";
 				color = { .4f, 0.2f, .0f }; // brown
 				break;
 			}
-			case 'N': // Navigation Sat
+			case 'N':
 			{
+				type = "Navigation";
 				color = { .0f, 0.8f, .0f }; // green
 				break;
 			}
-			case 'O': // Others
+			case 'O':
 			{
+				type = "Other";
 				color = { .7f, .2f, .2f }; // red
 				break;
 			}
-			default: color = { 1.0f, 0.5f, 1.0f }; break;
 		}
 	}
 	else if (colorType.size() == 2)
 	{
 		switch (colorType[1])
 		{
-			case 'I': // Special Intrest
+			case 'I':
 			{
+				type = "Special Intrest";
 				color = { .0f, 0.6f, 0.6f }; // dark blue
 				break;
 			}
-			case 'A': // Scientific Sat
+			case 'A':
 			{
+				type = "Scientific";
 				color = { .69f, 0.4f, 1.f }; // purple
 				break;
 			}
-			case 'S': // Space Stations
+			case 'S':
 			{
+				type = "Space Station";
 				color = { 1.0f, 0.5f, 0.0f }; // orange
 				break;
 			}
-			default: color = { 1.0f, 0.5f, 1.0f }; break;
 		}
 	}
 }
