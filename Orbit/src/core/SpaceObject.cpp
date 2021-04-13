@@ -8,7 +8,7 @@ SpaceObject::SpaceObject(const glm::vec3& pos_, const glm::vec3& scale_, const g
 	color = color_;
 }
 
-SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
+SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two, const std::string& colorType)
 {
 	tleSGP4 = std::make_unique<cTle>(name, one, two);
 	satSGP4 = std::make_unique<cSatellite>(*tleSGP4.get());
@@ -29,7 +29,7 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two)
 	//std::cout << position.y << std::endl;
 	//std::cout << position.z << std::endl;
 
-	color = { 1.0f, 0.7f, 0.9f };
+	setApropiateColor(colorType);
 	calculateSize();
 }
 
@@ -121,5 +121,68 @@ void SpaceObject::calculateSize()
 		scale.x = SIZE_THE_FURTHEST;
 		scale.y = SIZE_THE_FURTHEST;
 		scale.z = SIZE_THE_FURTHEST;
+	}
+}
+
+void SpaceObject::setApropiateColor(const std::string& colorType)
+{
+	if (colorType.size() == 1)
+	{
+		switch (colorType[0])
+		{
+			case 'D': // Debris
+			{
+				color = { 1.0f, 0.7f, 0.9f };
+				break;
+			}
+			case 'A': // Active Sat
+			{
+				color = { 1.0f, 0.7f, 0.9f };
+				break;
+			}
+			case 'C': // Communication Sat
+			{
+				color = { 1.0f, 0.7f, 0.9f };
+				break;
+			}
+			case 'W': // Weather and Earth Resources Sat
+			{
+				color = { 1.0f, 0.7f, 0.9f };
+				break;
+			}
+			case 'N': // Navigation Sat
+			{
+				color = { 1.0f, 0.7f, 0.9f };
+				break;
+			}
+			case 'O': // Others
+			{
+				color = { 1.0f, 0.7f, 0.9f };
+				break;
+			}
+			default: color = { 1.0f, 0.7f, 0.9f }; break;
+		}
+	}
+	else if (colorType.size() == 2)
+	{
+		switch (colorType[1])
+		{
+			case 'I': // Special Intrest
+			{
+				color = { 1.0f, 0.7f, 0.9f };
+				break;
+			}
+			case 'A': // Scientific Sat
+			{
+				color = { 1.0f, 0.7f, 0.9f };
+				break;
+			}
+			case 'S': // Space Stations
+			{
+				color = { 1.0f, 0.7f, 0.9f };
+				break;
+			}
+			default: color = { 1.0f, 0.7f, 0.9f }; break;
+		}
 	}
 }

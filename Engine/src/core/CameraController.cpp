@@ -48,7 +48,7 @@ namespace Engine
 	{
 		MouseScrollEvent& e = (MouseScrollEvent&)event;
 
-		if (e.getEventType() == EventType::MOUSE_SCROLLED && viewData.cameraPos.z < MAX_ZOOM && viewData.cameraPos.z > MIN_ZOOM)
+		if (e.getEventType() == EventType::MOUSE_SCROLLED && windowHandle->isMouseButtonPressed(1) && viewData.cameraPos.z < MAX_ZOOM && viewData.cameraPos.z > MIN_ZOOM)
 		{
 			viewData.cameraPos += zoomSpeed * viewData.cameraFront * e.getYOffest();
 

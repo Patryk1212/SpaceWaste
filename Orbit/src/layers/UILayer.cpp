@@ -9,8 +9,6 @@ void UILayer::onAttach()
 
 	initSlider();
 	initControls();
-	
-	initObjectList();
 	initMenu();
 }
 
@@ -79,7 +77,7 @@ void UILayer::setObserver(std::shared_ptr<Layer>& observer)
 void UILayer::receiveMessage(const Engine::Message& message)
 {
 	initGeneralInfo(message.intNumber[0]);
-	initObjectList();
+	initObjectList(message.objects);
 }
 
 void UILayer::initImGuiSettings()
@@ -140,7 +138,7 @@ void UILayer::initSlider()
 
 	ImVec4 color_base{ 1.f, .1f, .0f, 1.f };
 	ImVec4 color_highlight{ .1f, .2f, .8f, 1.f };
-	ImVec4 color_active{ .1f, .2f, 1.f, 1.f };
+	ImVec4 color_active{ 1.f, .1f, .0f, 1.f };
 	std::unique_ptr<UIButton> button = std::make_unique<UIButton>("STOP", "PLAY", color_base, color_highlight, color_active);
 
 	std::unique_ptr<SingleUIWindow> slider = std::make_unique<UISlider>(spec, "Visualization Speed", 1, 5, button);
@@ -178,9 +176,20 @@ void UILayer::initGeneralInfo(int number)
 	uiWindows.emplace_back(std::move(info));
 }
 
-void UILayer::initObjectList()
+void UILayer::initObjectList(const std::vector<std::shared_ptr<Engine::Object>>& spaceObjectsHandle)
 {
-
+	ImVec2 pos{ 362.5f, 680.f };
+	ImVec2 size{ 555.f, 35.f };
+	UIWindowSpec spec(UIWindowInstance::OBJECTS_LIST, "Object List", pos, size, 0.5f, false, true, true, true);
+	
+	//ImVec4 color_base{ 1.f, .1f, .0f, 1.f };
+	//ImVec4 color_highlight{ .1f, .2f, .8f, 1.f };
+	//ImVec4 color_active{ 1.f, .1f, .0f, 1.f };
+	//std::unique_ptr<UIButton> button = std::make_unique<UIButton>("STOP", "PLAY", color_base, color_highlight, color_active);
+	
+	std::unique_ptr<SingleUIWindow> list = std::make_unique<UIObjectViewer>(spec, spaceObjectsHandle);
+	
+	uiWindows.emplace_back(std::move(list));
 }
 
 void UILayer::initMenu()

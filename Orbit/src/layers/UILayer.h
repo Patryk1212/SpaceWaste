@@ -5,8 +5,7 @@
 #include "ui/UISlider.h"
 #include "ui/UIStandard.h"
 #include "ui/UIButtonList.h"
-
-#include "message/Message.h"
+#include "ui/UIObjectViewer.h"
 
 class UILayer : public Engine::Layer
 {
@@ -33,6 +32,6 @@ private:
 	void initSlider();
 	void initControls();
 	void initGeneralInfo(int number);
-	void initObjectList();
+	void initObjectList(const std::vector<std::shared_ptr<Engine::Object>>& spaceObjectsHandle);
 	void initMenu();
 };

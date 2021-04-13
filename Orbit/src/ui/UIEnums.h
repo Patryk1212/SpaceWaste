@@ -5,7 +5,8 @@ enum class UIType
 	NONE = 0,
 	STANDARD,
 	SLIDER,
-	BUTTON_LIST
+	BUTTON_LIST,
+	OBJECT_LIST
 };
 
 enum class UIWindowInstance

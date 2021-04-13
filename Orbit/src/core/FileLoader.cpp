@@ -37,7 +37,8 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::shared_ptr<Engine::Obj
 
         if (file.good())
         {
-            int number = 0;
+            int number = -1;
+            std::string type;
             std::string name;
             std::string one;
             std::string two;
@@ -46,44 +47,55 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::shared_ptr<Engine::Obj
 
             while (std::getline(file, line))
             {
-                switch (number)
+                if (number == -1)
                 {
-                case 0:
+                    type = line;
+                    std::cout << type << std::endl;
+                    number++;
+                }
+                else
                 {
-                    name = line;
-                    break;
-                }
-                case 1:
-                {
-                    one = line;
-                    break;
-                }
-                case 2:
-                {
-                    two = line;
-                    break;
-                }
-                default: break;
-                }
+                    switch (number)
+                    {
+                    case 0:
+                    {
+                        name = line;
+                        break;
+                    }
+                    case 1:
+                    {
+                        one = line;
+                        break;
+                    }
+                    case 2:
+                    {
+                        two = line;
+                        break;
+                    }
+                    default: break;
+                    }
 
-                if (number == 2)
-                {
-                    //std::cout << "Number " << x << std::endl;
-                    std::unique_ptr<Engine::Object> object = std::make_unique<SpaceObject>(name, one, two);
-                    objects.emplace_back(std::move(object));
-                    number = 0;
-                    x++;
-                }
-                else number++;
+                    if (number == 2)
+                    {
+                        //std::cout << "Number " << x << std::endl;
+                        std::unique_ptr<Engine::Object> object = std::make_unique<SpaceObject>(name, one, two, type);
+                        //object->passOrderDetails();
+                        objects.emplace_back(std::move(object));
+                        number = 0;
+                        x++;
+                    }
+                    else number++;
 
-                if (x > 17381)
-                {
-                    x = 0;
-                    break;
+                    if (x > 17381)
+                    {
+                        x = 0;
+                        break;
+                    }
                 }
             }
         }
 
         file.close();
+        std::cout << "CLOSE" << std::endl;
     }    
 }

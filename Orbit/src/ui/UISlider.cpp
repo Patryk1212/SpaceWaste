@@ -41,7 +41,6 @@ void UISlider::onUpdate()
 					button->clicked = true;
 					button->textActive = button->text;
 				}
-				
 			}
 
 			ImGui::SameLine();

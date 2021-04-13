@@ -11,7 +11,7 @@ class SpaceObject : public Engine::Object
 public:
 	SpaceObject() = default;
 	SpaceObject(const glm::vec3& pos_, const glm::vec3& scale_, const glm::vec3& color_);
-	SpaceObject(std::string& name, std::string& one, std::string& two);
+	SpaceObject(std::string& name, std::string& one, std::string& two, const std::string& colorType);
 	~SpaceObject() = default;
 
 	virtual void onUpdate(float deltaTime, int visSpeed_) override;
@@ -29,6 +29,7 @@ public:
 	virtual void resize(float scalar) override;
 	virtual inline void setColor(const glm::vec3& color_) override { color = color_; }
 
+	/* test */
 	virtual bool checkInside(const glm::vec3& point) override
 	{
 		glm::vec3 min{ position.x - scale.x , position.y - scale.y , position.z - scale.z };
@@ -50,6 +51,11 @@ private:
 	float MIN_SIZE = 0.f;
 	float MAX_SIZE = 0.f;
 	void calculateSize();
+
+private:
+	void setApropiateColor(const std::string& colorType);
+	int unique_id = 0;
+
 
 private:
 	std::unique_ptr<cTle> tleSGP4;
