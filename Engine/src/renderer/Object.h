@@ -43,35 +43,4 @@ namespace Engine
 		VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
 		std::vector<std::unique_ptr<VulkanUniformBuffer>> uniformBuffer;
 	};
-
-	const std::vector<Vertex> vertices =
-	{
-			{{-1.0f, -1.0f, -1.0f}},
-			{{ 1.0f, -1.0f, -1.0f}},
-			{{-1.0f,  1.0f, -1.0f}},
-			{{ 1.0f,  1.0f, -1.0f}},
-
-			{{-1.0f, -1.0f,  1.0f}},
-			{{ 1.0f, -1.0f,  1.0f}},
-			{{-1.0f,  1.0f,  1.0f}},
-			{{ 1.0f,  1.0f,  1.0f}},
-
-			{{-1.0f, -1.0f, -1.0f}},
-			{{ 1.0f, -1.0f, -1.0f}},
-			{{-1.0f, -1.0f, -1.0f}},
-			{{-1.0f, -1.0f,  1.0f}},
-
-			{{ 1.0f, -1.0f, -1.0f}},
-			{{ 1.0f, -1.0f,  1.0f}}
-	};
-
-	const std::vector<uint16_t> indices =
-	{
-		0,2,1,   2,3,1,
-		4,8,5,   5,8,9,
-		2,6,3,   3,6,7,
-		4,5,7,   4,7,6,
-		2,10,11, 2,11,6,
-		12,3,7,  12,7,13
-	};
 }

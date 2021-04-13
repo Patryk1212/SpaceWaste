@@ -18,7 +18,9 @@ namespace Engine
 	class Graphics
 	{
 	public:
-		Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue);
+		Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, 
+			const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue,
+			const std::vector<uint16_t>& indices, const std::vector<Vertex>& vertices);
 		~Graphics() = default;
 	
 		void createObjectsAndRecord(const std::vector<std::shared_ptr<Object>>& objects);
@@ -26,48 +28,7 @@ namespace Engine
 		void startFrame();
 		void endFrame();
 
-		int newData = 0;
-		bool ready1 = false;
 		VkRenderPassBeginInfo renderPassInfo{};
-		//void recordCmd(int imageIndex)
-		//{
-		//	VkCommandBufferBeginInfo beginInfo{};
-		//	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		//	beginInfo.flags = VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT;// VK_COMMAND_BUFFER_USAGE_FLAG_BITS_MAX_ENUM;// VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-		//
-		//	vkResetCommandBuffer(commandBuffers[imageIndex], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
-		//	if (vkBeginCommandBuffer(commandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
-		//	{
-		//		throw std::runtime_error("failed to begin recording command buffer!");
-		//	}
-		//	
-		//	renderPassInfo.framebuffer = swapChainData.swapChainFramebuffers[imageIndex];
-		//	vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-		//	vkCmdBindPipeline(commandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.graphicsPipeline);
-		//
-		//	// Record new stuff
-		//	VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
-		//
-		//	VkDeviceSize offsets[] = { 0 };
-		//	vkCmdBindVertexBuffers(commandBuffers[imageIndex], 0, 1, vertexBuffers, offsets);
-		//	vkCmdBindIndexBuffer(commandBuffers[imageIndex], indexBuffer->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
-		//
-		//	for (const auto& cube : cubes)
-		//	{
-		//		vkCmdBindDescriptorSets(commandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipelineLayout, 0, 1, &cube->descriptorSet, 0, nullptr);
-		//		vkCmdDrawIndexed(commandBuffers[imageIndex], indexBuffer->getCount(), 1, 0, 0, 0);
-		//	}
-		//
-		//
-		//	// Submit command buffer
-		//	vkCmdEndRenderPass(commandBuffers[imageIndex]);
-		//
-		//	if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
-		//	{
-		//		throw std::runtime_error("failed to record command buffer!");
-		//	}
-		//}
-
 		void onShutDown();
 
 	public:
@@ -147,12 +108,12 @@ namespace Engine
 		std::unique_ptr<ImguiLayer> imguiLayer;
 		VkResult result;
 
-		//to be deleted
+	
 		/* - - - - - - - - - - - - - - - - - - - - - - - */
 		VkDescriptorPool descriptorPool; // 3d
 		std::unique_ptr<VulkanBufferAllocator> bufferAllocator;
+
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
-		std::unique_ptr<VulkanVertexBuffer> vertexBuffer1;
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 	};
 }

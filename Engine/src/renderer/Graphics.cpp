@@ -6,7 +6,9 @@
 
 namespace Engine
 {
-	Graphics::Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue)
+	Graphics::Graphics(const std::shared_ptr<Window>& window, const VkPhysicalDevice& physicalDevice, 
+		const VkDevice& logicalDevice, const VkQueue& graphicsQueue, const VkQueue& presentQueue,
+		const std::vector<uint16_t>& indices, const std::vector<Vertex>& vertices)
 		: physicalDeviceHandle(physicalDevice), logicalDeviceHandle(logicalDevice), windowHandle(window), graphicsQueue(graphicsQueue), presentQueue(presentQueue)
 	{
 		createSwapChain();

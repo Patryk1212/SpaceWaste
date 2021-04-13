@@ -3,8 +3,6 @@
 
 void MainLayer::onAttach()
 {
-    std::cout << "MAIN Layer Attached" << std::endl;
-
     /* add earth */
     glm::vec3 earthPos{ 0.0f, 0.0f, 0.0f };
     glm::vec3 earthSize{ 250.0f, 250.0f, 250.0f };
@@ -15,10 +13,6 @@ void MainLayer::onAttach()
 
     fileLoader.loadFileNames();
     fileLoader.loadTLEandCreateObjects(spaceObjects);
-
-    std::cout << "Data Ready" << std::endl;
-    std::cout << "Objects loaded: ";
-    std::cout << spaceObjects.size() << std::endl << std::endl;
 
     Engine::Renderer3D::recordCommandBuffers(spaceObjects);   
 

@@ -25,10 +25,6 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two, 
 	velocity.y = vecPos.Velocity().m_z;
 	velocity.z = vecPos.Velocity().m_y;
 
-	//std::cout << position.x << std::endl;
-	//std::cout << position.y << std::endl;
-	//std::cout << position.z << std::endl;
-
 	setApropiateColor(colorType);
 	calculateSize();
 }
@@ -132,35 +128,35 @@ void SpaceObject::setApropiateColor(const std::string& colorType)
 		{
 			case 'D': // Debris
 			{
-				color = { 1.0f, 0.7f, 0.9f };
+				color = { .75f, .75f, .75f }; // white
 				break;
 			}
 			case 'A': // Active Sat
 			{
-				color = { 1.0f, 0.7f, 0.9f };
+				color = { .0f, 0.48f, 1.0f }; // light blue
 				break;
 			}
 			case 'C': // Communication Sat
 			{
-				color = { 1.0f, 0.7f, 0.9f };
+				color = { 1.0f, 1.f, .0f }; // yellow
 				break;
 			}
 			case 'W': // Weather and Earth Resources Sat
 			{
-				color = { 1.0f, 0.7f, 0.9f };
+				color = { .4f, 0.2f, .0f }; // brown
 				break;
 			}
 			case 'N': // Navigation Sat
 			{
-				color = { 1.0f, 0.7f, 0.9f };
+				color = { .0f, 0.8f, .0f }; // green
 				break;
 			}
 			case 'O': // Others
 			{
-				color = { 1.0f, 0.7f, 0.9f };
+				color = { .7f, .2f, .2f }; // red
 				break;
 			}
-			default: color = { 1.0f, 0.7f, 0.9f }; break;
+			default: color = { 1.0f, 0.5f, 1.0f }; break;
 		}
 	}
 	else if (colorType.size() == 2)
@@ -169,20 +165,20 @@ void SpaceObject::setApropiateColor(const std::string& colorType)
 		{
 			case 'I': // Special Intrest
 			{
-				color = { 1.0f, 0.7f, 0.9f };
+				color = { .0f, 0.6f, 0.6f }; // dark blue
 				break;
 			}
 			case 'A': // Scientific Sat
 			{
-				color = { 1.0f, 0.7f, 0.9f };
+				color = { .69f, 0.4f, 1.f }; // purple
 				break;
 			}
 			case 'S': // Space Stations
 			{
-				color = { 1.0f, 0.7f, 0.9f };
+				color = { 1.0f, 0.5f, 0.0f }; // orange
 				break;
 			}
-			default: color = { 1.0f, 0.7f, 0.9f }; break;
+			default: color = { 1.0f, 0.5f, 1.0f }; break;
 		}
 	}
 }

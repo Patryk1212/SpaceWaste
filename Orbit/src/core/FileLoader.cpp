@@ -8,18 +8,12 @@ void FileLoader::loadFileNames()
 
     if (file.good())
     {
-        std::cout << std::endl << "Loading files:" << std::endl;
-
         std::string line;
         while (std::getline(file, line))
         {
             if (line == "") break;
-            std::cout << " - ";
-            std::cout << line.c_str() << std::endl;
             fileNames.emplace_back(line);
         }
-        
-        std::cout << "Total number of files: " << fileNames.size() << std::endl << std::endl;
     }
 
     file.close();
@@ -50,7 +44,6 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::shared_ptr<Engine::Obj
                 if (number == -1)
                 {
                     type = line;
-                    std::cout << type << std::endl;
                     number++;
                 }
                 else
@@ -77,9 +70,7 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::shared_ptr<Engine::Obj
 
                     if (number == 2)
                     {
-                        //std::cout << "Number " << x << std::endl;
                         std::unique_ptr<Engine::Object> object = std::make_unique<SpaceObject>(name, one, two, type);
-                        //object->passOrderDetails();
                         objects.emplace_back(std::move(object));
                         number = 0;
                         x++;
@@ -96,6 +87,5 @@ void FileLoader::loadTLEandCreateObjects(std::vector<std::shared_ptr<Engine::Obj
         }
 
         file.close();
-        std::cout << "CLOSE" << std::endl;
     }    
 }

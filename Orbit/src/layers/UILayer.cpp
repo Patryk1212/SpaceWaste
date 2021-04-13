@@ -3,8 +3,6 @@
 
 void UILayer::onAttach()
 {
-	std::cout << "UI Layer Attached" << std::endl;
-
 	initImGuiSettings();
 
 	initSlider();
