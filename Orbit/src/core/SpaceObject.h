@@ -6,19 +6,6 @@
 #include "renderer/Object.h"
 #include "ObjectConstVar.h"
 
-//enum class SpaceObjectType
-//{
-//	DEBRIS = 0,
-//	ACTIVE_SAT,
-//	COMMUNICATION_SAT,
-//	SPECIAL_INTREST_SAT,
-//	WEATHER_RESOURCES_SAT,
-//	NAVIGATION_SAT,
-//	SCIENTIFIC_SAT,
-//	SPACE_STATIONS,
-//	OTHER
-//};
-
 class SpaceObject : public Engine::Object
 {
 public:
@@ -46,17 +33,6 @@ public:
 	virtual inline void setScale(const glm::vec3& scale_) override { scale = scale_; }
 	virtual void resize(float scalar) override;
 	virtual inline void setColor(const glm::vec3& color_) override { color = color_; }
-
-	/* test */
-	virtual bool checkInside(const glm::vec3& point) override
-	{
-		glm::vec3 min{ position.x - scale.x , position.y - scale.y , position.z - scale.z };
-		glm::vec3 max{ position.x + scale.x , position.y + scale.y , position.z + scale.z };
-
-		return (point.x >= min.y && point.x <= max.y) &&
-			(point.y >= min.z && point.y <= max.z);//&&
-			   //(point.z >= min.z && point.z <= max.z);
-	};
 
 private:
 	const float speed = 10.f;

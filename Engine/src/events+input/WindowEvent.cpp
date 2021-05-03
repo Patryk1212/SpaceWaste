@@ -2,6 +2,4 @@
 #include "WindowEvent.h"
 
 namespace Engine
-{
-
-}
+{}

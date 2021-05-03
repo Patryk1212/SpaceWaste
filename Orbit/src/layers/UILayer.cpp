@@ -161,12 +161,12 @@ void UILayer::initSlider()
 void UILayer::initControls()
 {
 	ImVec2 pos{ 10.f, 640.f };
-	ImVec2 size{ 216.f, 70.f };
+	ImVec2 size{ 230.f, 70.f };
 	UIWindowSpec spec(UIWindowInstance::CONTROLS, "controls", pos, size, 0.5f, false, true, true, true);
 
 	std::vector<std::string> text;
-	text.emplace_back("Move around: Mouse + RMB");
-	text.emplace_back("Zoom in/out: Scroll Wheel");
+	text.emplace_back("Move around: RMB + Mouse");
+	text.emplace_back("Zoom in/out: RMB + Scroll Wheel");
 	text.emplace_back("UI Intercations: LMB");
 
 	std::unique_ptr<SingleUIWindow> controls = std::make_unique<UIStandard>(spec, text);

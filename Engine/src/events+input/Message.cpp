@@ -2,5 +2,4 @@
 #include "Message.h"
 
 namespace Engine
-{
-}
+{}

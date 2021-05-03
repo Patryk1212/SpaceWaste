@@ -34,10 +34,6 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two, 
 
 void SpaceObject::onUpdate(float deltaTime, int visSpeed_)
 {
-	//speed += 1 * deltaTime;
-	//cEciTime eci = satSGP4->PositionEci(speed);
-	//cEci vecPos = eci;
-
 	position.x += velocity.x * deltaTime * (((float)visSpeed_)/speed);
 	position.z += velocity.z * deltaTime * (((float)visSpeed_)/speed);
 	position.y += velocity.y * deltaTime * (((float)visSpeed_)/speed);

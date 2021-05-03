@@ -12,15 +12,4 @@ namespace Engine
 	{
 		return layers;
 	}
-
-	//const std::unique_ptr<Layer>& LayerStack::getLayerWithTag(const std::string& name) const
-	//{
-	//	for (const auto& layer : layers)
-	//	{
-	//		if (layer->getLayerName() == name)
-	//		{
-	//			return layer;
-	//		}
-	//	}
-	//}
 }

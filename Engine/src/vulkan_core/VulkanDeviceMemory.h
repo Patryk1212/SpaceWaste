@@ -10,7 +10,7 @@ namespace Engine
 	{
 	public:
 		VulkanDeviceMemory(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc, const std::vector<std::shared_ptr<Object>>& objects);
-		~VulkanDeviceMemory() = default; //proper destroy func needed
+		~VulkanDeviceMemory() = default;
 
 		VkDeviceMemory getMemory(int swpachainImage);
 		uint64_t getMemoryOffset() const;

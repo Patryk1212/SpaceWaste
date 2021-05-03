@@ -12,6 +12,7 @@ namespace Engine
 		int slices = 20;
 		const float PI = 3.14f;
 
+		// calculate vertices
 		Vertex positions;
 		std::vector<Vertex> vert;
 
@@ -40,9 +41,8 @@ namespace Engine
 			}
 		}
 
+		// calculate indices
 		std::vector<uint16_t> indices;
-
-		// Calc The Index Positions
 		for (int i = 0; i < slices * stacks + slices; ++i)
 		{
 			indices.push_back(uint16_t(i));

@@ -18,8 +18,8 @@ namespace Engine
 	struct PipeLineData
 	{
 		VkPipeline graphicsPipeline;
-		VkDescriptorSetLayout descriptorSetLayout; // maybe renderer
+		VkDescriptorSetLayout descriptorSetLayout;
 		VkPipelineLayout pipelineLayout;
-		VkRenderPass renderPass; // maybe renderer
+		VkRenderPass renderPass;
 	};
 }

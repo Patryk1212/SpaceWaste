@@ -69,7 +69,7 @@ namespace Engine
 
 		if (enableValidationLayers)
 		{
-			debug->DestroyDebugUtilsMessengerEXT(instance, nullptr); // already in class
+			debug->DestroyDebugUtilsMessengerEXT(instance, nullptr);
 		}
 
 		vkDestroySurfaceKHR(instance, surface->getSurface(), nullptr);

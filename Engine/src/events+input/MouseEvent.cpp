@@ -2,6 +2,4 @@
 #include "MouseEvent.h"
 
 namespace Engine
-{
-
-}
+{}

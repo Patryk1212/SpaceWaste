@@ -24,15 +24,14 @@ namespace Engine
 		~Graphics() = default;
 	
 		void createObjectsAndRecord(const std::vector<std::shared_ptr<Object>>& objects);
+		void updateUniformBuffer(const std::vector<std::shared_ptr<Object>>& objects);
 
 		void startFrame();
 		void endFrame();
 
-		VkRenderPassBeginInfo renderPassInfo{};
 		void onShutDown();
 
-	public:
-		void createSyncObjects();
+	private:
 		void recreateSwapChain();
 		void cleanupSwapChain();
 
@@ -44,56 +43,44 @@ namespace Engine
 		VkQueue graphicsQueue;
 		VkQueue presentQueue;
 
-	private: // swap chain
+	private:
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
+	private:
+		SwapChainData swapChainData;
 		void createSwapChain();
 		void createImageViews();
 
 	private: // graphics pipeline
+		PipeLineData pipeline;
 		void createGraphicsPipeline();
 
 	private: // render pass
+		VkRenderPassBeginInfo renderPassInfo{};
 		void createRenderPass();
 
 	private: // frame buffer
 		void createFramebuffers();
 
 	private: // command pool
+		VkCommandPool commandPool; 
 		void createCommandPool();
 
 	private: // command buffer
-		
+		std::vector<VkCommandBuffer> commandBuffers; 
 		void createCommandBuffers(const std::vector<std::shared_ptr<Object>>& objects);
 
 	private: // uniforms buffers
+		std::unique_ptr<VulkanDeviceMemory> uniformBufferMemory;		
 		void createDescriptorSetLayout();
-
-		
-		void createUniformBuffers(const std::vector<std::shared_ptr<Object>>& objects);//
-		std::unique_ptr<VulkanDeviceMemory> uniformBufferMemory;
-		
-	public:
-		void updateUniformBuffer(const std::vector<std::shared_ptr<Object>>& objects);
+		void createUniformBuffers(const std::vector<std::shared_ptr<Object>>& objects);
 
 	private: // descriptor sets
-		
-		void createDescriptorPool(const std::vector<std::shared_ptr<Object>>& objects);//
-		void createDescriptorSets(const std::vector<std::shared_ptr<Object>>& objects);//
-
-	private: // swap chain
-		SwapChainData swapChainData;
-
-	private: // graphics pipeline
-		PipeLineData pipeline;
-
-	private: // command pool
-		VkCommandPool commandPool; // possible 3d
-
-	private: // command buffer
-		std::vector<VkCommandBuffer> commandBuffers; // possible 3d
+		VkDescriptorPool descriptorPool;
+		void createDescriptorPool(const std::vector<std::shared_ptr<Object>>& objects);
+		void createDescriptorSets(const std::vector<std::shared_ptr<Object>>& objects);
 
 	private: // semaphores and fences
 		std::vector<VkSemaphore> imageAvailableSemaphores;
@@ -102,17 +89,14 @@ namespace Engine
 		std::vector<VkFence> imagesInFlight;
 		const int MAX_FRAMES_IN_FLIGHT = 2;
 		uint32_t currentFrame = 0;
+		void createSyncObjects();
 
 	private:
 		std::unique_ptr<VulkanDepthImage> depthImage;
 		std::unique_ptr<ImguiLayer> imguiLayer;
 		VkResult result;
 
-	
-		/* - - - - - - - - - - - - - - - - - - - - - - - */
-		VkDescriptorPool descriptorPool; // 3d
 		std::unique_ptr<VulkanBufferAllocator> bufferAllocator;
-
 		std::unique_ptr<VulkanVertexBuffer> vertexBuffer;
 		std::unique_ptr<VulkanIndexBuffer> indexBuffer;
 	};

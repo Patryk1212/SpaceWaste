@@ -15,7 +15,6 @@ namespace Engine
 
 		virtual void onAttach() {}
 		virtual void onUpdate(float deltaTime) {}
-		virtual void onRender() {}
 		virtual void passCamera(std::unique_ptr<CameraController>& cc) {}
 		virtual bool onEvent(Event& event) { return false; }
 

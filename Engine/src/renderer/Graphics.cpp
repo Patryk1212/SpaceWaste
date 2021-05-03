@@ -17,7 +17,7 @@ namespace Engine
 		createCommandPool();
 		bufferAllocator = std::make_unique<VulkanBufferAllocator>(physicalDevice, logicalDevice, graphicsQueue, commandPool);
 		
-		depthImage = std::make_unique<VulkanDepthImage>(bufferAllocator, logicalDevice, physicalDevice, swapChainData); // needs func from there in render pass creation
+		depthImage = std::make_unique<VulkanDepthImage>(bufferAllocator, logicalDevice, physicalDevice, swapChainData);
 		
 		createRenderPass();
 		createDescriptorSetLayout();
@@ -25,8 +25,8 @@ namespace Engine
 		
 		createFramebuffers();
 
-		vertexBuffer = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices); // renderer 3d
-		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices); // renderer 3d
+		vertexBuffer = std::make_unique<VulkanVertexBuffer>(bufferAllocator, vertices);
+		indexBuffer = std::make_unique<VulkanIndexBuffer>(bufferAllocator, indices);
 
 		createSyncObjects();
 
@@ -35,11 +35,11 @@ namespace Engine
 
 	void Graphics::createObjectsAndRecord(const std::vector<std::shared_ptr<Object>>& objects)
 	{
-		createUniformBuffers(objects); // renderer 3d // needed for object
+		createUniformBuffers(objects);
 		uniformBufferMemory = std::make_unique<VulkanDeviceMemory>(bufferAllocator, objects);
 
-		createDescriptorPool(objects); // renderer 3d // needed for object
-		createDescriptorSets(objects); // renderer 3d // needed for object
+		createDescriptorPool(objects);
+		createDescriptorSets(objects);
 		createCommandBuffers(objects);
 	}
 
@@ -66,8 +66,6 @@ namespace Engine
 		imagesInFlight[swapChainData.imageIndex] = inFlightFences[currentFrame];
 
 		imguiLayer->startFrame();
-
-		//cameraController->onUpdate();
 	}
 
 	void Graphics::endFrame()
@@ -468,9 +466,7 @@ namespace Engine
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 1;
-		pipelineLayoutInfo.pSetLayouts = &pipeline.descriptorSetLayout;// .data(); // change from &
-		//pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
-		//pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+		pipelineLayoutInfo.pSetLayouts = &pipeline.descriptorSetLayout;
 
 		if (vkCreatePipelineLayout(logicalDeviceHandle, &pipelineLayoutInfo, nullptr, &pipeline.pipelineLayout) != VK_SUCCESS)
 		{
@@ -522,7 +518,6 @@ namespace Engine
 		VkAttachmentReference colorAttachmentRef{};
 		colorAttachmentRef.attachment = 0;
 		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		///
 
 		VkAttachmentDescription depthAttachment{};
 		depthAttachment.format = depthImage->findDepthFormat();
@@ -537,7 +532,6 @@ namespace Engine
 		VkAttachmentReference depthAttachmentRef{};
 		depthAttachmentRef.attachment = 1;
 		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-		///
 
 		VkSubpassDescription subpass{};
 		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -578,7 +572,7 @@ namespace Engine
 			std::array<VkImageView, 2> attachments =
 			{
 				swapChainData.swapChainImageViews[i],
-				depthImage->getDepthImageView() //depthImageView
+				depthImage->getDepthImageView()
 			};
 
 			VkFramebufferCreateInfo framebufferInfo{};
@@ -604,7 +598,7 @@ namespace Engine
 		VkCommandPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
-		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; /// shit here
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
 		if (vkCreateCommandPool(logicalDeviceHandle, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
 		{
@@ -631,8 +625,7 @@ namespace Engine
 		{
 			VkCommandBufferBeginInfo beginInfo{};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			//beginInfo.flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;//VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT; // Optional
-			beginInfo.pInheritanceInfo = nullptr; // Optional
+			beginInfo.pInheritanceInfo = nullptr;
 
 			if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS)
 			{
@@ -653,10 +646,8 @@ namespace Engine
 			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 			renderPassInfo.pClearValues = clearValues.data();
 
-			/* --------------------------------------------------------------------------------- */
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.graphicsPipeline);
-
 
 			VkBuffer vertexBuffers[] = { vertexBuffer->getVertexBuffer() };
 
