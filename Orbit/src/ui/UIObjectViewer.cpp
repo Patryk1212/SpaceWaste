@@ -148,8 +148,8 @@ void UIObjectViewer::displayObjectsEachType(const char* prefix, int uid)
                
                 if (ImGui::Selectable(object->showName().c_str(), true))
                 {
-                    currentObject = numberInVector;
-                    selectedObject = numberInVector;
+                    currentObject = object->getUniqueID();
+                    selectedObject = object->getUniqueID();
                     detailsWindow = true;
                 }
 

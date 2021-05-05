@@ -32,8 +32,7 @@ namespace Engine
 		virtual inline void setScale(const glm::vec3& scale_) {}
 		virtual inline void resize(float scalar) {}
 		virtual inline void setColor(const glm::vec3& color_) {}
-
-		virtual bool checkInside(const glm::vec3& point) { return false; }
+		virtual inline int getUniqueID() const { return 0; }
 
 	public:
 		void createUniformBuffer(const std::unique_ptr<VulkanBufferAllocator>& bufferAlloc);

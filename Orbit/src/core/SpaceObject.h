@@ -33,6 +33,7 @@ public:
 	virtual inline void setScale(const glm::vec3& scale_) override { scale = scale_; }
 	virtual void resize(float scalar) override;
 	virtual inline void setColor(const glm::vec3& color_) override { color = color_; }
+	virtual inline int getUniqueID() const override { return unique_id; }
 
 private:
 	const float speed = 10.f;

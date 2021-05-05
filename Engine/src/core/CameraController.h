@@ -39,5 +39,7 @@ namespace Engine
 	private:
 		std::shared_ptr<Window> windowHandle;
 		std::unique_ptr<Camera> camera;
+
+		bool earthInFocus = false;
 	};
 }

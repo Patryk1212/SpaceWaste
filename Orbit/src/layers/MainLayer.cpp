@@ -6,7 +6,7 @@ void MainLayer::onAttach()
     /* add earth */
     glm::vec3 earthPos{ 0.0f, 0.0f, 0.0f };
     glm::vec3 earthSize{ 600.0f, 600.0f, 600.0f };
-    glm::vec3 earthColor{ 0.05f, 0.82f, 0.1f };
+    glm::vec3 earthColor{ 0.05f, 0.60f, 0.1f };
     std::unique_ptr<Engine::Object> earth = std::make_unique<SpaceObject>(earthPos, earthSize, earthColor);
     spaceObjects.emplace_back(std::move(earth));
     /* --------- */
@@ -67,7 +67,7 @@ void MainLayer::receiveMessage(const Engine::Message& message)
 void MainLayer::updateObjectsPosition(float deltaTime)
 {
     // bool earth = true;
-    for (int i = 0; i < spaceObjects.size(); i++)// auto& cube : spaceObjects)
+    for (int i = 0; i < spaceObjects.size(); i++)
     {
         if (i != 0 && running)
         {
@@ -83,10 +83,10 @@ void MainLayer::updateObjectsPosition(float deltaTime)
         if (i != 0 && currentObjectOnFocus == i)
         {
             glm::vec3 highLightColor{ 0.f, 1.f, 0.f };
-            spaceObjects[i]->getUniformbufferObject().color = highLightColor;
+            spaceObjects[i]->setColor(highLightColor);
         }
-        else spaceObjects[i]->getUniformbufferObject().color = spaceObjects[i]->getColor();
 
+        spaceObjects[i]->getUniformbufferObject().color = spaceObjects[i]->getColor();
     }
 }
 

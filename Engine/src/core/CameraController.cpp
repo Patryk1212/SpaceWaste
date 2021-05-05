@@ -30,6 +30,7 @@ namespace Engine
 			yoffset *= SENSITIVITY;
 
 			phi += yoffset;
+
 			if (phi < 0.5f) phi = 0.5f;
 			if (phi > 2.5f) phi = 2.5f;
 

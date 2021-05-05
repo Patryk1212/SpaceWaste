@@ -34,13 +34,9 @@ SpaceObject::SpaceObject(std::string& name, std::string& one, std::string& two, 
 
 void SpaceObject::onUpdate(float deltaTime, int visSpeed_)
 {
-	position.x += velocity.x * deltaTime * (((float)visSpeed_)/speed);
-	position.z += velocity.z * deltaTime * (((float)visSpeed_)/speed);
-	position.y += velocity.y * deltaTime * (((float)visSpeed_)/speed);
-
-	//std::cout << position.x << position.y << position.z << std::endl;
-	//position = { vecPos.Position().m_x, vecPos.Position().m_z, vecPos.Position().m_y };
-	//position /= 10;
+	position.x += velocity.x * deltaTime * (((float)visSpeed_) / speed);
+	position.z += velocity.z * deltaTime * (((float)visSpeed_) / speed);
+	position.y += velocity.y * deltaTime * (((float)visSpeed_) / speed);
 }
 
 std::string SpaceObject::showName() const
@@ -82,9 +78,9 @@ void SpaceObject::resize(float scalar)
 
 void SpaceObject::calculateSize()
 {
-	float x = glm::distance({ .0f, .0f, .0f }, position);
+	float tempDis = glm::distance({ .0f, .0f, .0f }, position);
 
-	if (x < CLOSE) // close to earth
+	if (tempDis < CLOSE) // close to earth
 	{
 		scale.x = MAX_SIZE_LOW;
 		scale.y = MAX_SIZE_LOW;
@@ -93,7 +89,7 @@ void SpaceObject::calculateSize()
 		MIN_SIZE = MIN_SIZE_LOW;
 		MAX_SIZE = MAX_SIZE_LOW;
 	}
-	else if (x < MID) // middle way
+	else if (tempDis < MID) // middle way
 	{
 		scale.x = MAX_SIZE_MIDDLE;
 		scale.y = MAX_SIZE_MIDDLE;
@@ -102,7 +98,7 @@ void SpaceObject::calculateSize()
 		MIN_SIZE = MIN_SIZE_MIDDLE;
 		MAX_SIZE = MAX_SIZE_MIDDLE;
 	}
-	else if (x < FAR)// far away from earth
+	else if (tempDis < FAR)// far away from earth
 	{
 		scale.x = MAX_SIZE_HIGH;
 		scale.y = MAX_SIZE_HIGH;
