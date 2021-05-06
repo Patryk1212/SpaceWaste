@@ -5,14 +5,6 @@
 
 namespace Engine
 {
-	VulkanDebug::~VulkanDebug()
-	{
-		//if (enableValidationLayers)
-		//{
-		//	DestroyDebugUtilsMessengerEXT(VulkanContext::getInstance(), debugMessenger, nullptr);
-		//}
-	}
-
 	VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebug::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
 	{
 		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;

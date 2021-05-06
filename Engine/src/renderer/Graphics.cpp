@@ -125,11 +125,11 @@ namespace Engine
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 	}
 	
-	void Graphics::onShutDown() // needs to be done properly
+	void Graphics::onShutDown()
 	{
 		cleanupSwapChain();
 
-		vkDestroyDescriptorSetLayout(logicalDeviceHandle, pipeline.descriptorSetLayout, nullptr); //////////////////////
+		vkDestroyDescriptorSetLayout(logicalDeviceHandle, pipeline.descriptorSetLayout, nullptr);
 
 		vkDestroyBuffer(logicalDeviceHandle, indexBuffer->getIndexBuffer(), nullptr);
 		vkFreeMemory(logicalDeviceHandle, indexBuffer->getIndexBufferMemory(), nullptr);
@@ -185,11 +185,6 @@ namespace Engine
 			glfwWaitEvents();
 		}
 
-		//ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
-		//ImGui_ImplVulkanH_CreateWindow(g_Instance, g_PhysicalDevice, g_Device, &g_MainWindowData,
-		//	g_QueueFamily, g_Allocator, g_SwapChainResizeWidth, g_SwapChainResizeHeight, g_MinImageCount);
-		//g_MainWindowData.FrameIndex = 0;
-
 		vkDeviceWaitIdle(logicalDeviceHandle);
 
 		cleanupSwapChain();
@@ -199,10 +194,6 @@ namespace Engine
 		createRenderPass();
 		createGraphicsPipeline();
 		createFramebuffers();
-		//createUniformBuffers();
-		//createDescriptorPool();
-		//createDescriptorSets();
-		//createCommandBuffers();
 	}
 
 	void Graphics::cleanupSwapChain()
@@ -224,13 +215,6 @@ namespace Engine
 		}
 
 		vkDestroySwapchainKHR(logicalDeviceHandle, swapChainData.swapChain, nullptr);
-
-		for (size_t i = 0; i < swapChainData.swapChainImages.size(); i++)
-		{
-			//vkDestroyBuffer(logicalDeviceHandle, uniformBuffers[i], nullptr);
-			//vkFreeMemory(logicalDeviceHandle, uniformBuffersMemory[i], nullptr); ////////////////////////////////////////
-		}
-
 		vkDestroyDescriptorPool(logicalDeviceHandle, descriptorPool, nullptr);
 	}
 

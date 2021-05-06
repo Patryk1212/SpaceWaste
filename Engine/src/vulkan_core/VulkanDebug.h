@@ -8,7 +8,7 @@ namespace Engine
 	{
 	public:
 		VulkanDebug() = default;
-		~VulkanDebug();
+		~VulkanDebug() = default;
 
 		void setupDebugMessenger();
 		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);

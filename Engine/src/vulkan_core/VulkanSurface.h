@@ -9,7 +9,7 @@ namespace Engine
 	{
 	public:
 		VulkanSurface(const std::shared_ptr<Window>& window);
-		~VulkanSurface();
+		~VulkanSurface() = default;
 
 		static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 		static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
